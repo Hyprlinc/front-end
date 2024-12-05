@@ -8,6 +8,7 @@ import countriesAndCities from '../assets/coutriesAndCities';
 import channelGenres from '../assets/genres';
 
 import { useNavigate } from 'react-router-dom';
+import registerUser from '../services/apis';
 
 const RegistrationForm = () => {
     const [step, setStep] = useState(1);
@@ -34,6 +35,7 @@ const RegistrationForm = () => {
     const [influencerDetails, setInfluencerDetails] = useState({
         name: '',
         email: '',
+        password: '',
         platform: '',
         channelLink: ''
     });
@@ -77,6 +79,8 @@ const RegistrationForm = () => {
     //         setIsAnimating(false); // End animation
     //     }, 500); // Match the transition duration in CSS
     // };
+
+    const [isLoading, setIsLoading] = useState(false);
 
     const handleInfluencerDetailsSubmit = (e) => {
         e.preventDefault();
@@ -131,20 +135,55 @@ const RegistrationForm = () => {
     };
 
 
-    const handlePersonalDetailsSubmit = (e) => {
+    const handlePersonalDetailsSubmit = async (e) => {
         e.preventDefault();
-        const {
-            age, gender, country, city,
-            contentLanguages, channelGenre, contentDescription
-        } = personalDetails;
-        // If all validations pass
-        console.log('Full Registration Details:', {
-            phoneNumber,
-            profileType,
-            influencerDetails,
-            personalDetails
-        });
-        setStep(5)
+        // const {
+        //     age, gender, country, city,
+        //     contentLanguages, channelGenre, contentDescription
+        // } = personalDetails;
+        // // If all validations pass
+        // console.log('Full Registration Details:', {
+        //     phoneNumber,
+        //     profileType,
+        //     influencerDetails,
+        //     personalDetails
+        // });
+        const registrationData = {
+            // Phone number details
+            // phoneNumber,
+            // profileType,
+
+            // Influencer details
+            fullName: influencerDetails.name,
+            email: influencerDetails.email,
+            password: influencerDetails.password,
+            primaryPlatforms: influencerDetails.platform,
+            channelLink: influencerDetails.channelLink,
+
+            // Personal details
+            age: personalDetails.age,
+            gender: personalDetails.gender,
+            country: selectedCountry,
+            city: selectedCity,
+            contentLanguages: personalDetails.contentLanguages,
+            channelGenre: personalDetails.channelGenre,
+            contentDescription: personalDetails.contentDescription,
+
+            // Channel details for [/* instagram and youtube */] to be added later.
+
+        };
+        try {
+            setIsLoading(true);
+            const response = await registerUser(registrationData).then((value) => { setIsLoading(false) });
+            console.log("Response body", response);
+            alert("Registration Successful")
+            setStep(5);
+        } catch (error) {
+            setIsLoading(false);
+            alert("Something went wrong" || error);
+            console.error(error)
+        }
+
     };
 
 
@@ -208,6 +247,9 @@ const RegistrationForm = () => {
         }));
     };
 
+    const [showPassword, setShowPassword] = useState(false);
+
+
     const handleInstagramDetailsSubmit = (e) => {
         e.preventDefault();
         const {
@@ -230,7 +272,7 @@ const RegistrationForm = () => {
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-brand-gray p-4">
-            <div className="bg-white shadow-md rounded-lg w-full max-w-md p-8">
+            <div className="bg-white shadow-md rounded-lg w-full p-8" style={{ maxWidth: '600px' }}>
                 {step === 1 && (
                     <form onSubmit={handlePhoneSubmit} className="space-y-6">
                         <div className="text-center">
@@ -363,6 +405,57 @@ const RegistrationForm = () => {
                             />
                         </div>
 
+                        {/* Password and Confirm Password Fields Side by Side */}
+                        <div className="flex space-x-9">
+                            {/* Password Field */}
+                            <div className="w-1/2">
+                                <label htmlFor="password" className="block text-gray-700 mb-2">Password</label>
+                                <div className="relative">
+                                    <input
+                                        type={showPassword ? 'text' : 'password'}
+                                        id="password"
+                                        name="password"
+                                        value={influencerDetails.password}
+                                        onChange={handleInfluencerDetailsChange}
+                                        placeholder="Enter your password"
+                                        className="w-full px-4 py-2 pr-12 border rounded-md focus:outline-none focus:ring-2 focus:ring-brand-blue"
+                                        required
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowPassword(!showPassword)}
+                                        className="absolute inset-y-0 right-3 flex items-center text-gray-500 focus:outline-none"
+                                    >
+                                        {showPassword ? 'Hide' : 'View'}
+                                    </button>
+                                </div>
+                            </div>
+
+                            {/* Confirm Password Field */}
+                            <div className="w-1/2">
+                                <label htmlFor="confirmPassword" className="block text-gray-700 mb-2">Confirm Password</label>
+                                <div className="relative">
+                                    <input
+                                        type={'password'}
+                                        id="confirmPassword"
+                                        name="confirmPassword"
+                                        value={influencerDetails.confirmPassword}
+                                        onChange={handleInfluencerDetailsChange}
+                                        placeholder="Confirm your password"
+                                        className="w-full px-4 py-2 pr-12 border rounded-md focus:outline-none focus:ring-2 focus:ring-brand-blue"
+                                        required
+                                    />
+                                    {/* <button
+                                        type="button"
+                                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                                        className="absolute inset-y-0 right-3 flex items-center text-gray-500 focus:outline-none"
+                                    >
+                                        {showConfirmPassword ? 'Hide' : 'View'}
+                                    </button> */}
+                                </div>
+                            </div>
+                        </div>
+
                         <div className="flex space-x-4">
                             <button
                                 type="button"
@@ -380,6 +473,7 @@ const RegistrationForm = () => {
                         </div>
                     </form>
                 )}
+
                 {step === 4 && (
                     <form onSubmit={handlePersonalDetailsSubmit} className="max-w-3xl mx-auto space-y-4">
                         <div className="text-center">
@@ -416,8 +510,13 @@ const RegistrationForm = () => {
                                     required
                                 >
                                     <option value="">Select Gender</option>
-                                    {['Male', 'Female', 'Non-Binary', 'Prefer Not to Say'].map(gender => (
-                                        <option key={gender} value={gender}>{gender}</option>
+                                    {[
+                                        { label: 'Male', value: 'M' },
+                                        { label: 'Female', value: 'F' },
+                                        { label: 'Non-Binary', value: 'B' },
+                                        { label: 'Prefer Not to Say', value: 'N' },
+                                    ].map(option => (
+                                        <option key={option.value} value={option.value}>{option.label}</option>
                                     ))}
                                 </select>
                             </div>
@@ -521,9 +620,17 @@ const RegistrationForm = () => {
                             </button>
                             <button
                                 type="submit"
-                                className="w-1/2 bg-brand-blue text-white py-2 rounded-md text-sm hover:bg-blue-700 transition duration-300"
+                                disabled={isLoading}
+                                className={`submit-button ${isLoading ? 'loading' : ''}`}
                             >
-                                Complete Registration
+                                {isLoading ? (
+                                    <div className="loading-spinner">
+                                        <span>Loading...</span>
+                                        {/* You can replace this with a more sophisticated spinner */}
+                                    </div>
+                                ) : (
+                                    'Complete Registration'
+                                )}
                             </button>
                         </div>
                     </form>
