@@ -15,7 +15,7 @@ const registerUser = async (registrationData) => {
     } catch (error) {
         // Handle registration error
         console.error('Registration failed:', error.response ? error.response.data : error.message);
-        
+
         // Show user-friendly error message
         if (error.response) {
             // The request was made and the server responded with a status code
@@ -28,7 +28,7 @@ const registerUser = async (registrationData) => {
             // Something happened in setting up the request that triggered an Error
             alert('Error in registration process. Please try again.');
         }
-        
+
         throw error;
     }
 };

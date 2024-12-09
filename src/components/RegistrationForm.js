@@ -126,7 +126,8 @@ const RegistrationForm = () => {
                 ...prev,
                 [name]: value.map(option => option.value) // Map to extract only the language values from the options
             }));
-        } else {
+        }
+        else {
             setPersonalDetails(prev => ({
                 ...prev,
                 [name]: value
@@ -163,8 +164,8 @@ const RegistrationForm = () => {
             // Personal details
             age: personalDetails.age,
             gender: personalDetails.gender,
-            country: selectedCountry,
-            city: selectedCity,
+            country: personalDetails.country,
+            city: personalDetails.city,
             contentLanguages: personalDetails.contentLanguages,
             channelGenre: personalDetails.channelGenre,
             contentDescription: personalDetails.contentDescription,
@@ -172,6 +173,7 @@ const RegistrationForm = () => {
             // Channel details for [/* instagram and youtube */] to be added later.
 
         };
+        console.log(registrationData);
         try {
             setIsLoading(true);
             const response = await registerUser(registrationData).then((value) => { setIsLoading(false) });
@@ -204,12 +206,19 @@ const RegistrationForm = () => {
     }));
 
     // Prepare city options based on the selected country
-    const cityOptions = selectedCountry
-        ? countriesAndCities[selectedCountry.value].map(city => ({
-            label: city,
-            value: city,
-        }))
-        : [];
+    // const cityOptions = personalDetails.country
+    //     ? countriesAndCities[selectedCountry.value].map(city => ({
+    //         label: city,
+    //         value: city,
+    //     }))
+    //     : [];
+
+    const cityOptions = personalDetails.country
+    ? countriesAndCities[personalDetails.country]?.map(city => ({
+        label: city,
+        value: city,
+    }))
+    : [];
 
 
     // Handle form input changes
@@ -529,8 +538,11 @@ const RegistrationForm = () => {
                                     id="country"
                                     name="country"
                                     options={countryOptions}
-                                    value={selectedCountry}
-                                    onChange={handleCountryChange}
+                                    value={countryOptions.find(option => option.value === personalDetails.country)} // Match the selected country
+                                    onChange={(selectedOption) => setPersonalDetails((prev) => ({
+                                        ...prev,
+                                        country: selectedOption ? selectedOption.value : '', // Safely update country
+                                    }))}
                                     className="w-full px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-brand-blue"
                                     placeholder="Select Country"
                                     isSearchable
@@ -543,12 +555,15 @@ const RegistrationForm = () => {
                                     id="city"
                                     name="city"
                                     options={cityOptions}
-                                    value={selectedCity}
-                                    onChange={handleCityChange}
+                                    value={cityOptions.find(option => option.value === personalDetails.city)} // Match the selected city
+                                    onChange={(selectedOption) => setPersonalDetails((prev) => ({
+                                        ...prev,
+                                        city: selectedOption ? selectedOption.value : '', // Update city
+                                    }))}
                                     className="w-full px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-brand-blue"
                                     placeholder="Select City"
                                     isSearchable
-                                    isDisabled={!selectedCountry} // Disable city dropdown if no country is selected
+                                    isDisabled={!personalDetails.country} // Disable city dropdown if no country is selected
                                 />
                             </div>
                         </div>
