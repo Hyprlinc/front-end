@@ -1,24 +1,58 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Phone, User, Target, CheckCircle, MapPin } from 'lucide-react';
 import Select from 'react-select';
 import { FaYoutube } from 'react-icons/fa';
+import {jwtDecode} from "jwt-decode"; 
 import indianLanguages from '../assets/locale/indianLanguages';
 import internationalLanguages from '../assets/locale/internationalLanguages';
 import countriesAndCities from '../assets/coutriesAndCities';
 import channelGenres from '../assets/genres';
 
 import { useNavigate } from 'react-router-dom';
-import registerUser from '../services/apis';
+import { registerUser, registerChannelDetails, creatorLogin } from '../services/apis';
+
+
+ // Function to store token securely (localStorage for simplicity, cookies recommended in production)
+ 
+
+
 
 const RegistrationForm = () => {
     const [step, setStep] = useState(1);
     const [phoneNumber, setPhoneNumber] = useState('');
     const [profileType, setProfileType] = useState('');
 
-    const [selectedCountry, setSelectedCountry] = useState(null);
-    const [selectedCity, setSelectedCity] = useState(null);
-
     const navigate = useNavigate();
+
+
+    const storeToken = (token) => {
+        localStorage.setItem("jwt", token);
+    };
+    
+    // Function to retrieve stored token
+    const getToken = () => {
+        return localStorage.getItem("jwt");
+    };
+    
+    // Function to clear token (e.g., on logout)
+    const clearToken = () => {
+        localStorage.removeItem("jwt");
+    };
+    
+    // Handle login after registration
+    const handleLogin = async () => {
+        const token = getToken();
+        if (!token) return;
+    
+        try {
+            const response = await creatorLogin({ token }); // Replace `loginAPI` with your actual login API call
+            console.log("Login Successful:", response);
+            navigate("/dashboard");
+        } catch (error) {
+            console.error("Login Error:", error);
+            clearToken(); // Clear invalid token
+        }
+    };
 
 
     const [channelDetails, setChannelDetails] = useState({
@@ -71,14 +105,6 @@ const RegistrationForm = () => {
             alert(`Registration for ${type} with phone ${phoneNumber}`);
         }
     };
-
-    // const goToNextStep = (nextStep) => {
-    //     setIsAnimating(true); // Start animation
-    //     setTimeout(() => {
-    //         setStep(nextStep); // Update the step after animation
-    //         setIsAnimating(false); // End animation
-    //     }, 500); // Match the transition duration in CSS
-    // };
 
     const [isLoading, setIsLoading] = useState(false);
 
@@ -189,36 +215,18 @@ const RegistrationForm = () => {
     };
 
 
-    const handleCountryChange = (selectedOption) => {
-        setSelectedCountry(selectedOption);
-        setSelectedCity(null); // Reset city when country is changed
-    };
-
-    // Handle city change
-    const handleCityChange = (selectedOption) => {
-        setSelectedCity(selectedOption);
-    };
-
     // Prepare country options for react-select
     const countryOptions = Object.keys(countriesAndCities).map(country => ({
         label: country,
         value: country,
     }));
 
-    // Prepare city options based on the selected country
-    // const cityOptions = personalDetails.country
-    //     ? countriesAndCities[selectedCountry.value].map(city => ({
-    //         label: city,
-    //         value: city,
-    //     }))
-    //     : [];
-
     const cityOptions = personalDetails.country
-    ? countriesAndCities[personalDetails.country]?.map(city => ({
-        label: city,
-        value: city,
-    }))
-    : [];
+        ? countriesAndCities[personalDetails.country]?.map(city => ({
+            label: city,
+            value: city,
+        }))
+        : [];
 
 
     // Handle form input changes
@@ -259,25 +267,56 @@ const RegistrationForm = () => {
     const [showPassword, setShowPassword] = useState(false);
 
 
-    const handleInstagramDetailsSubmit = (e) => {
+    const handleInstagramDetailsSubmit = async (e) => {
         e.preventDefault();
         const {
             accountName, accountAge, followers,
             avgReelViews, avgComments, avgLikes, engagementRate
         } = instagramDetails;
 
-        // Basic validation
-        if (!accountName || !accountAge || !followers || !avgReelViews ||
-            !avgComments || !avgLikes || !engagementRate) {
+        const combinedDetails = {
+            ...channelDetails,
+            ...instagramDetails,
+        };
+        console.log(combinedDetails);
+
+        const allFieldsFilled = Object.values(combinedDetails).every((field) => field.trim() !== '');
+        if (!allFieldsFilled) {
             alert('Please fill in all fields');
             return;
         }
-
-        console.log('Instagram Details:', instagramDetails);
-        alert('Instagram data submitted successfully!'); // Or navigate to another step if needed
-        navigate('/dashboard');
+        
+        try {
+            // Call the API function
+            const response = await registerChannelDetails(combinedDetails);
+            console.log('API Response:', response);
+            alert('Channel and Instagram details submitted successfully!');
+            navigate('/dashboard'); // Navigate to the dashboard or another page
+        } catch (error) {
+            console.error('Error submitting details:', error);
+        }
 
     };
+
+    useEffect(() => {
+        const token = getToken();
+        if (token) {
+            try {
+                const decoded = jwtDecode(token);
+                const isExpired = decoded.exp * 1000 < Date.now(); // Check if token is expired
+                if (!isExpired) {
+                    navigate("/dashboard"); // Redirect to dashboard if token is valid
+                } else {
+                    navigate('/');
+                    clearToken(); // Clear expired token
+                }
+            } catch (error) {
+                console.error("Invalid Token:", error);
+                navigate('/')
+                clearToken();
+            }
+        }
+    }, [navigate]);
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-brand-gray p-4">
@@ -932,3 +971,8 @@ const RegistrationForm = () => {
 };
 
 export default RegistrationForm;
+
+/*
+
+in this code, I want to handle session. When a user first signs up and done with submitting till instagram details, it should call login api using the stored jwt token and if this jwt token is there then navigate to the dashboard automatically when webiste refreshes.
+*/
