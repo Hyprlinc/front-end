@@ -9,7 +9,7 @@ import countriesAndCities from '../assets/coutriesAndCities';
 import channelGenres from '../assets/genres';
 
 import { useNavigate } from 'react-router-dom';
-import { registerUser, registerChannelDetails, creatorLogin } from '../services/apis';
+import { registerUser, registerChannelDetails, creatorLogin, fetchCreatorProfile } from '../services/apis';
 
 
  // Function to store token securely (localStorage for simplicity, cookies recommended in production)
@@ -45,9 +45,11 @@ const RegistrationForm = () => {
         if (!token) return;
     
         try {
-            const response = await creatorLogin({ token }); // Replace `loginAPI` with your actual login API call
-            console.log("Login Successful:", response);
+            // const response = await creatorLogin({ token });
+            // storeToken(response.data.token) // Replace `loginAPI` with your actual login API call
+            // console.log("Login Successful:", response);
             navigate("/dashboard");
+            fetchCreatorProfile(token);
         } catch (error) {
             console.error("Login Error:", error);
             clearToken(); // Clear invalid token
@@ -305,7 +307,8 @@ const RegistrationForm = () => {
                 const decoded = jwtDecode(token);
                 const isExpired = decoded.exp * 1000 < Date.now(); // Check if token is expired
                 if (!isExpired) {
-                    navigate("/dashboard"); // Redirect to dashboard if token is valid
+                    handleLogin()
+                    // Redirect to dashboard if token is valid
                 } else {
                     navigate('/');
                     clearToken(); // Clear expired token

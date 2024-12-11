@@ -1,5 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Home, Inbox, Search, Network, Star, MessageSquareQuote, Settings, DollarSignIcon, CreditCardIcon } from 'lucide-react';
+import { fetchCreatorProfile } from '../services/apis';
+
+import { useNavigate } from 'react-router-dom';
 
 
 
@@ -23,6 +26,19 @@ const user = {
 const CreatorDashboard = () => {
   const [activeSection, setActiveSection] = useState('home');
   const [isAvailable, setIsAvailable] = useState(true);
+
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    const token = localStorage.getItem('jwt');
+    if(token){
+      fetchCreatorProfile(token);
+    }else{
+      navigate('/')
+    }
+  })
+  
+  
 
 
   const renderContent = () => {

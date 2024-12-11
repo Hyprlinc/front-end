@@ -1,9 +1,13 @@
 import axios from 'axios';
 
+
+
+const API_BASE_URL = 'http://192.168.0.123:5000';
+
 // Function to handle API registration
 export const registerUser = async (registrationData) => {
     try {
-        const response = await axios.post('http://192.168.0.123:5000/api/auth/register', registrationData, {
+        const response = await axios.post(`${API_BASE_URL}/api/auth/register`, registrationData, {
             headers: {
                 'Content-Type': 'application/json',
             }
@@ -41,7 +45,7 @@ export const registerChannelDetails = async (channelDetails) => {
     try {
         console.log("Channel Details before API", channelDetails);
         const fetchToken = localStorage.getItem('jwt');
-        const response = await axios.post('http://192.168.0.123:5000/api/channelOnboarding/uploadChannelDetails', channelDetails, {
+        const response = await axios.post(`${API_BASE_URL}/api/channelOnboarding/uploadChannelDetails`, channelDetails, {
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${fetchToken}`
@@ -73,7 +77,7 @@ export const creatorLogin = async (email, password) => {
     let config = {
         method: 'post',
         maxBodyLength: Infinity,
-        url: 'http://192.168.0.123:5000/api/auth/login',
+        url: `${API_BASE_URL}/api/auth/login`,
         headers: {
             'Content-Type': 'application/json'
         },
@@ -91,3 +95,33 @@ export const creatorLogin = async (email, password) => {
             
         });
 }
+
+
+
+export const fetchCreatorProfile = async (token) => {
+    try {
+        // Retrieve the JWT token from localStorage or cookies// Adjust storage retrieval as needed
+
+        // Make the API request
+        const response = await axios.get(`${API_BASE_URL}/api/auth/profile`, {
+            headers: {
+                'Authorization': `Bearer ${token}`, // Attach the token in the Authorization header
+            },
+        });
+
+        // Return the profile data
+        console.log(response.data);
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching creator profile:', error);
+
+        // Handle errors appropriately
+        if (error.response && error.response.status === 404) {
+            throw new Error('Creator not found');
+        } else if (error.response && error.response.status === 401) {
+            throw new Error('Unauthorized access');
+        } else {
+            throw new Error('Server error fetching profile');
+        }
+    }
+};
