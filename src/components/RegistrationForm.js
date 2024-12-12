@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Phone, User, Target, CheckCircle, MapPin } from 'lucide-react';
 import Select from 'react-select';
 import { FaYoutube } from 'react-icons/fa';
-import {jwtDecode} from "jwt-decode"; 
+import { jwtDecode } from "jwt-decode";
 import indianLanguages from '../assets/locale/indianLanguages';
 import internationalLanguages from '../assets/locale/internationalLanguages';
 import countriesAndCities from '../assets/coutriesAndCities';
@@ -12,47 +12,57 @@ import { useNavigate } from 'react-router-dom';
 import { registerUser, registerChannelDetails, creatorLogin, fetchCreatorProfile } from '../services/apis';
 
 
- // Function to store token securely (localStorage for simplicity, cookies recommended in production)
- 
+// Function to store token securely (localStorage for simplicity, cookies recommended in production)
+
 
 
 
 const RegistrationForm = () => {
+    const [showLoginForm, setShowLoginForm] = useState(false);
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
     const [step, setStep] = useState(1);
     const [phoneNumber, setPhoneNumber] = useState('');
     const [profileType, setProfileType] = useState('');
 
     const navigate = useNavigate();
 
+    const handleLoginSubmit = (e) => {
+        e.preventDefault();
+        // Logic for influencer login
+    };
+
 
     const storeToken = (token) => {
         localStorage.setItem("jwt", token);
     };
-    
+
     // Function to retrieve stored token
     const getToken = () => {
         return localStorage.getItem("jwt");
     };
-    
+
     // Function to clear token (e.g., on logout)
     const clearToken = () => {
         localStorage.removeItem("jwt");
     };
-    
+
     // Handle login after registration
-    const handleLogin = async () => {
+    const handleNavigateToDashboard = async () => {
         const token = getToken();
         if (!token) return;
-    
+        navigate('/dashboard')
+       
+    };
+
+    const handleLogin = async () => {
         try {
-            // const response = await creatorLogin({ token });
-            // storeToken(response.data.token) // Replace `loginAPI` with your actual login API call
-            // console.log("Login Successful:", response);
-            navigate("/dashboard");
-            fetchCreatorProfile(token);
+            const response = await creatorLogin(email, password);
+            console.log("Response from API", response.data)
+            storeToken(response.data.token);
+            handleNavigateToDashboard();
         } catch (error) {
-            console.error("Login Error:", error);
-            clearToken(); // Clear invalid token
+            console.error('Login failed:', error);
         }
     };
 
@@ -287,7 +297,7 @@ const RegistrationForm = () => {
             alert('Please fill in all fields');
             return;
         }
-        
+
         try {
             // Call the API function
             const response = await registerChannelDetails(combinedDetails);
@@ -307,7 +317,7 @@ const RegistrationForm = () => {
                 const decoded = jwtDecode(token);
                 const isExpired = decoded.exp * 1000 < Date.now(); // Check if token is expired
                 if (!isExpired) {
-                    handleLogin()
+                    handleNavigateToDashboard()
                     // Redirect to dashboard if token is valid
                 } else {
                     navigate('/');
@@ -321,18 +331,26 @@ const RegistrationForm = () => {
         }
     }, [navigate]);
 
+
+
     return (
         <div className="min-h-screen flex items-center justify-center bg-brand-gray p-4">
             <div className="bg-white shadow-md rounded-lg w-full p-8" style={{ maxWidth: '600px' }}>
-                {step === 1 && (
+
+
+                {step === 1 && !showLoginForm && (
                     <form onSubmit={handlePhoneSubmit} className="space-y-6">
                         <div className="text-center">
                             <Phone className="mx-auto mb-4 text-brand-blue" size={48} />
-                            <h2 className="text-2xl font-bold text-gray-800">Enter Your Phone Number</h2>
+                            <h2 className="text-2xl font-bold text-gray-800">
+                                Enter Your Phone Number
+                            </h2>
                             <p className="text-gray-600 mt-2">We'll send a verification code</p>
                         </div>
                         <div>
-                            <label htmlFor="phone" className="block text-gray-700 mb-2">Phone Number</label>
+                            <label htmlFor="phone" className="block text-gray-700 mb-2">
+                                Phone Number
+                            </label>
                             <div className="flex items-center">
                                 <span className="mr-2 text-gray-600">+91</span>
                                 <input
@@ -353,6 +371,67 @@ const RegistrationForm = () => {
                         >
                             Send Verification Code
                         </button>
+                        <p className="text-center mt-4">
+                            <button
+                                type="button"
+                                onClick={() => setShowLoginForm(true)}
+                                className="text-brand-blue hover:underline focus:outline-none"
+                            >
+                                Login as an Influencer
+                            </button>
+                        </p>
+                    </form>
+                )}
+
+                {showLoginForm && (
+                    <form onSubmit={handleLoginSubmit} className="space-y-6">
+                        <div className="text-center">
+                            <h2 className="text-2xl font-bold text-gray-800">Influencer Login</h2>
+                        </div>
+                        <div>
+                            <label htmlFor="email" className="block text-gray-700 mb-2">
+                                Email
+                            </label>
+                            <input
+                                type="email"
+                                id="email"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                placeholder="Enter your email"
+                                className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-brand-blue"
+                                required
+                            />
+                        </div>
+                        <div>
+                            <label htmlFor="password" className="block text-gray-700 mb-2">
+                                Password
+                            </label>
+                            <input
+                                type="password"
+                                id="password"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                placeholder="Enter your password"
+                                className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-brand-blue"
+                                required
+                            />
+                        </div>
+                        <button
+                            onClick={handleLogin}
+                            type="submit"
+                            className="w-full bg-brand-blue text-white py-2 rounded-md hover:bg-blue-700 transition duration-300"
+                        >
+                            Login
+                        </button>
+                        <p className="text-center mt-4">
+                            <button
+                                type="button"
+                                onClick={() => setShowLoginForm(false)}
+                                className="text-gray-600 hover:underline focus:outline-none"
+                            >
+                                Back to Phone Verification
+                            </button>
+                        </p>
                     </form>
                 )}
 

@@ -84,16 +84,13 @@ export const creatorLogin = async (email, password) => {
         data: data
     };
 
-    axios.request(config)
-        .then((response) => {
-            console.log(JSON.stringify(response.data));
-            return response.data;
-
-        })
-        .catch((error) => {
-            console.error(error);
-            
-        });
+    try {
+        const response = await axios.request(config);
+        return response; // Return the full response object
+    } catch (error) {
+        console.error('Login API failed:', error);
+        throw error; // Rethrow the error so the caller knows about it
+    }
 }
 
 
@@ -111,10 +108,9 @@ export const fetchCreatorProfile = async (token) => {
 
         // Return the profile data
         console.log(response.data);
-        return response.data;
+        return response;
     } catch (error) {
         console.error('Error fetching creator profile:', error);
-
         // Handle errors appropriately
         if (error.response && error.response.status === 404) {
             throw new Error('Creator not found');
