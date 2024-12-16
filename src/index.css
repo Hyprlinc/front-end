@@ -1,7 +1,4 @@
-/* @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap'); */
-@import '@fontsource/roboto/400.css';  /* Normal weight */
-@import '@fontsource/roboto/500.css';  /* Medium weight */
-@import '@fontsource/roboto/700.css';  /* Bold weight */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -9,8 +6,7 @@
 
 body {
   margin: 0;
-  font-family: 'Roboto'
-    sans-serif;
+  font-family: 'Inter', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }

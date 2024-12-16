@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Home, Inbox, Search, Network, Star, MessageSquareQuote, Settings, DollarSignIcon, CreditCardIcon, Youtube, Instagram } from 'lucide-react';
-import { fetchCreatorProfile } from '../services/apis';
+import { Home, Inbox, Search, Network, Star, MessageSquareQuote, Settings, DollarSignIcon, CreditCardIcon, Youtube, Instagram, User, Globe, Mail, MapPin, Award, Link as LinkIcon, ChevronDown, ChevronUp, CheckCircle, AlertTriangle, Plus, Eye, Edit } from 'lucide-react';
+import { fetchCreatorProfile, fetchCreatorsChannelData } from '../services/apis';
 
 import { useNavigate } from 'react-router-dom';
+import UserProfileComponent from './profile';
 
 
 
@@ -40,36 +41,77 @@ const CreatorDashboard = () => {
     city: "",
     contentLang: [],
     channelGenre: "",
-    contentDesc: ""
+    contentDesc: "",
+    channelAgeYoutub: "",
+    channelAgeIg: "",
+    subscribers: "",
+    averageViews: "",
+    contentType: "",
+    postingFrequency: "",
+    liveStreaming: "",
+    collabType: "",
+    accountName: "",
+    followers: "",
+    avgReelViews: "",
+    avgComments: "",
+    avgLikes: "",
+    engagementRate: "",
   });
 
   const navigate = useNavigate()
 
+  const populateFields = async (token) => {
+    fetchCreatorProfile(token)
+      .then((response) => {
+        setUser((prevUser) => ({
+          ...prevUser,
+          id: response.data.id,
+          fullName: response.data.full_name,
+          email: response.data.email,
+          primaryPlatform: response.data.primaryplatform,
+          channelLinks: response.data.channel_links,
+          age: response.data.age,
+          gender: response.data.gender,
+          country: response.data.country,
+          city: response.data.city,
+          contentLang: response.data.content_lang,
+          contentDesc: response.data.content_desc,
+          channelGenre: response.data.channel_genre
+        }));
+        fetchCreatorsChannelData(token).then((res) => {
+          // console.log(res)
+          setUser((prevUser) => ({
+            ...prevUser,
+            channelAgeYoutub: res.data.channelDetails.channel_age_youtube,
+            channelAgeIg: res.data.channelDetails.ig_account_age,
+            subscribers: res.data.channelDetails.subscribers_count_youtube,
+            averageViews: res.data.channelDetails.avg_views_youtube,
+            contentType: res.data.channelDetails.content_type_youtube,
+            postingFrequency: res.data.channelDetails.posts_freq_youtube,
+            liveStreaming: res.data.channelDetails.live_streaming_youtube,
+            collabType: res.data.channelDetails.collab_type,
+            followers: res.data.channelDetails.ig_followers_count,
+            avgReelViews: res.data.channelDetails.avg_ig_reel_views,
+            avgComments: res.data.channelDetails.avg_ig_comment_count,
+            avgLikes: res.data.channelDetails.avg_ig_likes_count,
+            engagementRate: res.data.channelDetails.eng_rate_ig,
+          }));
+
+        })
+        setIsLoading(false); // Stop the loader after the data is fetched,
+
+      })
+      .catch((error) => {
+        console.error("Failed to fetch creator profile:", error);
+        navigate('/'); // Redirect to login if fetching profile fails
+      });
+
+  }
+
   useEffect(() => {
     const token = localStorage.getItem('jwt');
     if (token) {
-      fetchCreatorProfile(token)
-        .then((response) => {
-          setUser({
-            id: response.data.id,
-            fullName: response.data.full_name,
-            email: response.data.email,
-            primaryPlatform: response.data.primaryplatform,
-            channelLinks: response.data.channel_links,
-            age: response.data.age,
-            gender: response.data.gender,
-            country: response.data.country,
-            city: response.data.city,
-            contentLang: response.data.content_lang,
-            contentDesc: response.data.content_desc,
-            channelGenre: response.data.channel_genre
-          });
-          setIsLoading(false); // Stop the loader after the data is fetched
-        })
-        .catch((error) => {
-          console.error("Failed to fetch creator profile:", error);
-          navigate('/'); // Redirect to login if fetching profile fails
-        });
+      populateFields(token);
     } else {
       navigate('/');
     }
@@ -92,71 +134,151 @@ const CreatorDashboard = () => {
     </div>
   );
 
+  // Connected Status Indicator
+  const ConnectedStatus = ({ isConnected }) => (
+    <div className="flex items-center">
+      <span
+        className={`inline-block w-3 h-3 rounded-full mr-2 ${isConnected
+            ? 'bg-green-500 animate-pulse'
+            : 'bg-gray-300'
+          }`}
+      />
+      <span className="text-sm">
+        {isConnected ? 'Connected' : 'Not Connected'}
+      </span>
+    </div>
+  );
+
+  const [expandedLink, setExpandedLink] = useState(null);
+
+  // Toggle expand/collapse for a specific link
+  const toggleExpand = (index) => {
+    setExpandedLink(expandedLink === index ? null : index);
+  };
+
+  // Render additional information for YouTube or Instagram
+  const renderAdditionalInfo = (link) => {
+    if (link.includes("youtube")) {
+      return (
+        <div className="space-y-2 bg-gray-100 p-4 rounded-lg">
+          <ProfileRow label="Channel Age (YouTube)" value={user.channelAgeYoutub} />
+          <ProfileRow label="Subscribers" value={user.subscribers} />
+          <ProfileRow label="Average Views" value={user.averageViews} />
+          <ProfileRow label="Content Type" value={user.contentType} />
+          <ProfileRow label="Posting Frequency" value={user.postingFrequency} />
+          <ProfileRow label="Live Streaming" value={user.liveStreaming ? "Yes" : "No"} />
+        </div>
+      );
+    } else if (link.includes("instagram")) {
+      return (
+        <div className="space-y-2 bg-gray-100 p-4 rounded-lg">
+          <ProfileRow label="Account Age (Instagram)" value={user.channelAgeIg} />
+          <ProfileRow label="Followers" value={user.followers} />
+          <ProfileRow label="Average Reel Views" value={user.avgReelViews} />
+          <ProfileRow label="Average Comments" value={user.avgComments} />
+          <ProfileRow label="Average Likes" value={user.avgLikes} />
+          <ProfileRow label="Engagement Rate" value={`${user.engagementRate}%`} />
+        </div>
+      );
+    }
+    return null; // Default for unsupported links
+  };
+
+
 
   const renderContent = () => {
     switch (activeSection) {
       case 'profile':
-        // return (
-        //   <div className="p-6">
-        //     <h2 className="text-2xl font-bold mb-4">User Profile</h2>
-        //     <div className="space-y-2">
-        //       <p><strong>Name:</strong> {user.fullName}</p>
-        //       <p><strong>Email:</strong> {user.email}</p>
-        //     </div>
-        //   </div>
-        // );
 
-        return (
-          <div className="bg-white shadow-md rounded-lg p-6 max-w-2xl mx-auto">
-            
-            <div className="grid md:grid-cols-2 gap-6">
-              {/* Personal Information Section */}
-              <div>
-                <h3 className="text-xl font-semibold text-gray-700 mb-4 border-b pb-2">Personal Details</h3>
-                <div className="space-y-3 sm:space-y-4 md:space-y-6 lg:space-y-8">
-                  <ProfileRow label="Name" value={user.fullName} />
-                  <ProfileRow label="Email" value={user.email} />
-                  <ProfileRow label="Gender" value={user.gender} />
-                  <ProfileRow label="Country" value={user.country} />
-                  <ProfileRow label="City" value={user.city} />
-                </div>
+      return (
+        <div className="bg-white rounded-2xl shadow-lg overflow-hidden w-full">
+          {/* Header Section */}
+          <div className="bg-brand-blue text-white p-6">
+            <div className="flex items-center space-x-4">
+              <div className="bg-white p-1 rounded-full">
+                <img
+                  src={dummyUser.avatar}
+                  alt={user.fullName}
+                  className="w-16 h-16 rounded-full object-cover"
+                />
               </div>
-              
-              {/* Content Information Section */}
               <div>
-                <h3 className="text-xl font-semibold text-gray-700 mb-4 border-b pb-2">Content Profile</h3>
-                <div className="space-y-3 sm:space-y-4 md:space-y-6 lg:space-y-8">
-                  <ProfileRow label="Content Description" value={user.contentDesc} />
-                  <ProfileRow label="Content Languages" value={user.contentLang?.join(', ')} />
-                  <ProfileRow label="Content Genre" value={user.channelGenre} />
-                </div>
+                <h2 className="text-2xl font-bold">{user.fullName}</h2>
+                <p className="text-white text-opacity-80">{user.email}</p>
               </div>
             </div>
-      
-            {/* Channel Links Section */}
-            {user.channelLinks && user.channelLinks.length > 0 && (
-              <div className="mt-6 border-t pt-4">
-                <h3 className="text-xl font-semibold text-gray-700 mb-4">Channel Links</h3>
-                <div className="space-y-2">
-                  {user.channelLinks.map((link, index) => (
-                    <div key={index} className="flex items-center">
-                      {renderSocialIcon(link)}
-                      <a 
-                        href={link} 
-                        target="_blank" 
-                        rel="noopener noreferrer" 
-                        className="text-blue-600 hover:underline"
-                      >
-                        {link}
-                      </a>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
           </div>
-        );
-      
+    
+          {/* Main Content Grid */}
+          <div className="grid md:grid-cols-2 gap-6 p-6">
+            {/* Personal Information Section */}
+            <div className="bg-brand-gray rounded-lg p-5 space-y-4">
+              <h3 className="text-lg font-semibold text-gray-700 border-b border-gray-300 pb-2 flex items-center">
+                <Globe className="mr-2 text-brand-blue" size={20} />
+                Personal Details
+              </h3>
+              <div className="space-y-4">
+                <ProfileRow icon={User} label="Full Name" value={user.fullName} />
+                <ProfileRow icon={Mail} label="Email" value={user.email} />
+                <ProfileRow label="Gender" value={user.gender} />
+                <ProfileRow icon={MapPin} label="Location" value={`${user.country}, ${user.city}`} />
+              </div>
+            </div>
+    
+            {/* Content Information Section */}
+            <div className="bg-brand-gray rounded-lg p-5 space-y-4">
+              <h3 className="text-lg font-semibold text-gray-700 border-b border-gray-300 pb-2 flex items-center">
+                <Award className="mr-2 text-brand-blue" size={20} />
+                Content Profile
+              </h3>
+              <div className="space-y-4">
+                <ProfileRow label="Content Description" value={user.contentDesc} />
+                <ProfileRow label="Content Languages" value={user.contentLang?.join(", ")} />
+                <ProfileRow label="Content Genre" value={user.channelGenre} />
+              </div>
+            </div>
+          </div>
+    
+          {/* Channel Links Section */}
+          {user.channelLinks && user.channelLinks.length > 0 && (
+            <div className="p-6 bg-white border-t border-gray-200">
+              <h3 className="text-lg font-semibold text-gray-700 mb-4 flex items-center">
+                <LinkIcon className="mr-2 text-brand-blue" size={20} />
+                Channel Links
+              </h3>
+              <div className="space-y-3">
+                {user.channelLinks.map((link, index) => (
+                  <div
+                    key={index}
+                    className="bg-brand-gray p-3 rounded-lg hover:bg-gray-200 transition-all"
+                  >
+                    <div className="flex justify-between items-center">
+                      <div className="flex items-center">
+                        {renderSocialIcon(link)}
+                        <a
+                          href={link}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-brand-blue hover:underline text-sm truncate ml-2"
+                        >
+                          {link}
+                        </a>
+                      </div>
+                      <div className="flex items-center">
+                        <ConnectedStatus isConnected={true} />
+                        <button onClick={() => toggleExpand(index)} className="ml-4">
+                          {expandedLink === index ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
+                        </button>
+                      </div>
+                    </div>
+                    {expandedLink === index && renderAdditionalInfo(link)}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      );
 
       case 'inbox':
         return (
@@ -171,15 +293,77 @@ const CreatorDashboard = () => {
       case 'collabs':
         return (
           <div className="p-6">
-            <h2 className="text-2xl font-bold mb-4">Ongoing Collaborations</h2>
+            {/* Header Section */}
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-2xl font-bold">Ongoing Collaborations</h2>
+              <button className="flex items-center px-4 py-2 border rounded-lg text-brand-blue hover:bg-gray-100">
+                <Plus className="mr-2" size={16} />
+                New Collaboration
+              </button>
+            </div>
+      
+            {/* Collaboration Cards */}
             <div className="space-y-4">
-              <div className="border p-4 rounded-lg">
-                <h3 className="font-semibold">Brand Collaboration with TechCorp</h3>
-                <p className="text-sm text-gray-600">Status: In Progress</p>
+              {/* Card 1 */}
+              <div className="border p-4 rounded-lg flex justify-between items-center">
+                <div>
+                  <h3 className="font-semibold">Lenskart</h3>
+                  <span className="inline-flex items-center bg-green-100 text-green-600 px-3 py-1 text-sm rounded-full mt-2">
+                    <CheckCircle size={16} className="mr-2" />
+                    In Progress
+                  </span>
+                </div>
+                <div className="flex space-x-2">
+                  <button className="flex items-center px-4 py-2 border rounded-lg text-gray-700 hover:bg-gray-100">
+                    <Eye className="mr-2" size={16} />
+                    View Details
+                  </button>
+                  <button className="flex items-center px-4 py-2 bg-brand-blue text-white rounded-lg hover:bg-blue-600">
+                    <Edit className="mr-2" size={16} />
+                    Update Progress
+                  </button>
+                </div>
               </div>
-              <div className="border p-4 rounded-lg">
-                <h3 className="font-semibold">Instagram Campaign with FashionHub</h3>
-                <p className="text-sm text-gray-600">Status: Negotiation</p>
+      
+              {/* Card 2 */}
+              <div className="border p-4 rounded-lg flex justify-between items-center">
+                <div>
+                  <h3 className="font-semibold">Hyperpure Feed India, Zomato</h3>
+                  <span className="inline-flex items-center bg-yellow-100 text-yellow-600 px-3 py-1 text-sm rounded-full mt-2">
+                    <AlertTriangle size={16} className="mr-2" />
+                    Negotiation
+                  </span>
+                </div>
+                <div className="flex space-x-2">
+                  <button className="flex items-center px-4 py-2 border rounded-lg text-gray-700 hover:bg-gray-100">
+                    <Eye className="mr-2" size={16} />
+                    View Details
+                  </button>
+                  <button className="flex items-center px-4 py-2 bg-brand-blue text-white rounded-lg hover:bg-blue-600">
+                    <Edit className="mr-2" size={16} />
+                    Continue Negotiation
+                  </button>
+                </div>
+              </div>
+                {/*  card 3*/}
+              <div className="border p-4 rounded-lg flex justify-between items-center">
+                <div>
+                  <h3 className="font-semibold">Boat Lifestyle</h3>
+                  <span className="inline-flex items-center bg-green-100 text-green-600 px-3 py-1 text-sm rounded-full mt-2">
+                    <CheckCircle size={16} className="mr-2" />
+                    In Progress
+                  </span>
+                </div>
+                <div className="flex space-x-2">
+                  <button className="flex items-center px-4 py-2 border rounded-lg text-gray-700 hover:bg-gray-100">
+                    <Eye className="mr-2" size={16} />
+                    View Details
+                  </button>
+                  <button className="flex items-center px-4 py-2 bg-brand-blue text-white rounded-lg hover:bg-blue-600">
+                    <Edit className="mr-2" size={16} />
+                    Update Progress
+                  </button>
+                </div>
               </div>
             </div>
           </div>

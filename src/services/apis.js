@@ -121,3 +121,28 @@ export const fetchCreatorProfile = async (token) => {
         }
     }
 };
+
+export const fetchCreatorsChannelData = async (token) => {
+    try {
+        // Make the API request
+        const response = await axios.get(`${API_BASE_URL}/api/channelOnboarding/getChannelDetails`, {
+            headers: {
+                'Authorization': `Bearer ${token}`, // Attach the token in the Authorization header
+            },
+        });
+
+        // Return the profile data
+        console.log(response.data);
+        return response;
+    } catch (error) {
+        console.error('Error fetching creator profile:', error);
+        // Handle errors appropriately
+        if (error.response && error.response.status === 404) {
+            throw new Error('Creator not found');
+        } else if (error.response && error.response.status === 401) {
+            throw new Error('Unauthorized access');
+        } else {
+            throw new Error('Server error fetching profile');
+        }
+    }
+};
