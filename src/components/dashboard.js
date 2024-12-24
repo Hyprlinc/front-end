@@ -4,6 +4,7 @@ import { fetchCreatorProfile, fetchCreatorsChannelData } from '../services/apis'
 
 import { useNavigate } from 'react-router-dom';
 import UserProfileComponent from './profile';
+import CreatorDashboardHome from './home/homePage';
 
 
 
@@ -42,7 +43,7 @@ const CreatorDashboard = () => {
     contentLang: [],
     channelGenre: "",
     contentDesc: "",
-    channelAgeYoutub: "",
+    channelAgeYoutube: "",
     channelAgeIg: "",
     subscribers: "",
     averageViews: "",
@@ -61,45 +62,37 @@ const CreatorDashboard = () => {
   const navigate = useNavigate()
 
   const populateFields = async (token) => {
-    fetchCreatorProfile(token)
-      .then((response) => {
+    Promise.all([fetchCreatorProfile(token), fetchCreatorsChannelData(token)])
+      .then(([profileResponse, channelDataResponse]) => {
         setUser((prevUser) => ({
           ...prevUser,
-          id: response.data.id,
-          fullName: response.data.full_name,
-          email: response.data.email,
-          primaryPlatform: response.data.primaryplatform,
-          channelLinks: response.data.channel_links,
-          age: response.data.age,
-          gender: response.data.gender,
-          country: response.data.country,
-          city: response.data.city,
-          contentLang: response.data.content_lang,
-          contentDesc: response.data.content_desc,
-          channelGenre: response.data.channel_genre
+          id: profileResponse.data.id,
+          fullName: profileResponse.data.full_name,
+          email: profileResponse.data.email,
+          primaryPlatform: profileResponse.data.primaryplatform,
+          channelLinks: profileResponse.data.channel_links,
+          age: profileResponse.data.age,
+          gender: profileResponse.data.gender,
+          country: profileResponse.data.country,
+          city: profileResponse.data.city,
+          contentLang: profileResponse.data.content_lang,
+          contentDesc: profileResponse.data.content_desc,
+          channelGenre: profileResponse.data.channel_genre,
+          channelAgeYoutub: channelDataResponse.data.channelDetails.channel_age_youtube,
+          channelAgeIg: channelDataResponse.data.channelDetails.ig_account_age,
+          subscribers: channelDataResponse.data.channelDetails.subscribers_count_youtube,
+          averageViews: channelDataResponse.data.channelDetails.avg_views_youtube,
+          contentType: channelDataResponse.data.channelDetails.content_type_youtube,
+          postingFrequency: channelDataResponse.data.channelDetails.posts_freq_youtube,
+          liveStreaming: channelDataResponse.data.channelDetails.live_streaming_youtube,
+          collabType: channelDataResponse.data.channelDetails.collab_type,
+          followers: channelDataResponse.data.channelDetails.ig_followers_count,
+          avgReelViews: channelDataResponse.data.channelDetails.avg_ig_reel_views,
+          avgComments: channelDataResponse.data.channelDetails.avg_ig_comment_count,
+          avgLikes: channelDataResponse.data.channelDetails.avg_ig_likes_count,
+          engagementRate: channelDataResponse.data.channelDetails.eng_rate_ig,
         }));
-        fetchCreatorsChannelData(token).then((res) => {
-          // console.log(res)
-          setUser((prevUser) => ({
-            ...prevUser,
-            channelAgeYoutub: res.data.channelDetails.channel_age_youtube,
-            channelAgeIg: res.data.channelDetails.ig_account_age,
-            subscribers: res.data.channelDetails.subscribers_count_youtube,
-            averageViews: res.data.channelDetails.avg_views_youtube,
-            contentType: res.data.channelDetails.content_type_youtube,
-            postingFrequency: res.data.channelDetails.posts_freq_youtube,
-            liveStreaming: res.data.channelDetails.live_streaming_youtube,
-            collabType: res.data.channelDetails.collab_type,
-            followers: res.data.channelDetails.ig_followers_count,
-            avgReelViews: res.data.channelDetails.avg_ig_reel_views,
-            avgComments: res.data.channelDetails.avg_ig_comment_count,
-            avgLikes: res.data.channelDetails.avg_ig_likes_count,
-            engagementRate: res.data.channelDetails.eng_rate_ig,
-          }));
-
-        })
-        setIsLoading(false); // Stop the loader after the data is fetched,
-
+        setIsLoading(false); // Stop the loader after the data is fetched
       })
       .catch((error) => {
         console.error("Failed to fetch creator profile:", error);
@@ -107,6 +100,41 @@ const CreatorDashboard = () => {
       });
 
   }
+
+  const mockStats = {
+    ongoingCampaigns: 3,
+    lastMonthEarnings: 1250,
+    campaignsCompleted: 5
+  };
+
+  const mockSocialStats = {
+    instagramFollowers: 5420,
+    youtubeViews: 125000
+  };
+
+  const mockCampaigns = [
+    {
+      id: 1,
+      brandName: 'Rangraze.in',
+      type: 'Product Review',
+      budgetRange: '$500 - $750',
+      deadline: '2024-02-15'
+    },
+    {
+      id: 2,
+      brandName: 'Boat LifeStyle',
+      type: 'Sponsored Content',
+      budgetRange: '$350 - $500',
+      deadline: '2024-02-20'
+    },
+    {
+      id: 3,
+      brandName: 'Louis Philippe',
+      type: 'Sponsored Content',
+      budgetRange: '$120 - $567',
+      deadline: '2024-02-20'
+    }
+  ];
 
   useEffect(() => {
     const token = localStorage.getItem('jwt');
@@ -127,20 +155,54 @@ const CreatorDashboard = () => {
     return null;
   };
 
-  const ProfileRow = ({ label, value }) => (
-    <div className="flex">
-      <span className="font-medium text-gray-600 w-1/3">{label}:</span>
-      <span className="text-gray-800 w-2/3">{value || 'Not provided'}</span>
-    </div>
-  );
+  const ProfileRow = ({ label, value, onEdit, editable = true }) => {
+    const [isEditing, setIsEditing] = useState(false);
+    const [editedValue, setEditedValue] = useState(value);
+  
+    const handleEditToggle = () => {
+      if (isEditing) {
+        onEdit(editedValue);
+        setIsEditing(false);
+      } else {
+        setIsEditing(true);
+      }
+    };
+  
+    return (
+      <div className="flex items-center justify-between py-2 border-b border-gray-200 last:border-b-0">
+        <div className="flex flex-col">
+          <span className="text-sm text-gray-600 font-medium">{label}</span>
+          {isEditing ? (
+            <input
+              type="text"
+              value={editedValue}
+              onChange={(e) => setEditedValue(e.target.value)}
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+            />
+          ) : (
+            <span className="text-base text-gray-900 mt-1">{value}</span>
+          )}
+        </div>
+        {editable && (
+          <button 
+            onClick={handleEditToggle} 
+            className="text-gray-500 hover:text-indigo-600 transition-colors duration-200"
+          >
+            {isEditing ? 'Save' : <Edit size={20} />}
+          </button>
+        )}
+      </div>
+    );
+  };
+  
 
   // Connected Status Indicator
   const ConnectedStatus = ({ isConnected }) => (
     <div className="flex items-center">
       <span
         className={`inline-block w-3 h-3 rounded-full mr-2 ${isConnected
-            ? 'bg-green-500 animate-pulse'
-            : 'bg-gray-300'
+          ? 'bg-green-500 animate-pulse'
+          : 'bg-gray-300'
           }`}
       />
       <span className="text-sm">
@@ -157,27 +219,120 @@ const CreatorDashboard = () => {
   };
 
   // Render additional information for YouTube or Instagram
-  const renderAdditionalInfo = (link) => {
+  // const renderAdditionalInfo = (link) => {
+  //   if (link.includes("youtube")) {
+  //     return (
+  //       <div className="space-y-2 bg-gray-100 p-4 rounded-lg">
+  //         <ProfileRow label="Channel Age (YouTube)" value={user.channelAgeYoutub} />
+  //         <ProfileRow label="Subscribers" value={user.subscribers} />
+  //         <ProfileRow label="Average Views" value={user.averageViews} />
+  //         <ProfileRow label="Content Type" value={user.contentType} />
+  //         <ProfileRow label="Posting Frequency" value={user.postingFrequency} />
+  //         <ProfileRow label="Live Streaming" value={user.liveStreaming ? "Yes" : "No"} />
+  //       </div>
+  //     );
+  //   } else if (link.includes("instagram")) {
+  //     return (
+  //       <div className="space-y-2 bg-gray-100 p-4 rounded-lg">
+  //         <ProfileRow label="Account Age (Instagram)" value={user.channelAgeIg} />
+  //         <ProfileRow label="Followers" value={user.followers} />
+  //         <ProfileRow label="Average Reel Views" value={user.avgReelViews} />
+  //         <ProfileRow label="Average Comments" value={user.avgComments} />
+  //         <ProfileRow label="Average Likes" value={user.avgLikes} />
+  //         <ProfileRow label="Engagement Rate" value={`${user.engagementRate}%`} />
+  //       </div>
+  //     );
+  //   }
+  //   return null; // Default for unsupported links
+  // };
+
+  const handleUpdateUser = (field, value) => {
+    setUser(prevUser => ({
+      ...prevUser,
+      [field]: value
+    }));
+  };
+
+  const renderAdditionalInfo = (link, user, onUpdateUser) => {
     if (link.includes("youtube")) {
       return (
-        <div className="space-y-2 bg-gray-100 p-4 rounded-lg">
-          <ProfileRow label="Channel Age (YouTube)" value={user.channelAgeYoutub} />
-          <ProfileRow label="Subscribers" value={user.subscribers} />
-          <ProfileRow label="Average Views" value={user.averageViews} />
-          <ProfileRow label="Content Type" value={user.contentType} />
-          <ProfileRow label="Posting Frequency" value={user.postingFrequency} />
-          <ProfileRow label="Live Streaming" value={user.liveStreaming ? "Yes" : "No"} />
+        <div className="bg-white shadow-md rounded-lg overflow-hidden">
+          <div className="bg-indigo-50 px-6 py-4 border-b border-gray-200">
+            <h3 className="text-lg font-semibold text-gray-800">YouTube Profile</h3>
+          </div>
+          <div className="p-6 space-y-4">
+            <ProfileRow 
+              label="Channel Age" 
+              value={user.channelAgeYoutube} 
+              onEdit={(newValue) => onUpdateUser('channelAgeYoutube', newValue)}
+            />
+            <ProfileRow 
+              label="Subscribers" 
+              value={user.subscribers} 
+              onEdit={(newValue) => onUpdateUser('subscribers', newValue)}
+            />
+            <ProfileRow 
+              label="Average Views" 
+              value={user.averageViews} 
+              onEdit={(newValue) => onUpdateUser('averageViews', newValue)}
+            />
+            <ProfileRow 
+              label="Content Type" 
+              value={user.contentType} 
+              onEdit={(newValue) => onUpdateUser('contentType', newValue)}
+            />
+            <ProfileRow 
+              label="Posting Frequency" 
+              value={user.postingFrequency} 
+              onEdit={(newValue) => onUpdateUser('postingFrequency', newValue)}
+            />
+            <ProfileRow 
+              label="Live Streaming" 
+              value={user.liveStreaming ? "Yes" : "No"} 
+              onEdit={(newValue) => onUpdateUser('liveStreaming', newValue === 'Yes')}
+              editable={true}
+            />
+          </div>
         </div>
       );
     } else if (link.includes("instagram")) {
       return (
-        <div className="space-y-2 bg-gray-100 p-4 rounded-lg">
-          <ProfileRow label="Account Age (Instagram)" value={user.channelAgeIg} />
-          <ProfileRow label="Followers" value={user.followers} />
-          <ProfileRow label="Average Reel Views" value={user.avgReelViews} />
-          <ProfileRow label="Average Comments" value={user.avgComments} />
-          <ProfileRow label="Average Likes" value={user.avgLikes} />
-          <ProfileRow label="Engagement Rate" value={`${user.engagementRate}%`} />
+        <div className="bg-white shadow-md rounded-lg overflow-hidden">
+          <div className="bg-pink-50 px-6 py-4 border-b border-gray-200">
+            <h3 className="text-lg font-semibold text-gray-800">Instagram Profile</h3>
+          </div>
+          <div className="p-6 space-y-4">
+            <ProfileRow 
+              label="Account Age" 
+              value={user.channelAgeIg} 
+              onEdit={(newValue) => onUpdateUser('channelAgeIg', newValue)}
+            />
+            <ProfileRow 
+              label="Followers" 
+              value={user.followers} 
+              onEdit={(newValue) => onUpdateUser('followers', newValue)}
+            />
+            <ProfileRow 
+              label="Average Reel Views" 
+              value={user.avgReelViews} 
+              onEdit={(newValue) => onUpdateUser('avgReelViews', newValue)}
+            />
+            <ProfileRow 
+              label="Average Comments" 
+              value={user.avgComments} 
+              onEdit={(newValue) => onUpdateUser('avgComments', newValue)}
+            />
+            <ProfileRow 
+              label="Average Likes" 
+              value={user.avgLikes} 
+              onEdit={(newValue) => onUpdateUser('avgLikes', newValue)}
+            />
+            <ProfileRow 
+              label="Engagement Rate" 
+              value={`${user.engagementRate}%`} 
+              onEdit={(newValue) => onUpdateUser('engagementRate', parseFloat(newValue))}
+            />
+          </div>
         </div>
       );
     }
@@ -190,95 +345,95 @@ const CreatorDashboard = () => {
     switch (activeSection) {
       case 'profile':
 
-      return (
-        <div className="bg-white rounded-2xl shadow-lg overflow-hidden w-full">
-          {/* Header Section */}
-          <div className="bg-brand-blue text-white p-6">
-            <div className="flex items-center space-x-4">
-              <div className="bg-white p-1 rounded-full">
-                <img
-                  src={dummyUser.avatar}
-                  alt={user.fullName}
-                  className="w-16 h-16 rounded-full object-cover"
-                />
-              </div>
-              <div>
-                <h2 className="text-2xl font-bold">{user.fullName}</h2>
-                <p className="text-white text-opacity-80">{user.email}</p>
-              </div>
-            </div>
-          </div>
-    
-          {/* Main Content Grid */}
-          <div className="grid md:grid-cols-2 gap-6 p-6">
-            {/* Personal Information Section */}
-            <div className="bg-brand-gray rounded-lg p-5 space-y-4">
-              <h3 className="text-lg font-semibold text-gray-700 border-b border-gray-300 pb-2 flex items-center">
-                <Globe className="mr-2 text-brand-blue" size={20} />
-                Personal Details
-              </h3>
-              <div className="space-y-4">
-                <ProfileRow icon={User} label="Full Name" value={user.fullName} />
-                <ProfileRow icon={Mail} label="Email" value={user.email} />
-                <ProfileRow label="Gender" value={user.gender} />
-                <ProfileRow icon={MapPin} label="Location" value={`${user.country}, ${user.city}`} />
+        return (
+          <div className="bg-white rounded-2xl shadow-lg overflow-hidden w-full">
+            {/* Header Section */}
+            <div className="bg-brand-blue text-white p-6">
+              <div className="flex items-center space-x-4">
+                <div className="bg-white p-1 rounded-full">
+                  <img
+                    src={dummyUser.avatar}
+                    alt={user.fullName}
+                    className="w-16 h-16 rounded-full object-cover"
+                  />
+                </div>
+                <div>
+                  <h2 className="text-2xl font-bold">{user.fullName}</h2>
+                  <p className="text-white text-opacity-80">{user.email}</p>
+                </div>
               </div>
             </div>
-    
-            {/* Content Information Section */}
-            <div className="bg-brand-gray rounded-lg p-5 space-y-4">
-              <h3 className="text-lg font-semibold text-gray-700 border-b border-gray-300 pb-2 flex items-center">
-                <Award className="mr-2 text-brand-blue" size={20} />
-                Content Profile
-              </h3>
-              <div className="space-y-4">
-                <ProfileRow label="Content Description" value={user.contentDesc} />
-                <ProfileRow label="Content Languages" value={user.contentLang?.join(", ")} />
-                <ProfileRow label="Content Genre" value={user.channelGenre} />
+
+            {/* Main Content Grid */}
+            <div className="grid md:grid-cols-2 gap-6 p-6">
+              {/* Personal Information Section */}
+              <div className="bg-brand-gray rounded-lg p-5 space-y-4">
+                <h3 className="text-lg font-semibold text-gray-700 border-b border-gray-300 pb-2 flex items-center">
+                  <Globe className="mr-2 text-brand-blue" size={20} />
+                  Personal Details
+                </h3>
+                <div className="space-y-4">
+                  <ProfileRow icon={User} label="Full Name" value={user.fullName} />
+                  <ProfileRow icon={Mail} label="Email" value={user.email} />
+                  <ProfileRow label="Gender" value={user.gender} />
+                  <ProfileRow icon={MapPin} label="Location" value={`${user.country}, ${user.city}`} />
+                </div>
+              </div>
+
+              {/* Content Information Section */}
+              <div className="bg-brand-gray rounded-lg p-5 space-y-4">
+                <h3 className="text-lg font-semibold text-gray-700 border-b border-gray-300 pb-2 flex items-center">
+                  <Award className="mr-2 text-brand-blue" size={20} />
+                  Content Profile
+                </h3>
+                <div className="space-y-4">
+                  <ProfileRow label="Content Description" value={user.contentDesc} />
+                  <ProfileRow label="Content Languages" value={user.contentLang?.join(", ")} />
+                  <ProfileRow label="Content Genre" value={user.channelGenre} />
+                </div>
               </div>
             </div>
-          </div>
-    
-          {/* Channel Links Section */}
-          {user.channelLinks && user.channelLinks.length > 0 && (
-            <div className="p-6 bg-white border-t border-gray-200">
-              <h3 className="text-lg font-semibold text-gray-700 mb-4 flex items-center">
-                <LinkIcon className="mr-2 text-brand-blue" size={20} />
-                Channel Links
-              </h3>
-              <div className="space-y-3">
-                {user.channelLinks.map((link, index) => (
-                  <div
-                    key={index}
-                    className="bg-brand-gray p-3 rounded-lg hover:bg-gray-200 transition-all"
-                  >
-                    <div className="flex justify-between items-center">
-                      <div className="flex items-center">
-                        {renderSocialIcon(link)}
-                        <a
-                          href={link}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-brand-blue hover:underline text-sm truncate ml-2"
-                        >
-                          {link}
-                        </a>
+
+            {/* Channel Links Section */}
+            {user.channelLinks && user.channelLinks.length > 0 && (
+              <div className="p-6 bg-white border-t border-gray-200">
+                <h3 className="text-lg font-semibold text-gray-700 mb-4 flex items-center">
+                  <LinkIcon className="mr-2 text-brand-blue" size={20} />
+                  Channel Links
+                </h3>
+                <div className="space-y-3">
+                  {user.channelLinks.map((link, index) => (
+                    <div
+                      key={index}
+                      className="bg-brand-gray p-3 rounded-lg hover:bg-gray-200 transition-all"
+                    >
+                      <div className="flex justify-between items-center">
+                        <div className="flex items-center">
+                          {renderSocialIcon(link)}
+                          <a
+                            href={link}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-brand-blue hover:underline text-sm truncate ml-2"
+                          >
+                            {link}
+                          </a>
+                        </div>
+                        <div className="flex items-center">
+                          <ConnectedStatus isConnected={true} />
+                          <button onClick={() => toggleExpand(index)} className="ml-4">
+                            {expandedLink === index ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
+                          </button>
+                        </div>
                       </div>
-                      <div className="flex items-center">
-                        <ConnectedStatus isConnected={true} />
-                        <button onClick={() => toggleExpand(index)} className="ml-4">
-                          {expandedLink === index ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
-                        </button>
-                      </div>
+                      {expandedLink === index && renderAdditionalInfo(link, user, handleUpdateUser)}
                     </div>
-                    {expandedLink === index && renderAdditionalInfo(link)}
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
-            </div>
-          )}
-        </div>
-      );
+            )}
+          </div>
+        );
 
       case 'inbox':
         return (
@@ -301,7 +456,7 @@ const CreatorDashboard = () => {
                 New Collaboration
               </button>
             </div>
-      
+
             {/* Collaboration Cards */}
             <div className="space-y-4">
               {/* Card 1 */}
@@ -324,7 +479,7 @@ const CreatorDashboard = () => {
                   </button>
                 </div>
               </div>
-      
+
               {/* Card 2 */}
               <div className="border p-4 rounded-lg flex justify-between items-center">
                 <div>
@@ -345,7 +500,7 @@ const CreatorDashboard = () => {
                   </button>
                 </div>
               </div>
-                {/*  card 3*/}
+              {/*  card 3*/}
               <div className="border p-4 rounded-lg flex justify-between items-center">
                 <div>
                   <h3 className="font-semibold">Boat Lifestyle</h3>
@@ -503,12 +658,7 @@ const CreatorDashboard = () => {
         );
 
       default:
-        return (
-          <div className="p-6">
-            <h2 className="text-2xl font-bold mb-4">Welcome, {user.name}!</h2>
-            <p>This is your creator dashboard. Navigate through the options on the left to manage your profile, messages, and collaborations.</p>
-          </div>
-        );
+       return <CreatorDashboardHome user={user} stats={mockStats} socialStats={mockSocialStats} campaigns={mockCampaigns}/>
     }
   };
 

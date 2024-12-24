@@ -10,7 +10,6 @@ function App() {
       <Routes>
         <Route path="/" element={<RegistrationForm />} />
         <Route path="/dashboard" element={<CreatorDashboard />} />
-        {/* Other routes */}
       </Routes>
     </Router>
   );
