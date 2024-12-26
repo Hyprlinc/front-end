@@ -10,7 +10,7 @@ function App() {
     <Router>
       <Routes>
         <Route path="/" element={<BrandRegistrationForm />} />
-        <Route path="/brandsAuth" element={<RegistrationForm />} />
+        <Route path="/creatorsAuth" element={<RegistrationForm />} />
         <Route path="/dashboard" element={<CreatorDashboard />} />
       </Routes>
     </Router>

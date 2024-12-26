@@ -320,12 +320,12 @@ const RegistrationForm = () => {
                     handleNavigateToDashboard()
                     // Redirect to dashboard if token is valid
                 } else {
-                    navigate('/');
+                    navigate('/creatorsAuth');
                     clearToken(); // Clear expired token
                 }
             } catch (error) {
                 console.error("Invalid Token:", error);
-                navigate('/')
+                navigate('/creatorsAuth')
                 clearToken();
             }
         }
