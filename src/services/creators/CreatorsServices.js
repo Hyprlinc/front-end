@@ -2,12 +2,12 @@ import axios from 'axios';
 
 
 
-const API_BASE_URL = 'http://192.168.0.123:5000';
+const API_BASE_URL = 'http://192.168.0.123:8080/api/v1';
 
 // Function to handle API registration
 export const registerUser = async (registrationData) => {
     try {
-        const response = await axios.post(`${API_BASE_URL}/api/auth/register`, registrationData, {
+        const response = await axios.post(`${API_BASE_URL}/auth/register`, registrationData, {
             headers: {
                 'Content-Type': 'application/json',
             }
@@ -45,7 +45,7 @@ export const registerChannelDetails = async (channelDetails) => {
     try {
         console.log("Channel Details before API", channelDetails);
         const fetchToken = localStorage.getItem('jwt');
-        const response = await axios.post(`${API_BASE_URL}/api/channelOnboarding/uploadChannelDetails`, channelDetails, {
+        const response = await axios.post(`${API_BASE_URL}/channelOnboarding/uploadChannelDetails`, channelDetails, {
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${fetchToken}`
@@ -77,7 +77,7 @@ export const creatorLogin = async (email, password) => {
     let config = {
         method: 'post',
         maxBodyLength: Infinity,
-        url: `${API_BASE_URL}/api/auth/login`,
+        url: `${API_BASE_URL}/auth/login`,
         headers: {
             'Content-Type': 'application/json'
         },
@@ -89,6 +89,7 @@ export const creatorLogin = async (email, password) => {
         return response; // Return the full response object
     } catch (error) {
         console.error('Login API failed:', error);
+        alert(`Login failed. Please try again. ${error.message}`);
         throw error; // Rethrow the error so the caller knows about it
     }
 }
@@ -100,7 +101,7 @@ export const fetchCreatorProfile = async (token) => {
         // Retrieve the JWT token from localStorage or cookies// Adjust storage retrieval as needed
 
         // Make the API request
-        const response = await axios.get(`${API_BASE_URL}/api/auth/profile`, {
+        const response = await axios.get(`${API_BASE_URL}/auth/profile`, {
             headers: {
                 'Authorization': `Bearer ${token}`, // Attach the token in the Authorization header
             },
@@ -125,7 +126,7 @@ export const fetchCreatorProfile = async (token) => {
 export const fetchCreatorsChannelData = async (token) => {
     try {
         // Make the API request
-        const response = await axios.get(`${API_BASE_URL}/api/channelOnboarding/getChannelDetails`, {
+        const response = await axios.get(`${API_BASE_URL}/channelOnboarding/getChannelDetails`, {
             headers: {
                 'Authorization': `Bearer ${token}`, // Attach the token in the Authorization header
             },

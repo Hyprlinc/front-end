@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Home, Inbox, Search, Network, Star, MessageSquareQuote, Settings, DollarSignIcon, CreditCardIcon, Youtube, Instagram, User, Globe, Mail, MapPin, Award, Link as LinkIcon, ChevronDown, ChevronUp, CheckCircle, AlertTriangle, Plus, Eye, Edit } from 'lucide-react';
-import { fetchCreatorProfile, fetchCreatorsChannelData } from '../services/apis';
+import { fetchCreatorProfile, fetchCreatorsChannelData } from '../services/creators/CreatorsServices';
 
 import { useNavigate } from 'react-router-dom';
 import UserProfileComponent from './profile';

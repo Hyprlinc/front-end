@@ -2,13 +2,15 @@ import './App.css';
 import RegistrationForm from './components/RegistrationForm';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import  CreatorDashboard  from './components/dashboard';
+import BrandRegistrationForm from './components/BrandsAuth';
 
 
 function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<RegistrationForm />} />
+        <Route path="/" element={<BrandRegistrationForm />} />
+        <Route path="/brandsAuth" element={<RegistrationForm />} />
         <Route path="/dashboard" element={<CreatorDashboard />} />
       </Routes>
     </Router>

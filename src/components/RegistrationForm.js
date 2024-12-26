@@ -9,7 +9,7 @@ import countriesAndCities from '../assets/coutriesAndCities';
 import channelGenres from '../assets/genres';
 
 import { useNavigate } from 'react-router-dom';
-import { registerUser, registerChannelDetails, creatorLogin, fetchCreatorProfile } from '../services/apis';
+import { registerUser, registerChannelDetails, creatorLogin, fetchCreatorProfile } from '../services/creators/CreatorsServices';
 
 
 // Function to store token securely (localStorage for simplicity, cookies recommended in production)
