@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { AlertCircle } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { brandLogin, registerBrand } from '../services/brands/BrandsServices';
 
 const BrandRegistrationForm = () => {
@@ -258,6 +259,7 @@ const BrandRegistrationForm = () => {
 };
 
 const BrandLoginForm = ({ setShowLoginForm }) => {
+    const navigate = useNavigate();
     const [formData, setFormData] = useState({ email: '', password: '' });
     const [errors, setErrors] = useState({});
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -276,7 +278,9 @@ const BrandLoginForm = ({ setShowLoginForm }) => {
 
         try {
             await brandLogin(formData.email, formData.password);
-            alert('Login successful'); // Replace with navigation to dashboard
+            alert('Login successful'); 
+            navigate('/brandsDashboard');
+            // Replace with navigation to dashboard
         } catch (error) {
             console.error('Login error:', error);
             setErrors({ submit: 'Invalid credentials. Please try again.' });
