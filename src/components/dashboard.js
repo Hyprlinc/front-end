@@ -5,6 +5,9 @@ import { fetchCreatorProfile, fetchCreatorsChannelData } from '../services/creat
 import { useNavigate } from 'react-router-dom';
 import UserProfileComponent from './profile';
 import CreatorDashboardHome from './home/homePage';
+import EmailInbox from './Creators/EmailInbox';
+import RatingsAndReviews from './Creators/RatingsAndTestimonials';
+import EarningsDashboard from './Creators/Earnings';
 
 
 
@@ -436,14 +439,16 @@ const CreatorDashboard = () => {
         );
 
       case 'inbox':
-        return (
-          <div className="p-6">
-            <h2 className="text-2xl font-bold mb-4">Inbox</h2>
-            <div className="text-gray-500">
-              No new messages
-            </div>
-          </div>
-        );
+        return <EmailInbox/>;
+        
+        // (
+        //   <div className="p-6">
+        //     <h2 className="text-2xl font-bold mb-4">Inbox</h2>
+        //     <div className="text-gray-500">
+        //       No new messages
+        //     </div>
+        //   </div>
+        // );
 
       case 'collabs':
         return (
@@ -525,60 +530,10 @@ const CreatorDashboard = () => {
         );
 
       case 'earnings':
-        return (
-          <div className="p-6">
-            <h2 className="text-2xl font-bold mb-4">Earnings</h2>
-            <div className="grid grid-cols-3 gap-4">
-              <div className="bg-blue-50 p-4 rounded-lg">
-                <h3 className="text-lg font-semibold">Total Earnings</h3>
-                <p className="text-2xl font-bold text-blue-600">${dummyUser.earnings.total}</p>
-              </div>
-              <div className="bg-green-50 p-4 rounded-lg">
-                <h3 className="text-lg font-semibold">This Month</h3>
-                <p className="text-2xl font-bold text-green-600">${dummyUser.earnings.thisMonth}</p>
-              </div>
-              <div className="bg-yellow-50 p-4 rounded-lg">
-                <h3 className="text-lg font-semibold">Pending Payment</h3>
-                <p className="text-2xl font-bold text-yellow-600">${dummyUser.earnings.pendingPayment}</p>
-              </div>
-            </div>
-          </div>
-        );
+        return <EarningsDashboard/>;
 
       case 'ratings':
-        return (
-          <div className="p-6">
-            <h2 className="text-2xl font-bold mb-4">Ratings & Reviews</h2>
-            <div className="flex items-center space-x-4">
-              <div className="text-5xl font-bold text-yellow-500">{dummyUser.ratings.overall}</div>
-              <div>
-                <div className="flex text-yellow-500">
-                  {[...Array(5)].map((_, i) => (
-                    <Star key={i} fill={i < Math.floor(dummyUser.ratings.overall) ? 'currentColor' : 'none'} />
-                  ))}
-                </div>
-                <p className="text-gray-600">Based on {dummyUser.ratings.totalReviews} reviews</p>
-              </div>
-            </div>
-          </div>
-        );
-
-      case 'testimonials':
-        return (
-          <div className="p-6">
-            <h2 className="text-2xl font-bold mb-4">Testimonials</h2>
-            <div className="space-y-4">
-              <div className="border p-4 rounded-lg">
-                <p className="italic">"Amazing work and professionalism!"</p>
-                <p className="text-sm text-gray-600">- TechCorp Marketing Team</p>
-              </div>
-              <div className="border p-4 rounded-lg">
-                <p className="italic">"Exceeded our expectations in every way."</p>
-                <p className="text-sm text-gray-600">- FashionHub Creative Director</p>
-              </div>
-            </div>
-          </div>
-        );
+        return < RatingsAndReviews/>;
 
       case 'settings':
         return (
@@ -645,17 +600,17 @@ const CreatorDashboard = () => {
           </div>
         );
 
-      case 'search':
-        return (
-          <div className="p-6">
-            <h2 className="text-2xl font-bold mb-4">Search Collaborations</h2>
-            <input
-              type="text"
-              placeholder="Search for collaborations..."
-              className="w-full p-2 border rounded-lg"
-            />
-          </div>
-        );
+      // case 'search':
+      //   return (
+      //     <div className="p-6">
+      //       <h2 className="text-2xl font-bold mb-4">Search Collaborations</h2>
+      //       <input
+      //         type="text"
+      //         placeholder="Search for collaborations..."
+      //         className="w-full p-2 border rounded-lg"
+      //       />
+      //     </div>
+      //   );
 
       default:
        return <CreatorDashboardHome user={user} stats={mockStats} socialStats={mockSocialStats} campaigns={mockCampaigns}/>
@@ -713,13 +668,13 @@ const CreatorDashboard = () => {
             <Network className="w-5 h-5" />
             <span>Ongoing Collabs</span>
           </div>
-          <div
+          {/* <div
             className={`flex items-center space-x-2 p-2 rounded-lg cursor-pointer ${activeSection === 'search' ? 'bg-blue-100' : 'hover:bg-gray-200'}`}
             onClick={() => setActiveSection('search')}
           >
             <Search className="w-5 h-5" />
             <span>Search Collabs</span>
-          </div>
+          </div> */}
           <div
             className={`flex items-center space-x-2 p-2 rounded-lg cursor-pointer ${activeSection === 'earnings' ? 'bg-blue-100' : 'hover:bg-gray-200'}`}
             onClick={() => setActiveSection('earnings')}
@@ -732,15 +687,9 @@ const CreatorDashboard = () => {
             onClick={() => setActiveSection('ratings')}
           >
             <Star className="w-5 h-5" />
-            <span>Ratings</span>
+            <span>Ratings & Testimonials</span>
           </div>
-          <div
-            className={`flex items-center space-x-2 p-2 rounded-lg cursor-pointer ${activeSection === 'testimonials' ? 'bg-blue-100' : 'hover:bg-gray-200'}`}
-            onClick={() => setActiveSection('testimonials')}
-          >
-            <MessageSquareQuote className="w-5 h-5" />
-            <span>Testimonials</span>
-          </div>
+         
           <div
             className={`flex items-center space-x-2 p-2 rounded-lg cursor-pointer ${activeSection === 'settings' ? 'bg-blue-100' : 'hover:bg-gray-200'}`}
             onClick={() => setActiveSection('settings')}
@@ -766,6 +715,24 @@ const CreatorDashboard = () => {
             {isAvailable ? 'Available for Collab' : 'Unavailable'}
           </button>
         </div>
+
+        <div>
+
+        <button
+            onClick={() => window.location.href = 'http://localhost:5000/api/v1/fbAuth/auth/facebook'}
+            className="w-full mb-4 flex items-center justify-center space-x-2 bg-blue-600 text-white p-2 rounded-lg hover:bg-blue-700"
+          >
+            <svg 
+              className="w-5 h-5 fill-current" 
+              xmlns="http://www.w3.org/2000/svg" 
+              viewBox="0 0 24 24"
+            >
+              <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+            </svg>
+            <span>Login with Facebook</span>
+          </button>
+        </div>
+
       </div>
 
       {/* Main Content Area */}
