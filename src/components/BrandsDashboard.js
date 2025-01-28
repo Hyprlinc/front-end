@@ -22,6 +22,7 @@ import {
   Wallet,
   AlertOctagon 
 } from 'lucide-react';
+import DiscoverInfluencers from './Brand/DiscoverInfluencers';
 
 const BrandDashboard = () => {
   const [activeTab, setActiveTab] = useState('home');
@@ -31,7 +32,7 @@ const BrandDashboard = () => {
       case 'home':
         return <HomeContent />;
       case 'find':
-        return <FindInfluencersContent />;
+        return <DiscoverInfluencers />;
       default:
         return <HomeContent />;
     }

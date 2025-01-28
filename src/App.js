@@ -7,6 +7,7 @@ import BrandDashboard from './components/BrandsDashboard';
 import LoginPage from './components/Agencies/LoginPage';
 import AgencyDashboard from './components/Agencies/AgencyDashboard';
 import AgencyProfile from './components/Agencies/AgencyProfile';
+import BrandsDashboard2 from './components/Brand/Dashboard';
 
 
 function App() {
@@ -14,7 +15,7 @@ function App() {
     <Router>
       <Routes>
         <Route path="/" element={<BrandRegistrationForm />} />
-        <Route path="/brandsDashboard" element={<BrandDashboard />} />
+        <Route path="/brandsDashboard" element={<BrandsDashboard2 />} />
         <Route path="/creatorsAuth" element={<RegistrationForm />} />
         <Route path="/dashboard" element={<CreatorDashboard />} />
         <Route path="/agencyProfile" element={<AgencyProfile />} />

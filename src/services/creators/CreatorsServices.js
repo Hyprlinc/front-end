@@ -2,7 +2,7 @@ import axios from 'axios';
 
 
 
-const API_BASE_URL = 'http://192.168.0.123:5000/api/v1';
+const API_BASE_URL = 'http://localhost:5000/api/v1';
 
 // Function to handle API registration
 export const registerUser = async (registrationData) => {
