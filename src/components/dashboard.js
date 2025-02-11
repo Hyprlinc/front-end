@@ -9,6 +9,8 @@ import EmailInbox from './Creators/EmailInbox';
 import RatingsAndReviews from './Creators/RatingsAndTestimonials';
 import EarningsDashboard from './Creators/Earnings';
 
+import logo from '../assets/logo.png';
+
 
 
 
@@ -628,10 +630,20 @@ const CreatorDashboard = () => {
   return (
     <div className="flex h-screen">
       {/* Left Sidebar */}
-      <div className="w-64 bg-gray-100 border-r p-4 flex flex-col">
+      <div className="w-64 bg-[#007AFF] border-r p-4 flex flex-col text-white">
+        {/* Logo */}
+        <div className="mb-6 flex justify-center">
+          <img
+            style={{ height: '5rem', width: 'auto' }}
+            src={logo}  // Make sure this logo is in your public folder
+            alt="Hyperlinc Logo"
+            className="h-12 w-auto"
+          />
+        </div>
+
         {/* User Avatar and Profile */}
-        <div
-          className="flex items-center space-x-4 mb-6 cursor-pointer hover:bg-gray-200 p-2 rounded-lg"
+        {/* <div
+          className="flex items-center space-x-4 mb-6 cursor-pointer hover:bg-[#1a88ff] p-2 rounded-lg"
           onClick={() => setActiveSection('profile')}
         >
           <img
@@ -641,28 +653,28 @@ const CreatorDashboard = () => {
           />
           <div>
             <p className="font-semibold">{user.fullName}</p>
-            <p className="text-sm text-gray-600">View Profile</p>
+            <p className="text-sm text-gray-100">View Profile</p>
           </div>
-        </div>
+        </div> */}
 
         {/* Navigation Options */}
         <nav className="space-y-2">
           <div
-            className={`flex items-center space-x-2 p-2 rounded-lg cursor-pointer ${activeSection === 'home' ? 'bg-blue-100' : 'hover:bg-gray-200'}`}
+            className={`flex items-center space-x-2 p-2 rounded-lg cursor-pointer ${activeSection === 'home' ? 'bg-[#1a88ff]' : 'hover:bg-[#1a88ff]'}`}
             onClick={() => setActiveSection('home')}
           >
             <Home className="w-5 h-5" />
             <span>HOME</span>
           </div>
           <div
-            className={`flex items-center space-x-2 p-2 rounded-lg cursor-pointer ${activeSection === 'inbox' ? 'bg-blue-100' : 'hover:bg-gray-200'}`}
+            className={`flex items-center space-x-2 p-2 rounded-lg cursor-pointer ${activeSection === 'inbox' ? 'bg-[#1a88ff]' : 'hover:bg-[#1a88ff]'}`}
             onClick={() => setActiveSection('inbox')}
           >
             <Inbox className="w-5 h-5" />
             <span>Inbox</span>
           </div>
           <div
-            className={`flex items-center space-x-2 p-2 rounded-lg cursor-pointer ${activeSection === 'collabs' ? 'bg-blue-100' : 'hover:bg-gray-200'}`}
+            className={`flex items-center space-x-2 p-2 rounded-lg cursor-pointer ${activeSection === 'collabs' ? 'bg-[#1a88ff]' : 'hover:bg-[#1a88ff]'}`}
             onClick={() => setActiveSection('collabs')}
           >
             <Network className="w-5 h-5" />
@@ -676,14 +688,14 @@ const CreatorDashboard = () => {
             <span>Search Collabs</span>
           </div> */}
           <div
-            className={`flex items-center space-x-2 p-2 rounded-lg cursor-pointer ${activeSection === 'earnings' ? 'bg-blue-100' : 'hover:bg-gray-200'}`}
+            className={`flex items-center space-x-2 p-2 rounded-lg cursor-pointer ${activeSection === 'earnings' ? 'bg-[#1a88ff]' : 'hover:bg-[#1a88ff]'}`}
             onClick={() => setActiveSection('earnings')}
           >
             <DollarSignIcon className="w-5 h-5" />
             <span>Earnings</span>
           </div>
           <div
-            className={`flex items-center space-x-2 p-2 rounded-lg cursor-pointer ${activeSection === 'ratings' ? 'bg-blue-100' : 'hover:bg-gray-200'}`}
+            className={`flex items-center space-x-2 p-2 rounded-lg cursor-pointer ${activeSection === 'ratings' ? 'bg-[#1a88ff]' : 'hover:bg-[#1a88ff]'}`}
             onClick={() => setActiveSection('ratings')}
           >
             <Star className="w-5 h-5" />
@@ -691,14 +703,14 @@ const CreatorDashboard = () => {
           </div>
          
           <div
-            className={`flex items-center space-x-2 p-2 rounded-lg cursor-pointer ${activeSection === 'settings' ? 'bg-blue-100' : 'hover:bg-gray-200'}`}
+            className={`flex items-center space-x-2 p-2 rounded-lg cursor-pointer ${activeSection === 'settings' ? 'bg-[#1a88ff]' : 'hover:bg-[#1a88ff]'}`}
             onClick={() => setActiveSection('settings')}
           >
             <Settings className="w-5 h-5" />
             <span>Settings</span>
           </div>
           <div
-            className={`flex items-center space-x-2 p-2 rounded-lg cursor-pointer ${activeSection === 'payments' ? 'bg-blue-100' : 'hover:bg-gray-200'}`}
+            className={`flex items-center space-x-2 p-2 rounded-lg cursor-pointer ${activeSection === 'payments' ? 'bg-[#1a88ff]' : 'hover:bg-[#1a88ff]'}`}
             onClick={() => setActiveSection('payments')}
           >
             <CreditCardIcon className="w-5 h-5" />
