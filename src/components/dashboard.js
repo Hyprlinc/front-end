@@ -10,6 +10,22 @@ import RatingsAndReviews from './Creators/RatingsAndTestimonials';
 import EarningsDashboard from './Creators/Earnings';
 
 import logo from '../assets/logo.png';
+import homeIcon from '../assets/icons/Home.png';
+import inboxIcon from '../assets/icons/messages.png';
+import collabsIcon from '../assets/icons/collaborations.png';
+import earningsIcon from '../assets/icons/profile_management.png';
+import portfolioIcon from '../assets/icons/portfolio.png';
+import settingsIcon from '../assets/icons/settings.png';
+import supportIcon from '../assets/icons/support.png';
+
+import homeAcive from '../assets/icons/homeblue.png';
+import inboxActive from '../assets/icons/messagesblue.png';
+import collabsActive from '../assets/icons/collabotationsblue.png';
+import earningsActive from '../assets/icons/profileblue.png';
+import portfolioActive from '../assets/icons/portfolioblue.png';
+import settingsActive from '../assets/icons/settingsblue.png';
+import supportActive from '../assets/icons/supportblue.png';
+import ProfileManagement from './Creators/ProfileManagement';
 
 
 
@@ -163,7 +179,7 @@ const CreatorDashboard = () => {
   const ProfileRow = ({ label, value, onEdit, editable = true }) => {
     const [isEditing, setIsEditing] = useState(false);
     const [editedValue, setEditedValue] = useState(value);
-  
+
     const handleEditToggle = () => {
       if (isEditing) {
         onEdit(editedValue);
@@ -172,7 +188,7 @@ const CreatorDashboard = () => {
         setIsEditing(true);
       }
     };
-  
+
     return (
       <div className="flex items-center justify-between py-2 border-b border-gray-200 last:border-b-0">
         <div className="flex flex-col">
@@ -189,8 +205,8 @@ const CreatorDashboard = () => {
           )}
         </div>
         {editable && (
-          <button 
-            onClick={handleEditToggle} 
+          <button
+            onClick={handleEditToggle}
             className="text-gray-500 hover:text-indigo-600 transition-colors duration-200"
           >
             {isEditing ? 'Save' : <Edit size={20} />}
@@ -199,7 +215,7 @@ const CreatorDashboard = () => {
       </div>
     );
   };
-  
+
 
   // Connected Status Indicator
   const ConnectedStatus = ({ isConnected }) => (
@@ -216,7 +232,7 @@ const CreatorDashboard = () => {
     </div>
   );
 
-  const [expandedLink, setExpandedLink] = useState(null);
+  const [expandedLink, setExpandedLink] = useState(null); 
 
   // Toggle expand/collapse for a specific link
   const toggleExpand = (index) => {
@@ -266,34 +282,34 @@ const CreatorDashboard = () => {
             <h3 className="text-lg font-semibold text-gray-800">YouTube Profile</h3>
           </div>
           <div className="p-6 space-y-4">
-            <ProfileRow 
-              label="Channel Age" 
-              value={user.channelAgeYoutube} 
+            <ProfileRow
+              label="Channel Age"
+              value={user.channelAgeYoutube}
               onEdit={(newValue) => onUpdateUser('channelAgeYoutube', newValue)}
             />
-            <ProfileRow 
-              label="Subscribers" 
-              value={user.subscribers} 
+            <ProfileRow
+              label="Subscribers"
+              value={user.subscribers}
               onEdit={(newValue) => onUpdateUser('subscribers', newValue)}
             />
-            <ProfileRow 
-              label="Average Views" 
-              value={user.averageViews} 
+            <ProfileRow
+              label="Average Views"
+              value={user.averageViews}
               onEdit={(newValue) => onUpdateUser('averageViews', newValue)}
             />
-            <ProfileRow 
-              label="Content Type" 
-              value={user.contentType} 
+            <ProfileRow
+              label="Content Type"
+              value={user.contentType}
               onEdit={(newValue) => onUpdateUser('contentType', newValue)}
             />
-            <ProfileRow 
-              label="Posting Frequency" 
-              value={user.postingFrequency} 
+            <ProfileRow
+              label="Posting Frequency"
+              value={user.postingFrequency}
               onEdit={(newValue) => onUpdateUser('postingFrequency', newValue)}
             />
-            <ProfileRow 
-              label="Live Streaming" 
-              value={user.liveStreaming ? "Yes" : "No"} 
+            <ProfileRow
+              label="Live Streaming"
+              value={user.liveStreaming ? "Yes" : "No"}
               onEdit={(newValue) => onUpdateUser('liveStreaming', newValue === 'Yes')}
               editable={true}
             />
@@ -307,34 +323,34 @@ const CreatorDashboard = () => {
             <h3 className="text-lg font-semibold text-gray-800">Instagram Profile</h3>
           </div>
           <div className="p-6 space-y-4">
-            <ProfileRow 
-              label="Account Age" 
-              value={user.channelAgeIg} 
+            <ProfileRow
+              label="Account Age"
+              value={user.channelAgeIg}
               onEdit={(newValue) => onUpdateUser('channelAgeIg', newValue)}
             />
-            <ProfileRow 
-              label="Followers" 
-              value={user.followers} 
+            <ProfileRow
+              label="Followers"
+              value={user.followers}
               onEdit={(newValue) => onUpdateUser('followers', newValue)}
             />
-            <ProfileRow 
-              label="Average Reel Views" 
-              value={user.avgReelViews} 
+            <ProfileRow
+              label="Average Reel Views"
+              value={user.avgReelViews}
               onEdit={(newValue) => onUpdateUser('avgReelViews', newValue)}
             />
-            <ProfileRow 
-              label="Average Comments" 
-              value={user.avgComments} 
+            <ProfileRow
+              label="Average Comments"
+              value={user.avgComments}
               onEdit={(newValue) => onUpdateUser('avgComments', newValue)}
             />
-            <ProfileRow 
-              label="Average Likes" 
-              value={user.avgLikes} 
+            <ProfileRow
+              label="Average Likes"
+              value={user.avgLikes}
               onEdit={(newValue) => onUpdateUser('avgLikes', newValue)}
             />
-            <ProfileRow 
-              label="Engagement Rate" 
-              value={`${user.engagementRate}%`} 
+            <ProfileRow
+              label="Engagement Rate"
+              value={`${user.engagementRate}%`}
               onEdit={(newValue) => onUpdateUser('engagementRate', parseFloat(newValue))}
             />
           </div>
@@ -348,109 +364,21 @@ const CreatorDashboard = () => {
 
   const renderContent = () => {
     switch (activeSection) {
-      case 'profile':
+      case 'profile-mngm':
 
-        return (
-          <div className="bg-white rounded-2xl shadow-lg overflow-hidden w-full">
-            {/* Header Section */}
-            <div className="bg-brand-blue text-white p-6">
-              <div className="flex items-center space-x-4">
-                <div className="bg-white p-1 rounded-full">
-                  <img
-                    src={dummyUser.avatar}
-                    alt={user.fullName}
-                    className="w-16 h-16 rounded-full object-cover"
-                  />
-                </div>
-                <div>
-                  <h2 className="text-2xl font-bold">{user.fullName}</h2>
-                  <p className="text-white text-opacity-80">{user.email}</p>
-                </div>
-              </div>
-            </div>
-
-            {/* Main Content Grid */}
-            <div className="grid md:grid-cols-2 gap-6 p-6">
-              {/* Personal Information Section */}
-              <div className="bg-brand-gray rounded-lg p-5 space-y-4">
-                <h3 className="text-lg font-semibold text-gray-700 border-b border-gray-300 pb-2 flex items-center">
-                  <Globe className="mr-2 text-brand-blue" size={20} />
-                  Personal Details
-                </h3>
-                <div className="space-y-4">
-                  <ProfileRow icon={User} label="Full Name" value={user.fullName} />
-                  <ProfileRow icon={Mail} label="Email" value={user.email} />
-                  <ProfileRow label="Gender" value={user.gender} />
-                  <ProfileRow icon={MapPin} label="Location" value={`${user.country}, ${user.city}`} />
-                </div>
-              </div>
-
-              {/* Content Information Section */}
-              <div className="bg-brand-gray rounded-lg p-5 space-y-4">
-                <h3 className="text-lg font-semibold text-gray-700 border-b border-gray-300 pb-2 flex items-center">
-                  <Award className="mr-2 text-brand-blue" size={20} />
-                  Content Profile
-                </h3>
-                <div className="space-y-4">
-                  <ProfileRow label="Content Description" value={user.contentDesc} />
-                  <ProfileRow label="Content Languages" value={user.contentLang?.join(", ")} />
-                  <ProfileRow label="Content Genre" value={user.channelGenre} />
-                </div>
-              </div>
-            </div>
-
-            {/* Channel Links Section */}
-            {user.channelLinks && user.channelLinks.length > 0 && (
-              <div className="p-6 bg-white border-t border-gray-200">
-                <h3 className="text-lg font-semibold text-gray-700 mb-4 flex items-center">
-                  <LinkIcon className="mr-2 text-brand-blue" size={20} />
-                  Channel Links
-                </h3>
-                <div className="space-y-3">
-                  {user.channelLinks.map((link, index) => (
-                    <div
-                      key={index}
-                      className="bg-brand-gray p-3 rounded-lg hover:bg-gray-200 transition-all"
-                    >
-                      <div className="flex justify-between items-center">
-                        <div className="flex items-center">
-                          {renderSocialIcon(link)}
-                          <a
-                            href={link}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-brand-blue hover:underline text-sm truncate ml-2"
-                          >
-                            {link}
-                          </a>
-                        </div>
-                        <div className="flex items-center">
-                          <ConnectedStatus isConnected={true} />
-                          <button onClick={() => toggleExpand(index)} className="ml-4">
-                            {expandedLink === index ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
-                          </button>
-                        </div>
-                      </div>
-                      {expandedLink === index && renderAdditionalInfo(link, user, handleUpdateUser)}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
-        );
+        return <ProfileManagement/>
 
       case 'inbox':
-        return <EmailInbox/>;
-        
-        // (
-        //   <div className="p-6">
-        //     <h2 className="text-2xl font-bold mb-4">Inbox</h2>
-        //     <div className="text-gray-500">
-        //       No new messages
-        //     </div>
-        //   </div>
-        // );
+        return <EmailInbox />;
+
+      // (
+      //   <div className="p-6">
+      //     <h2 className="text-2xl font-bold mb-4">Inbox</h2>
+      //     <div className="text-gray-500">
+      //       No new messages
+      //     </div>
+      //   </div>
+      // );
 
       case 'collabs':
         return (
@@ -532,10 +460,10 @@ const CreatorDashboard = () => {
         );
 
       case 'earnings':
-        return <EarningsDashboard/>;
+        return <EarningsDashboard />;
 
       case 'ratings':
-        return < RatingsAndReviews/>;
+        return < RatingsAndReviews />;
 
       case 'settings':
         return (
@@ -615,7 +543,7 @@ const CreatorDashboard = () => {
       //   );
 
       default:
-       return <CreatorDashboardHome user={user} stats={mockStats} socialStats={mockSocialStats} campaigns={mockCampaigns}/>
+        return <CreatorDashboardHome user={user} stats={mockStats} socialStats={mockSocialStats} campaigns={mockCampaigns} />
     }
   };
 
@@ -630,12 +558,12 @@ const CreatorDashboard = () => {
   return (
     <div className="flex h-screen">
       {/* Left Sidebar */}
-      <div className="w-64 bg-[#007AFF] border-r p-4 flex flex-col text-white">
+      <div className="w-64 bg-[#007AFF] border-r p-4 flex flex-col text-white font-['Roboto']">
         {/* Logo */}
         <div className="mb-6 flex justify-center">
           <img
             style={{ height: '5rem', width: 'auto' }}
-            src={logo}  // Make sure this logo is in your public folder
+            src={logo}
             alt="Hyperlinc Logo"
             className="h-12 w-auto"
           />
@@ -652,69 +580,102 @@ const CreatorDashboard = () => {
             className="w-16 h-16 rounded-full object-cover"
           />
           <div>
-            <p className="font-semibold">{user.fullName}</p>
+            <p className="font-semibold text-[14px]">{user.fullName}</p>
             <p className="text-sm text-gray-100">View Profile</p>
           </div>
         </div> */}
 
         {/* Navigation Options */}
         <nav className="space-y-2">
+          {/* home */}
           <div
-            className={`flex items-center space-x-2 p-2 rounded-lg cursor-pointer ${activeSection === 'home' ? 'bg-[#1a88ff]' : 'hover:bg-[#1a88ff]'}`}
+            className={`flex items-center space-x-2 p-2 rounded-lg cursor-pointer text-[18px] font-['Roboto'] font-semibold
+            ${activeSection === 'home' ? 'bg-white text-[#007AFF]' : 'hover:bg-[#1a88ff] text-white'}`}
             onClick={() => setActiveSection('home')}
           >
-            <Home className="w-5 h-5" />
-            <span>HOME</span>
+            <img src={activeSection === 'home' ? homeAcive : homeIcon} alt="Home" className="w-5 h-5" />
+            <span>Home</span>
           </div>
+          {/* profile-mngm */}
           <div
-            className={`flex items-center space-x-2 p-2 rounded-lg cursor-pointer ${activeSection === 'inbox' ? 'bg-[#1a88ff]' : 'hover:bg-[#1a88ff]'}`}
-            onClick={() => setActiveSection('inbox')}
+            className={`flex items-center space-x-2 p-2 rounded-lg cursor-pointer text-[18px] font-['Roboto'] font-semibold
+            ${activeSection === 'profile-mngm' ? 'bg-white text-[#007AFF]' : 'hover:bg-[#1a88ff] text-white'}`}
+            onClick={() => setActiveSection('profile-mngm')}
           >
-            <Inbox className="w-5 h-5" />
-            <span>Inbox</span>
+            <img src={activeSection === 'profile-mngm' ? inboxActive : inboxIcon} alt="Inbox" className="w-5 h-5" />
+            <span>Profile Management</span>
           </div>
+          {/* collabs */}
           <div
-            className={`flex items-center space-x-2 p-2 rounded-lg cursor-pointer ${activeSection === 'collabs' ? 'bg-[#1a88ff]' : 'hover:bg-[#1a88ff]'}`}
+            className={`flex items-center space-x-2 p-2 rounded-lg cursor-pointer text-[18px] font-['Roboto'] font-semibold
+            ${activeSection === 'collabs' ? 'bg-white text-[#007AFF]' : 'hover:bg-[#1a88ff] text-white'}`}
             onClick={() => setActiveSection('collabs')}
           >
-            <Network className="w-5 h-5" />
-            <span>Ongoing Collabs</span>
+            <img src={activeSection === 'collabs' ? collabsActive : collabsIcon} alt="Collaborations" className="w-5 h-5" />
+            <span>Collaborations</span>
           </div>
-          {/* <div
-            className={`flex items-center space-x-2 p-2 rounded-lg cursor-pointer ${activeSection === 'search' ? 'bg-blue-100' : 'hover:bg-gray-200'}`}
-            onClick={() => setActiveSection('search')}
-          >
-            <Search className="w-5 h-5" />
-            <span>Search Collabs</span>
-          </div> */}
+          {/* earnings */}
           <div
-            className={`flex items-center space-x-2 p-2 rounded-lg cursor-pointer ${activeSection === 'earnings' ? 'bg-[#1a88ff]' : 'hover:bg-[#1a88ff]'}`}
+            className={`flex items-center space-x-2 p-2 rounded-lg cursor-pointer text-[18px] font-['Roboto'] font-semibold
+            ${activeSection === 'earnings' ? 'bg-white text-[#007AFF]' : 'hover:bg-[#1a88ff] text-white'}`}
             onClick={() => setActiveSection('earnings')}
           >
-            <DollarSignIcon className="w-5 h-5" />
+            <img src={activeSection === 'earnings' ? earningsActive : earningsIcon} alt="Earnings" className="w-5 h-5" />
             <span>Earnings</span>
           </div>
+          {/* messages */}
           <div
-            className={`flex items-center space-x-2 p-2 rounded-lg cursor-pointer ${activeSection === 'ratings' ? 'bg-[#1a88ff]' : 'hover:bg-[#1a88ff]'}`}
-            onClick={() => setActiveSection('ratings')}
+            className={`flex items-center space-x-2 p-2 rounded-lg cursor-pointer text-[18px] font-['Roboto'] font-semibold
+            ${activeSection === 'messages' ? 'bg-white text-[#007AFF]' : 'hover:bg-[#1a88ff] text-white'}`}
+            onClick={() => setActiveSection('messages')}
           >
-            <Star className="w-5 h-5" />
-            <span>Ratings & Testimonials</span>
+            <img src={activeSection === 'messages' ? inboxActive : inboxIcon} alt="Messages" className="w-5 h-5" />
+            <span>Messages</span>
           </div>
-         
+          {/* insights and analytics */}
           <div
-            className={`flex items-center space-x-2 p-2 rounded-lg cursor-pointer ${activeSection === 'settings' ? 'bg-[#1a88ff]' : 'hover:bg-[#1a88ff]'}`}
+            className={`flex items-center space-x-2 p-2 rounded-lg cursor-pointer text-[18px] font-['Roboto'] font-semibold
+            ${activeSection === 'insights' ? 'bg-white text-[#007AFF]' : 'hover:bg-[#1a88ff] text-white'}`}
+            onClick={() => setActiveSection('insights')}
+          >
+            <img src={activeSection === 'insights' ? portfolioActive : portfolioIcon} alt="Insights" className="w-5 h-5" />
+            <span>Insights and Analytics</span>
+          </div>
+          {/* portfolio */}
+          <div
+            className={`flex items-center space-x-2 p-2 rounded-lg cursor-pointer text-[18px] font-['Roboto'] font-semibold
+            ${activeSection === 'portfolio' ? 'bg-white text-[#007AFF]' : 'hover:bg-[#1a88ff] text-white'}`}
+            onClick={() => setActiveSection('portfolio')}
+          >
+            <img src={activeSection === 'portfolio' ? portfolioActive : portfolioIcon} alt="Portfolio" className="w-5 h-5" />
+            <span>Portfolio</span>
+          </div>
+          {/* campaigns calendar */}
+          <div
+            className={`flex items-center space-x-2 p-2 rounded-lg cursor-pointer text-[18px] font-['Roboto'] font-semibold
+            ${activeSection === 'calendar' ? 'bg-white text-[#007AFF]' : 'hover:bg-[#1a88ff] text-white'}`}
+            onClick={() => setActiveSection('calendar')}
+          >
+            <img src={activeSection === 'calendar' ? collabsActive : collabsIcon} alt="Calendar" className="w-5 h-5" />
+            <span>Campaigns Calendar</span>
+          </div>
+          {/* settings */}
+          <div
+            className={`flex items-center space-x-2 p-2 rounded-lg cursor-pointer text-[18px] font-['Roboto'] font-semibold
+            ${activeSection === 'settings' ? 'bg-white text-[#007AFF]' : 'hover:bg-[#1a88ff] text-white'}`}
             onClick={() => setActiveSection('settings')}
           >
-            <Settings className="w-5 h-5" />
+            <img src={activeSection === 'settings' ? settingsActive : settingsIcon} alt="Settings" className="w-5 h-5" />
             <span>Settings</span>
           </div>
+          {/* support */}
           <div
-            className={`flex items-center space-x-2 p-2 rounded-lg cursor-pointer ${activeSection === 'payments' ? 'bg-[#1a88ff]' : 'hover:bg-[#1a88ff]'}`}
-            onClick={() => setActiveSection('payments')}
+            className={`flex items-center space-x-2 p-2 rounded-lg cursor-pointer text-[20px] font-['Roboto'] font-semibold
+            ${activeSection === 'support' ? 'bg-white text-[#007AFF]' : 'hover:bg-[#1a88ff] text-white'}`}
+            onClick={() => setActiveSection('support')}
           >
-            <CreditCardIcon className="w-5 h-5" />
-            <span>Payments</span>
+            <img src={activeSection === 'support' ? supportActive : supportIcon} alt="Support" className="w-5 h-5" />
+            <span>Support</span>
           </div>
         </nav>
 
@@ -730,16 +691,16 @@ const CreatorDashboard = () => {
 
         <div>
 
-        <button
+          <button
             onClick={() => window.location.href = 'http://localhost:5000/api/v1/fbAuth/auth/facebook'}
             className="w-full mb-4 flex items-center justify-center space-x-2 bg-blue-600 text-white p-2 rounded-lg hover:bg-blue-700"
           >
-            <svg 
-              className="w-5 h-5 fill-current" 
-              xmlns="http://www.w3.org/2000/svg" 
+            <svg
+              className="w-5 h-5 fill-current"
+              xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24"
             >
-              <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+              <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
             </svg>
             <span>Login with Facebook</span>
           </button>
