@@ -30,8 +30,8 @@ const ProfileManagement = ({name, email, location, phoneNumber, bio}) => {
                 return <ProfileTab name={"Harsh"} email={"tripathiharsh1606@gmail.com"} location={"India"} phoneNumber={"9876543210"} bio={"I am a software engineer lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos. lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos."} />;
             case 'niches':
                 return <NichesTab/>;
-            case 'notifications':
-                return <div>Notifications Content</div>;
+            case 'kyc':
+                return <KYCTab/>;
             case 'bankAccounts':
                 return <BankAccountsTab/>;
             default:
@@ -73,13 +73,13 @@ const ProfileManagement = ({name, email, location, phoneNumber, bio}) => {
                             Niches
                         </button>
                         <button 
-                            ref={el => tabsRef.current['notifications'] = el}
+                            ref={el => tabsRef.current['kyc'] = el}
                             style={{...styles.tabButton, 
-                                color: activeTab === 'notifications' ? '#082777' : '#717B8C'
+                                color: activeTab === 'kyc' ? '#082777' : '#717B8C'
                             }}
-                            onClick={() => setActiveTab('notifications')}
+                            onClick={() => setActiveTab('kyc')}
                         >
-                            Notifications
+                            KYC
                         </button>
                         <button 
                             ref={el => tabsRef.current['bankAccounts'] = el}
@@ -105,13 +105,364 @@ const ProfileManagement = ({name, email, location, phoneNumber, bio}) => {
     );
 };
 
+
+
+
+
 const BankAccountsTab = () => {
+    const [formData, setFormData] = useState({
+        accountHolderName: '',
+        accountNumber: '',
+        ifscCode: '',
+        bankName: '',
+        branchName: ''
+    });
+    const [loading, setLoading] = useState(false);
+
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setFormData(prev => ({
+            ...prev,
+            [name]: value
+        }));
+
+        // If IFSC code is being changed and has 11 characters, fetch bank details
+        if (name === 'ifscCode' && value.length === 11) {
+            fetchBankDetails(value);
+        }
+    };
+
+    const fetchBankDetails = async (ifsc) => {
+        setLoading(true);
+        try {
+            const response = await fetch(`https://ifsc.razorpay.com/${ifsc}`);
+            const data = await response.json();
+            
+            if (data) {
+                setFormData(prev => ({
+                    ...prev,
+                    bankName: data.BANK || '',
+                    branchName: data.BRANCH || ''
+                }));
+            }
+        } catch (error) {
+            console.error('Error fetching bank details:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
     return (
-        <div>
-            <h1>Bank Accounts</h1>
+        <div style={{ padding: '24px', maxWidth: '600px' }}>
+            <h2 style={{ 
+                fontSize: '20px', 
+                fontWeight: '600',
+                marginBottom: '32px'
+            }}>
+                Bank Account Details
+            </h2>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+                <div>
+                    <label style={{
+                        display: 'block',
+                        fontFamily: 'Plus Jakarta Sans',
+                        fontSize: '16px',
+                        fontWeight: 700,
+                        marginBottom: '8px'
+                    }}>
+                        Account Holder's Name
+                    </label>
+                    <input
+                        type="text"
+                        name="accountHolderName"
+                        value={formData.accountHolderName}
+                        onChange={handleInputChange}
+                        placeholder="Enter account holder's name"
+                        style={{
+                            width: '100%',
+                            padding: '12px',
+                            border: '1px solid #E0E4EC',
+                            borderRadius: '8px',
+                                    fontSize: '16px'
+                        }}
+                    />
+                </div>
+
+                <div>
+                    <label style={{
+                        display: 'block',
+                        fontFamily: 'Plus Jakarta Sans',
+                        fontSize: '16px',
+                        fontWeight: 600,
+                        marginBottom: '8px'
+                    }}>
+                        Account Number
+                    </label>
+                    <input
+                        type="text"
+                        name="accountNumber"
+                        value={formData.accountNumber}
+                        onChange={handleInputChange}
+                        placeholder="Enter account number"
+                        style={{
+                            width: '100%',
+                            padding: '12px',
+                            border: '1px solid #E0E4EC',
+                            borderRadius: '8px',
+                                fontSize: '16px'
+                        }}
+                    />
+                </div>
+
+                <div>
+                    <label style={{
+                        display: 'block',
+                        fontFamily: 'Plus Jakarta Sans',
+                        fontSize: '16px',
+                        fontWeight: 600,
+                        marginBottom: '8px'
+                    }}>
+                        IFSC Code
+                    </label>
+                    <input
+                        type="text"
+                        name="ifscCode"
+                        value={formData.ifscCode}
+                        onChange={handleInputChange}
+                        placeholder="Enter IFSC code"
+                        style={{
+                            width: '100%',
+                            padding: '12px',
+                            border: '1px solid #E0E4EC',
+                            borderRadius: '8px',
+                            fontSize: '16px'
+                        }}
+                    />
+                </div>
+
+                <div>
+                    <label style={{
+                        display: 'block',
+                        fontFamily: 'Plus Jakarta Sans',
+                        fontSize: '16px',
+                        fontWeight: 600,
+                        marginBottom: '8px'
+                    }}>
+                        Bank Name
+                    </label>
+                    <input
+                        type="text"
+                        name="bankName"
+                        value={formData.bankName}
+                        readOnly
+                        placeholder={loading ? "Fetching bank details..." : "Bank name will appear here"}
+                        style={{
+                            width: '100%',
+                            padding: '12px',
+                            border: '1px solid #E0E4EC',
+                            borderRadius: '8px',
+                            fontSize: '16px',
+                            backgroundColor: '#f5f5f5',
+                            cursor: 'not-allowed'
+                        }}
+                    />
+                </div>
+
+                <div>
+                    <label style={{
+                        display: 'block',
+                        fontFamily: 'Plus Jakarta Sans',
+                        fontSize: '16px',
+                        fontWeight: 600,
+                        marginBottom: '8px'
+                    }}>
+                        Branch Name
+                    </label>
+                    <input
+                        type="text"
+                        name="branchName"
+                        value={formData.branchName}
+                        readOnly
+                        placeholder={loading ? "Fetching branch details..." : "Branch name will appear here"}
+                        style={{
+                            width: '100%',
+                            padding: '12px',
+                            border: '1px solid #E0E4EC',
+                            borderRadius: '8px',
+                            fontSize: '16px',
+                            backgroundColor: '#f5f5f5',
+                            cursor: 'not-allowed'
+                        }}
+                    />
+                </div>
+
+                <button
+                    style={{
+                        backgroundColor: '#000000',
+                        color: '#FFFFFF',
+                        padding: '12px 24px',
+                        border: 'none',
+                        borderRadius: '8px',
+                        fontSize: '14px',
+                        fontWeight: '600',
+                        cursor: 'pointer',
+                        marginTop: '16px'
+                    }}
+                >
+                    Save Bank Details
+                </button>
+            </div>
         </div>
     );
 };  
+
+const KYCTab = () => {
+    const [kycStatus] = useState(false); // This would come from the backend
+    const [formData, setFormData] = useState({
+        aadharNumber: '',
+        panNumber: '',
+        documents: null
+    });
+
+    const handleInputChange = (e) => {
+        setFormData({
+            ...formData,
+            [e.target.name]: e.target.value
+        });
+    };
+
+    const handleFileChange = (e) => {
+        setFormData({
+            ...formData,
+            documents: e.target.files[0]
+        });
+    };
+
+    return (
+        <div style={{ padding: '24px', maxWidth: '600px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '32px' }}>
+                <h2 style={{ fontSize: '20px', fontWeight: '600' }}>KYC Verification</h2>
+                <div style={{
+                    padding: '4px 12px',
+                    borderRadius: '16px',
+                    backgroundColor: kycStatus ? '#E3F2FD' : '#FFF3E0',
+                    color: kycStatus ? '#1976D2' : '#F57C00',
+                    fontSize: '12px',
+                    fontWeight: '500'
+                }}>
+                    {kycStatus ? 'Verified' : 'Pending Verification'}
+                </div>
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+                <div>
+                    <label style={{
+                        display: 'block',
+                        fontFamily: 'Plus Jakarta Sans',
+                        fontSize: '16px',
+                        fontWeight: 700,
+                        color: '#1E293B',
+                        marginBottom: '8px'
+                    }}>
+                        Aadhar Number
+                    </label>
+                    <input
+                        type="text"
+                        name="aadharNumber"
+                        value={formData.aadharNumber}
+                        onChange={handleInputChange}
+                        placeholder="Enter your Aadhar number"
+                        style={{
+                            width: '100%',
+                            padding: '12px',
+                            border: '1px solid #E0E4EC',
+                            borderRadius: '10px',
+                            fontSize: '14px'
+                        }}
+                    />
+                </div>
+
+                <div>
+                    <label style={{
+                        display: 'block',
+                        fontFamily: 'Plus Jakarta Sans',
+                        fontSize: '16px',
+                        fontWeight: 700,
+                        marginBottom: '8px'
+                    }}>
+                        PAN Number
+                    </label>
+                    <input
+                        type="text"
+                        name="panNumber"
+                        value={formData.panNumber}
+                        onChange={handleInputChange}
+                        placeholder="Enter your PAN number"
+                        style={{
+                            width: '100%',
+                            padding: '12px',
+                            border: '1px solid #E0E4EC',
+                            borderRadius: '10px',
+                            fontSize: '14px'
+                        }}
+                    />
+                </div>
+
+                <div>
+                    <label style={{
+                        display: 'block',
+                        fontFamily: 'Plus Jakarta Sans',
+                        fontSize: '16px',
+                        fontWeight: 600,
+                        marginBottom: '8px'
+                    }}>
+                        Upload Documents
+                    </label>
+                    <div style={{
+                        border: '1px dashed #E0E4EC',
+                        borderRadius: '2px',
+                        padding: '20px',
+                        textAlign: 'center',
+                        cursor: 'pointer'
+                    }}>
+                        <input
+                            type="file"
+                            name="documents"
+                            onChange={handleFileChange}
+                            style={{ display: 'none' }}
+                            id="document-upload"
+                        />
+                        <label htmlFor="document-upload" style={{ cursor: 'pointer' }}>
+                            <div style={{ color: '#717B8C', marginBottom: '8px' }}>
+                                Drag and drop your files here or click to browse
+                            </div>
+                            <div style={{ fontSize: '12px', color: '#717B8C' }}>
+                                Supported formats: PDF, JPG, PNG (Max size: 5MB)
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <button
+                    style={{
+                        backgroundColor: '#000000',
+                        color: '#FFFFFF',
+                        padding: '12px 24px',
+                        border: 'none',
+                        borderRadius: '8px',
+                        fontSize: '14px',
+                        fontWeight: '600',
+                        cursor: 'pointer',
+                        marginTop: '16px'
+                    }}
+                >
+                    Submit for Verification
+                </button>
+            </div>
+        </div>
+    );
+};
 
 const NichesTab = () => {
     const [selectedNiches, setSelectedNiches] = useState(new Set());

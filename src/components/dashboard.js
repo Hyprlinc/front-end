@@ -26,6 +26,7 @@ import portfolioActive from '../assets/icons/portfolioblue.png';
 import settingsActive from '../assets/icons/settingsblue.png';
 import supportActive from '../assets/icons/supportblue.png';
 import ProfileManagement from './Creators/ProfileManagement';
+import Collab from './Creators/Collaborations/Collab';
 
 
 
@@ -381,83 +382,8 @@ const CreatorDashboard = () => {
       // );
 
       case 'collabs':
-        return (
-          <div className="p-6">
-            {/* Header Section */}
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-2xl font-bold">Ongoing Collaborations</h2>
-              <button className="flex items-center px-4 py-2 border rounded-lg text-brand-blue hover:bg-gray-100">
-                <Plus className="mr-2" size={16} />
-                New Collaboration
-              </button>
-            </div>
-
-            {/* Collaboration Cards */}
-            <div className="space-y-4">
-              {/* Card 1 */}
-              <div className="border p-4 rounded-lg flex justify-between items-center">
-                <div>
-                  <h3 className="font-semibold">Lenskart</h3>
-                  <span className="inline-flex items-center bg-green-100 text-green-600 px-3 py-1 text-sm rounded-full mt-2">
-                    <CheckCircle size={16} className="mr-2" />
-                    In Progress
-                  </span>
-                </div>
-                <div className="flex space-x-2">
-                  <button className="flex items-center px-4 py-2 border rounded-lg text-gray-700 hover:bg-gray-100">
-                    <Eye className="mr-2" size={16} />
-                    View Details
-                  </button>
-                  <button className="flex items-center px-4 py-2 bg-brand-blue text-white rounded-lg hover:bg-blue-600">
-                    <Edit className="mr-2" size={16} />
-                    Update Progress
-                  </button>
-                </div>
-              </div>
-
-              {/* Card 2 */}
-              <div className="border p-4 rounded-lg flex justify-between items-center">
-                <div>
-                  <h3 className="font-semibold">Hyperpure Feed India, Zomato</h3>
-                  <span className="inline-flex items-center bg-yellow-100 text-yellow-600 px-3 py-1 text-sm rounded-full mt-2">
-                    <AlertTriangle size={16} className="mr-2" />
-                    Negotiation
-                  </span>
-                </div>
-                <div className="flex space-x-2">
-                  <button className="flex items-center px-4 py-2 border rounded-lg text-gray-700 hover:bg-gray-100">
-                    <Eye className="mr-2" size={16} />
-                    View Details
-                  </button>
-                  <button className="flex items-center px-4 py-2 bg-brand-blue text-white rounded-lg hover:bg-blue-600">
-                    <Edit className="mr-2" size={16} />
-                    Continue Negotiation
-                  </button>
-                </div>
-              </div>
-              {/*  card 3*/}
-              <div className="border p-4 rounded-lg flex justify-between items-center">
-                <div>
-                  <h3 className="font-semibold">Boat Lifestyle</h3>
-                  <span className="inline-flex items-center bg-green-100 text-green-600 px-3 py-1 text-sm rounded-full mt-2">
-                    <CheckCircle size={16} className="mr-2" />
-                    In Progress
-                  </span>
-                </div>
-                <div className="flex space-x-2">
-                  <button className="flex items-center px-4 py-2 border rounded-lg text-gray-700 hover:bg-gray-100">
-                    <Eye className="mr-2" size={16} />
-                    View Details
-                  </button>
-                  <button className="flex items-center px-4 py-2 bg-brand-blue text-white rounded-lg hover:bg-blue-600">
-                    <Edit className="mr-2" size={16} />
-                    Update Progress
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        );
+        return <Collab />;
+             
 
       case 'earnings':
         return <EarningsDashboard />;
