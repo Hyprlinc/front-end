@@ -1,13 +1,20 @@
 import React from 'react';
 import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-
+import Navbar from './comp/Navbar';
+import Sidebar from './comp/SideBar';
 
 const ProfileManagement = ({name, email, location, phoneNumber, bio}) => {
     const [activeTab, setActiveTab] = useState('profile');
     const [sliderWidth, setSliderWidth] = useState(0);
     const [sliderOffset, setSliderOffset] = useState(0);
     const tabsRef = useRef({});
+    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+    const defaultUser = {
+        name: "Anushka",
+        profilePicture: "https://avatar.iran.liara.run/public"
+    };
 
     useEffect(() => {
         const activeTabElement = tabsRef.current[activeTab];
@@ -26,136 +33,106 @@ const ProfileManagement = ({name, email, location, phoneNumber, bio}) => {
             case 'notifications':
                 return <div>Notifications Content</div>;
             case 'bankAccounts':
-                return <div>Bank Accounts Content</div>;
+                return <BankAccountsTab/>;
             default:
                 return <div>Profile Content</div>;
         }
     };
 
     return (
-        <div>
-            <div className="tab-bar" style={styles.tabBar}>
-                <div style={{
-                    ...styles.slider,
-                    width: sliderWidth,
-                    transform: `translateX(${sliderOffset}px)`
-                }} />
-                <button 
-                    ref={el => tabsRef.current['profile'] = el}
-                    style={{...styles.tabButton, 
-                        color: activeTab === 'profile' ? '#082777' : '#717B8C'
-                    }}
-                    onClick={() => setActiveTab('profile')}
-                >
-                    Profile
-                </button>
-                <button 
-                    ref={el => tabsRef.current['niches'] = el}
-                    style={{...styles.tabButton, 
-                        color: activeTab === 'niches' ? '#082777' : '#717B8C'
-                    }}
-                    onClick={() => setActiveTab('niches')}
-                >
-                    Niches
-                </button>
-                <button 
-                    ref={el => tabsRef.current['notifications'] = el}
-                    style={{...styles.tabButton, 
-                        color: activeTab === 'notifications' ? '#082777' : '#717B8C'
-                    }}
-                    onClick={() => setActiveTab('notifications')}
-                >
-                    Notifications
-                </button>
-                <button 
-                    ref={el => tabsRef.current['bankAccounts'] = el}
-                    style={{...styles.tabButton, 
-                        color: activeTab === 'bankAccounts' ? '#082777' : '#717B8C'
-                    }}
-                    onClick={() => setActiveTab('bankAccounts')}
-                >
-                    Bank Accounts
-                </button>
+        <div className="bg-gray-50 min-h-screen flex">
+            <div className={`flex-1 transition-all duration-300 ${isSidebarOpen ? 'mr-80' : ''}`}>
+                <Navbar 
+                    user={defaultUser} 
+                    onSidebarToggle={() => setIsSidebarOpen(!isSidebarOpen)} 
+                />
+                
+                <div>
+                    <div className="tab-bar" style={styles.tabBar}>
+                        <div style={{
+                            ...styles.slider,
+                            width: sliderWidth,
+                            transform: `translateX(${sliderOffset}px)`
+                        }} />
+                        <button 
+                            ref={el => tabsRef.current['profile'] = el}
+                            style={{...styles.tabButton, 
+                                color: activeTab === 'profile' ? '#082777' : '#717B8C'
+                            }}
+                            onClick={() => setActiveTab('profile')}
+                        >
+                            Profile
+                        </button>
+                        <button 
+                            ref={el => tabsRef.current['niches'] = el}
+                            style={{...styles.tabButton, 
+                                color: activeTab === 'niches' ? '#082777' : '#717B8C'
+                            }}
+                            onClick={() => setActiveTab('niches')}
+                        >
+                            Niches
+                        </button>
+                        <button 
+                            ref={el => tabsRef.current['notifications'] = el}
+                            style={{...styles.tabButton, 
+                                color: activeTab === 'notifications' ? '#082777' : '#717B8C'
+                            }}
+                            onClick={() => setActiveTab('notifications')}
+                        >
+                            Notifications
+                        </button>
+                        <button 
+                            ref={el => tabsRef.current['bankAccounts'] = el}
+                            style={{...styles.tabButton, 
+                                color: activeTab === 'bankAccounts' ? '#082777' : '#717B8C'
+                            }}
+                            onClick={() => setActiveTab('bankAccounts')}
+                        >
+                            Bank Accounts
+                        </button>
+                    </div>
+                    <div className="tab-content" style={styles.tabContent}>
+                        {renderTabContent()}
+                    </div>
+                </div>
             </div>
-            <div className="tab-content" style={styles.tabContent}>
-                {renderTabContent()}
-            </div>
+
+            <Sidebar 
+                isOpen={isSidebarOpen} 
+                onClose={() => setIsSidebarOpen(false)} 
+            />
         </div>
     );
 };
 
+const BankAccountsTab = () => {
+    return (
+        <div>
+            <h1>Bank Accounts</h1>
+        </div>
+    );
+};  
 
 const NichesTab = () => {
     const [selectedNiches, setSelectedNiches] = useState(new Set());
 
     const categories = {
-        "Fashion, Lifestyle & Beauty": [
-            "Streetwear & Urban Fashion",
-            "Modest Fashion",
-            "Luxury & Designer Fashion",
-            "Sustainable & Ethical Fashion",
-            "DIY & Handmade Fashion",
-            "Skincare & Dermatology",
-            "Makeup Tutorials & Reviews",
-            "Haircare & Styling",
-            "Fragrance & Perfumes",
-            "Home & Interior Décor",
-            "Minimalist & Aesthetic Lifestyle",
-            "Thrift & Budget Shopping"
-        ],
-        "Technology": [
-            "Artificial Intelligence & Machine Learning",
-            "Blockchain & Cryptocurrency",
-            "Cybersecurity & Ethical Hacking",
-            "Mobile & Web App Development",
-            "Consumer Tech & Gadgets",
-            "Virtual & Augmented Reality",
-            "Robotics & Automation",
-            "Programming & Coding Tutorials",
-            "Cloud Computing & DevOps",
-            "UI/UX & Product Design",
-            "Space & Aerospace Technology",
-            "Electric Vehicles & Sustainable Tech"
-        ],
-        "Health & Wellness": [
-            "Nutrition & Dieting",
-            "Yoga & Meditation",
-            "Fitness Training & Nutrition",
-            "Mental Health & Wellbeing",
-            "Alternative Medicine & Natural Healing",   
-        ],
-        "Travel & Adventure": [
-            "Adventure Travel",
-            "Solo Travel",
-            "Family Travel",
-            "Budget Travel",
-            "Travel Hacking",
-            "Travel Photography"
-                    ],
-        "Food & Cooking": [
-            "Cooking Tutorials",
-            "Healthy Eating",
-            "Food Photography",
-            "Culinary Arts"
-        ],
-        "DIY & Crafts": [
-            "DIY Projects",
-            "Crafting Tutorials",
-            "Art & Crafts",
-            "Sewing & Embroidery"
-        ],
-        "Art & Design": [
-            "Painting & Drawing",
-            "Sculpting & Ceramics",
-            "Graphic Design",
-            "Interior Design"
-        ],
-        "Business & Entrepreneurship": [
-            "Entrepreneurship",
-            "Small Business Management",
-            "Marketing & Sales",
-            "Financial Planning & Investing",
-            "Leadership & Team Building"
+        "Content Preferences": [
+            "Fashion, Lifestyle & Beauty",
+            "Technology",
+            "Food & Beverages",
+            "Fitness & Wellness",
+            "Travel & Adventure",
+            "Entertainment",
+            "Education & Careers",
+            "Gaming",
+            "Finance & Business",
+            "Automotive",
+            "Art & Creativity",
+            "Environment & Sustainability",
+            "Health & Medicine",
+            "Pets & Animals",
+            "Motivation & Personal Development"
         ],
     };
 
