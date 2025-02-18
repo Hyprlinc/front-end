@@ -21,10 +21,13 @@ import supportIcon from '../assets/icons/support.png';
 import homeAcive from '../assets/icons/homeblue.png';
 import inboxActive from '../assets/icons/messagesblue.png';
 import collabsActive from '../assets/icons/collabotationsblue.png';
-import earningsActive from '../assets/icons/profileblue.png';
+import earningsActive from '../assets/icons/earningsblue.png';
+import earnings from '../assets/icons/earnings.png';
 import portfolioActive from '../assets/icons/portfolioblue.png';
 import settingsActive from '../assets/icons/settingsblue.png';
 import supportActive from '../assets/icons/supportblue.png';
+import profileManagementActive from '../assets/icons/profileblue.png';
+import profileManagemnt from '../assets/icons/profile_management.png';
 import ProfileManagement from './Creators/ProfileManagement';
 import Collab from './Creators/Collaborations/Collab';
 
@@ -512,95 +515,79 @@ const CreatorDashboard = () => {
         </div> */}
 
         {/* Navigation Options */}
-        <nav className="space-y-2">
+        <nav className="space-y-4">
           {/* home */}
           <div
-            className={`flex items-center space-x-2 p-2 rounded-lg cursor-pointer text-[18px] font-['Roboto'] font-semibold
+            className={`flex items-center space-x-2 p-3 rounded-lg cursor-pointer text-[18px] font-['Roboto'] font-semibold
             ${activeSection === 'home' ? 'bg-white text-[#007AFF]' : 'hover:bg-[#1a88ff] text-white'}`}
             onClick={() => setActiveSection('home')}
           >
-            <img src={activeSection === 'home' ? homeAcive : homeIcon} alt="Home" className="w-5 h-5" />
+            <img src={activeSection === 'home' ? homeAcive : homeIcon} alt="Home" className="w-4 h-4" />
             <span>Home</span>
           </div>
           {/* profile-mngm */}
           <div
-            className={`flex items-center space-x-2 p-2 rounded-lg cursor-pointer text-[18px] font-['Roboto'] font-semibold
+            className={`flex items-center space-x-2 p-3 rounded-lg cursor-pointer text-[18px] font-['Roboto'] font-semibold
             ${activeSection === 'profile-mngm' ? 'bg-white text-[#007AFF]' : 'hover:bg-[#1a88ff] text-white'}`}
             onClick={() => setActiveSection('profile-mngm')}
           >
-            <img src={activeSection === 'profile-mngm' ? inboxActive : inboxIcon} alt="Inbox" className="w-5 h-5" />
+            <img src={activeSection === 'profile-mngm' ? profileManagementActive : profileManagemnt} alt="Inbox" className="w-4 h-4" />
             <span>Profile Management</span>
           </div>
           {/* collabs */}
           <div
-            className={`flex items-center space-x-2 p-2 rounded-lg cursor-pointer text-[18px] font-['Roboto'] font-semibold
+            className={`flex items-center space-x-2 p-3 rounded-lg cursor-pointer text-[18px] font-['Roboto'] font-semibold
             ${activeSection === 'collabs' ? 'bg-white text-[#007AFF]' : 'hover:bg-[#1a88ff] text-white'}`}
             onClick={() => setActiveSection('collabs')}
           >
-            <img src={activeSection === 'collabs' ? collabsActive : collabsIcon} alt="Collaborations" className="w-5 h-5" />
+            <img src={activeSection === 'collabs' ? collabsActive : collabsIcon} alt="Collaborations" className="w-4 h-4" />
             <span>Collaborations</span>
           </div>
           {/* earnings */}
           <div
-            className={`flex items-center space-x-2 p-2 rounded-lg cursor-pointer text-[18px] font-['Roboto'] font-semibold
+            className={`flex items-center space-x-2 p-3 rounded-lg cursor-pointer text-[18px] font-['Roboto'] font-semibold
             ${activeSection === 'earnings' ? 'bg-white text-[#007AFF]' : 'hover:bg-[#1a88ff] text-white'}`}
             onClick={() => setActiveSection('earnings')}
           >
-            <img src={activeSection === 'earnings' ? earningsActive : earningsIcon} alt="Earnings" className="w-5 h-5" />
+            <img src={activeSection === 'earnings' ? earningsActive : earnings} alt="Earnings" className="w-4 h-4" />
             <span>Earnings</span>
           </div>
           {/* messages */}
           <div
-            className={`flex items-center space-x-2 p-2 rounded-lg cursor-pointer text-[18px] font-['Roboto'] font-semibold
+            className={`flex items-center space-x-2 p-3 rounded-lg cursor-pointer text-[18px] font-['Roboto'] font-semibold
             ${activeSection === 'messages' ? 'bg-white text-[#007AFF]' : 'hover:bg-[#1a88ff] text-white'}`}
             onClick={() => setActiveSection('messages')}
           >
-            <img src={activeSection === 'messages' ? inboxActive : inboxIcon} alt="Messages" className="w-5 h-5" />
+            <img src={activeSection === 'messages' ? inboxActive : inboxIcon} alt="Messages" className="w-4 h-4" />
             <span>Messages</span>
-          </div>
-          {/* insights and analytics */}
-          <div
-            className={`flex items-center space-x-2 p-2 rounded-lg cursor-pointer text-[18px] font-['Roboto'] font-semibold
-            ${activeSection === 'insights' ? 'bg-white text-[#007AFF]' : 'hover:bg-[#1a88ff] text-white'}`}
-            onClick={() => setActiveSection('insights')}
-          >
-            <img src={activeSection === 'insights' ? portfolioActive : portfolioIcon} alt="Insights" className="w-5 h-5" />
-            <span>Insights and Analytics</span>
           </div>
           {/* portfolio */}
           <div
-            className={`flex items-center space-x-2 p-2 rounded-lg cursor-pointer text-[18px] font-['Roboto'] font-semibold
+            className={`flex items-center space-x-2 p-3 rounded-lg cursor-pointer text-[18px] font-['Roboto'] font-semibold
             ${activeSection === 'portfolio' ? 'bg-white text-[#007AFF]' : 'hover:bg-[#1a88ff] text-white'}`}
             onClick={() => setActiveSection('portfolio')}
           >
-            <img src={activeSection === 'portfolio' ? portfolioActive : portfolioIcon} alt="Portfolio" className="w-5 h-5" />
+            <img src={activeSection === 'portfolio' ? portfolioActive : portfolioIcon} alt="Portfolio" className="w-4 h-4" />
             <span>Portfolio</span>
           </div>
-          {/* campaigns calendar */}
-          <div
-            className={`flex items-center space-x-2 p-2 rounded-lg cursor-pointer text-[18px] font-['Roboto'] font-semibold
-            ${activeSection === 'calendar' ? 'bg-white text-[#007AFF]' : 'hover:bg-[#1a88ff] text-white'}`}
-            onClick={() => setActiveSection('calendar')}
-          >
-            <img src={activeSection === 'calendar' ? collabsActive : collabsIcon} alt="Calendar" className="w-5 h-5" />
-            <span>Campaigns Calendar</span>
-          </div>
+          
+          
           {/* settings */}
           <div
-            className={`flex items-center space-x-2 p-2 rounded-lg cursor-pointer text-[18px] font-['Roboto'] font-semibold
+            className={`flex items-center space-x-2 p-3 rounded-lg cursor-pointer text-[18px] font-['Roboto'] font-semibold
             ${activeSection === 'settings' ? 'bg-white text-[#007AFF]' : 'hover:bg-[#1a88ff] text-white'}`}
             onClick={() => setActiveSection('settings')}
           >
-            <img src={activeSection === 'settings' ? settingsActive : settingsIcon} alt="Settings" className="w-5 h-5" />
+            <img src={activeSection === 'settings' ? settingsActive : settingsIcon} alt="Settings" className="w-4 h-4" />
             <span>Settings</span>
           </div>
           {/* support */}
           <div
-            className={`flex items-center space-x-2 p-2 rounded-lg cursor-pointer text-[20px] font-['Roboto'] font-semibold
+            className={`flex items-center space-x-2 p-3 rounded-lg cursor-pointer text-[18px] font-['Roboto'] font-semibold
             ${activeSection === 'support' ? 'bg-white text-[#007AFF]' : 'hover:bg-[#1a88ff] text-white'}`}
             onClick={() => setActiveSection('support')}
           >
-            <img src={activeSection === 'support' ? supportActive : supportIcon} alt="Support" className="w-5 h-5" />
+            <img src={activeSection === 'support' ? supportActive : supportIcon} alt="Support" className="w-4 h-4" />
             <span>Support</span>
           </div>
         </nav>

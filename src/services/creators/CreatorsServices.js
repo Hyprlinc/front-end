@@ -147,3 +147,38 @@ export const fetchCreatorsChannelData = async (token) => {
         }
     }
 };
+
+export const searchCampaigns = async (searchParams) => {
+    const token = localStorage.getItem('jwt');
+    console.log(token)
+
+    try {
+        // Construct query parameters
+        const queryParams = new URLSearchParams({
+            ...(searchParams.search && { search: searchParams.search }),
+            ...(searchParams.startDate && { startDate: searchParams.startDate }),
+            ...(searchParams.endDate && { endDate: searchParams.endDate }),
+            ...(searchParams.minBudget && { minBudget: searchParams.minBudget }),
+            ...(searchParams.maxBudget && { maxBudget: searchParams.maxBudget }),
+            page: searchParams.page || 1,
+            limit: searchParams.limit || 20
+        });
+
+        const response = await axios.get(`${API_BASE_URL}/fuzzySearch/campaignSearch?${queryParams}`, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+
+        return response.data;
+    } catch (error) {
+        console.error('Error searching campaigns:', error);
+        if (error.response && error.response.status === 401) {
+            throw new Error('Unauthorized access');
+        } else {
+            throw new Error('Error searching campaigns: ' + (error.response?.data?.message || error.message));
+        }
+    }
+};
+
+
