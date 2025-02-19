@@ -27,7 +27,7 @@ const ProfileManagement = ({name, email, location, phoneNumber, bio}) => {
     const renderTabContent = () => {
         switch (activeTab) {
             case 'profile':
-                return <ProfileTab name={"Harsh"} email={"tripathiharsh1606@gmail.com"} location={"India"} phoneNumber={"9876543210"} bio={"I am a software engineer lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos. lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos."} />;
+                return <ProfileTab name={name} email={email} location={location} phoneNumber={phoneNumber} bio={bio} />;
             case 'niches':
                 return <NichesTab/>;
             case 'kyc':

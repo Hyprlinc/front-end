@@ -370,7 +370,7 @@ const CreatorDashboard = () => {
     switch (activeSection) {
       case 'profile-mngm':
 
-        return <ProfileManagement/>
+        return <ProfileManagement name={user.fullName} email={user.email} location={user.country} phoneNumber={user.phoneNumber} bio={user.bio} />
 
       case 'inbox':
         return <EmailInbox />;
