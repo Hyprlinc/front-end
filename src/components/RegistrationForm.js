@@ -714,7 +714,7 @@ const RegistrationForm = () => {
                         </div>
 
                         <div>
-                            <label htmlFor="channelGenre" className="block text-gray-700 text-sm mb-1">Channel Genre</label>
+                            <label htmlFor="channelGenre" className="block text-gray-700 text-sm mb-1">Content Niche</label>
                             <select
                                 id="channelGenre"
                                 name="channelGenre"
@@ -723,7 +723,7 @@ const RegistrationForm = () => {
                                 className="w-full px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-brand-blue"
                                 required
                             >
-                                <option value="">Select Channel Genre</option>
+                                <option value="">Select Your Niche</option>
                                 {channelGenres.map(genre => (
                                     <option key={genre} value={genre}>{genre}</option>
                                 ))}

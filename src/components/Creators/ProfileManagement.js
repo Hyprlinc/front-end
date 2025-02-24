@@ -4,15 +4,16 @@ import { useNavigate } from 'react-router-dom';
 import Navbar from './comp/Navbar';
 import Sidebar from './comp/SideBar';
 
-const ProfileManagement = ({name, email, location, phoneNumber, bio}) => {
+const ProfileManagement = ({name, email, location, phoneNumber, bio, niches}) => {
     const [activeTab, setActiveTab] = useState('profile');
     const [sliderWidth, setSliderWidth] = useState(0);
     const [sliderOffset, setSliderOffset] = useState(0);
     const tabsRef = useRef({});
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+    console.log(niches)
 
     const defaultUser = {
-        name: "Anushka",
+        name: name,
         profilePicture: "https://avatar.iran.liara.run/public"
     };
 
@@ -29,7 +30,7 @@ const ProfileManagement = ({name, email, location, phoneNumber, bio}) => {
             case 'profile':
                 return <ProfileTab name={name} email={email} location={location} phoneNumber={phoneNumber} bio={bio} />;
             case 'niches':
-                return <NichesTab/>;
+                return <NichesTab niches={niches} />;
             case 'kyc':
                 return <KYCTab/>;
             case 'bankAccounts':
@@ -75,20 +76,46 @@ const ProfileManagement = ({name, email, location, phoneNumber, bio}) => {
                         <button 
                             ref={el => tabsRef.current['kyc'] = el}
                             style={{...styles.tabButton, 
-                                color: activeTab === 'kyc' ? '#082777' : '#717B8C'
+                                color: activeTab === 'kyc' ? '#082777' : '#717B8C',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '8px'
                             }}
                             onClick={() => setActiveTab('kyc')}
                         >
                             KYC
+                            <span style={{
+                                fontSize: '10px',
+                                padding: '2px 6px',
+                                backgroundColor: '#FFF3E0',
+                                color: '#F57C00',
+                                borderRadius: '12px',
+                                fontWeight: '500'
+                            }}>
+                                Coming Soon
+                            </span>
                         </button>
                         <button 
                             ref={el => tabsRef.current['bankAccounts'] = el}
                             style={{...styles.tabButton, 
-                                color: activeTab === 'bankAccounts' ? '#082777' : '#717B8C'
+                                color: activeTab === 'bankAccounts' ? '#082777' : '#717B8C',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '8px'
                             }}
                             onClick={() => setActiveTab('bankAccounts')}
                         >
                             Bank Accounts
+                            <span style={{
+                                fontSize: '10px',
+                                padding: '2px 6px',
+                                backgroundColor: '#FFF3E0',
+                                color: '#F57C00',
+                                borderRadius: '12px',
+                                fontWeight: '500'
+                            }}>
+                                Coming Soon
+                            </span>
                         </button>
                     </div>
                     <div className="tab-content" style={styles.tabContent}>
@@ -464,8 +491,13 @@ const KYCTab = () => {
     );
 };
 
-const NichesTab = () => {
-    const [selectedNiches, setSelectedNiches] = useState(new Set());
+const NichesTab = ({ niches }) => {
+    // Initialize selectedNiches with passed niches if available
+    const [selectedNiches, setSelectedNiches] = useState(() => {
+        if (!niches) return new Set();
+        // Split the niches string and create a Set
+        return new Set(niches.split(',').map(niche => niche.trim()));
+    });
 
     const categories = {
         "Content Preferences": [

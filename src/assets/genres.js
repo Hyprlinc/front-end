@@ -1,10 +1,19 @@
 const channelGenres = [
-    'Food', 'Travel', 'Clothing', 'Fitness', 'Technology',
-    'Home & Decor', 'Beauty', 'Education', 'Comedy',
-    'Music', 'Gaming', 'Sports', 'Automotive',
-    'Science & Technology', 'Lifestyle', 'Fashion',
-    'Cooking', 'DIY & Crafts', 'Movies & Entertainment',
-    'Health & Wellness'
+    "Fashion, Lifestyle & Beauty",
+    "Technology",
+    "Food & Beverages",
+    "Fitness & Wellness",
+    "Travel & Adventure",
+    "Entertainment",
+    "Education & Careers",
+    "Gaming",
+    "Finance & Business",
+    "Automotive",
+    "Art & Creativity",
+    "Environment & Sustainability",
+    "Health & Medicine",
+    "Pets & Animals",
+    "Motivation & Personal Development"
 ];
 
 export default channelGenres;

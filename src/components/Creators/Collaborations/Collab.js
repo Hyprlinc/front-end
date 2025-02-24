@@ -1,17 +1,36 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Tabs, Tab, Box } from '@mui/material';
 import Navbar from '../comp/Navbar';
 import Sidebar from '../comp/SideBar';
 import ActiveCampaigns from './collabTabs/ActiveCampaigns';
 import Invitations from './collabTabs/Invitations';
 import PastCampaigns from './collabTabs/PastCampaigns';
-
-
+import { searchCampaigns } from '../../../services/creators/CreatorsServices';
 
 const Collab = () => {
     const [activeTab, setActiveTab] = useState(0);
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+    const [campaigns, setCampaigns] = useState([]);
+    const [loading, setLoading] = useState(true);
 
+    useEffect(() => {
+        const fetchCampaigns = async () => {
+            try {
+                const searchParams = {
+                    page: 1,
+                    limit: 20
+                };
+                const response = await searchCampaigns(searchParams);
+                setCampaigns(response);
+            } catch (error) {
+                console.error('Error fetching campaigns:', error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchCampaigns();
+    }, []);
 
     const defaultUser = {
         name: "Anushka",
@@ -46,29 +65,20 @@ const Collab = () => {
             </Box>
 
             <TabPanel value={activeTab} index={0}>
-          
-                <ActiveCampaigns/>
-         
+                <ActiveCampaigns campaigns={campaigns} loading={loading} />
             </TabPanel>
 
             <TabPanel value={activeTab} index={1}>
-          
                 <Invitations/>
-             
             </TabPanel>
 
             <TabPanel value={activeTab} index={2}>
-                {/* Content for History */}
                 <PastCampaigns/>
-           
             </TabPanel>
 
-            {/* Sidebar section moved inside the main Box */}
             {isSidebarOpen && (
                 <Box sx={{ position: 'absolute', right: 0, top: 0, height: '100%' }}>
-                    {/* Replace with your actual Sidebar component */}
                     <div className="sidebar">
-                        {/* Sidebar content */}
                         <Sidebar
                 isOpen={isSidebarOpen} 
                 onClose={() => setIsSidebarOpen(false)} 

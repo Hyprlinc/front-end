@@ -66,7 +66,7 @@ const CreatorDashboard = () => {
     country: "",
     city: "",
     contentLang: [],
-    channelGenre: "",
+    channelNiche: "",
     contentDesc: "",
     channelAgeYoutube: "",
     channelAgeIg: "",
@@ -102,7 +102,7 @@ const CreatorDashboard = () => {
           city: profileResponse.data.city,
           contentLang: profileResponse.data.content_lang,
           contentDesc: profileResponse.data.content_desc,
-          channelGenre: profileResponse.data.channel_genre,
+          channelNiche: profileResponse.data.niches,
           channelAgeYoutub: channelDataResponse.data.channelDetails.channel_age_youtube,
           channelAgeIg: channelDataResponse.data.channelDetails.ig_account_age,
           subscribers: channelDataResponse.data.channelDetails.subscribers_count_youtube,
@@ -370,7 +370,7 @@ const CreatorDashboard = () => {
     switch (activeSection) {
       case 'profile-mngm':
 
-        return <ProfileManagement name={user.fullName} email={user.email} location={user.country} phoneNumber={user.phoneNumber} bio={user.bio} />
+      return <ProfileManagement name={user.fullName} email={user.email} location={user.country} phoneNumber={user.phoneNumber} bio={user.bio} niches={user.channelNiche} />
 
       case 'inbox':
         return <EmailInbox />;
