@@ -46,10 +46,10 @@ const CreatorDashboardHome = ({ user, stats, campaigns, socialStats }) => {
   }, [isSearchActive]);
 
   // If user is undefined, provide a default user object
-  const defaultUser = {
-    name: "Anushka",
-    profilePicture: "https://avatar.iran.liara.run/public"
-  };
+  // const defaultUser = {
+  //   name: "Anushka",
+  //   profilePicture: "https://avatar.iran.liara.run/public"
+  // };
 
   // Mock data - in a real application, these would come from props or context
   const profileCompletionPercentage = user.profileCompletionPercentage || 85;
@@ -135,7 +135,7 @@ const CreatorDashboardHome = ({ user, stats, campaigns, socialStats }) => {
       <div className={`flex-1 transition-all duration-300 ${isSidebarOpen ? 'mr-80' : ''}`}>
         {/* Navbar */}
         <Navbar 
-          user={user || defaultUser} 
+          user={user} 
           onSidebarToggle={() => setIsSidebarOpen(!isSidebarOpen)} 
         />
       

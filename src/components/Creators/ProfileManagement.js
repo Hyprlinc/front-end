@@ -13,7 +13,7 @@ const ProfileManagement = ({name, email, location, phoneNumber, bio, niches}) =>
     console.log(niches)
 
     const defaultUser = {
-        name: name,
+        fullName: name,
         profilePicture: "https://avatar.iran.liara.run/public"
     };
 
@@ -821,25 +821,41 @@ const ProfileTab = ({name, email, location, phoneNumber, bio}) => {
         const textareaRef = useRef(null);
 
         useEffect(() => {
-            if (editStates.bio && textareaRef.current) {
-                textareaRef.current.focus();
-            }
+           
         }, [editStates.bio]);
+
+        const handleBioChange = (e) => {
+            const newValue = e.target.value;
+            setTempValues(prev => ({
+                ...prev,
+                bio: newValue
+            }));
+        };
 
         return (
             <div style={{ position: 'relative' }}>
-                {editStates.bio ? (
+                {!editStates.bio ? (
+                    <div 
+                        style={{
+                            width: '100%',
+                            padding: '12px',
+                            backgroundColor: '#EDF2F6',
+                            border: 'none',
+                            borderRadius: '8px',
+                            fontSize: '16px',
+                            minHeight: '120px'
+                        }}
+                        onClick={() => toggleEdit('bio')}
+                    >
+                        {values.bio || 'Enter your bio'}
+                    </div>
+                ) : (
                     <textarea 
                         ref={textareaRef}
                         placeholder='Enter your bio'
                         value={tempValues.bio}
-                        onChange={(e) => handleChange('bio', e.target.value)}
-                        onBlur={(e) => {
-                            const relatedTarget = e.relatedTarget;
-                            if (!relatedTarget || !relatedTarget.classList.contains('edit-button')) {
-                                toggleEdit('bio');
-                            }
-                        }}
+                        onChange={handleBioChange}
+                        onBlur={() => toggleEdit('bio')}
                         style={{
                             width: '100%',
                             padding: '12px',
@@ -851,26 +867,10 @@ const ProfileTab = ({name, email, location, phoneNumber, bio}) => {
                             resize: 'vertical'
                         }}
                     />
-                ) : (
-                    <div style={{
-                        width: '100%',
-                        padding: '12px',
-                        backgroundColor: '#EDF2F6',
-                        border: 'none',
-                        borderRadius: '8px',
-                        fontSize: '16px',
-                        minHeight: '120px'
-                    }}>
-                        {values.bio || 'Enter your bio'}
-                    </div>
                 )}
                 <button 
                     className="edit-button"
-                    onClick={() => {
-                        if (!editStates.bio) {
-                            toggleEdit('bio');
-                        }
-                    }}
+                    onClick={() => toggleEdit('bio')}
                     style={{
                         position: 'absolute',
                         right: '12px',

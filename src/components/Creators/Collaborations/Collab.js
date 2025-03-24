@@ -33,7 +33,7 @@ const Collab = () => {
     }, []);
 
     const defaultUser = {
-        name: "Anushka",
+        fullName: "",
         profilePicture: "https://avatar.iran.liara.run/public"
     };
 

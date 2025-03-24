@@ -264,6 +264,15 @@ const BrandLoginForm = ({ setShowLoginForm }) => {
     const [errors, setErrors] = useState({});
     const [isSubmitting, setIsSubmitting] = useState(false);
 
+
+    const storeToken = (token) => {
+        localStorage.setItem('brandToken', token);
+    };
+
+    const getToken = () => {
+        return localStorage.getItem('brandToken');
+    };
+
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData((prev) => ({
@@ -277,8 +286,9 @@ const BrandLoginForm = ({ setShowLoginForm }) => {
         setIsSubmitting(true);
 
         try {
-            await brandLogin(formData.email, formData.password);
-            alert('Login successful'); 
+           const loginResponse =  await brandLogin(formData.email, formData.password);
+            storeToken(loginResponse.token);
+            console.log('Login response:', loginResponse);
             navigate('/brandsDashboard');
             // Replace with navigation to dashboard
         } catch (error) {

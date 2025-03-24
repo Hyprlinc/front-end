@@ -28,9 +28,11 @@ import settingsActive from '../assets/icons/settingsblue.png';
 import supportActive from '../assets/icons/supportblue.png';
 import profileManagementActive from '../assets/icons/profileblue.png';
 import profileManagemnt from '../assets/icons/profile_management.png';
+
+import Portfolio from './Creators/Portfolio';
 import ProfileManagement from './Creators/ProfileManagement';
 import Collab from './Creators/Collaborations/Collab';
-
+import Support from './Creators/Support';
 
 
 
@@ -438,6 +440,9 @@ const CreatorDashboard = () => {
           </div>
         );
 
+        case 'portfolio':
+          return <Portfolio/>
+
       case 'help':
         return (
           <div className="p-6">
@@ -458,6 +463,9 @@ const CreatorDashboard = () => {
             </div>
           </div>
         );
+
+        case 'support':
+          return <Support/>
 
       // case 'search':
       //   return (
@@ -553,14 +561,14 @@ const CreatorDashboard = () => {
             <span>Earnings</span>
           </div>
           {/* messages */}
-          <div
+          {/* <div
             className={`flex items-center space-x-2 p-3 rounded-lg cursor-pointer text-[18px] font-['Roboto'] font-semibold
             ${activeSection === 'messages' ? 'bg-white text-[#007AFF]' : 'hover:bg-[#1a88ff] text-white'}`}
             onClick={() => setActiveSection('messages')}
           >
             <img src={activeSection === 'messages' ? inboxActive : inboxIcon} alt="Messages" className="w-4 h-4" />
             <span>Messages</span>
-          </div>
+          </div> */}
           {/* portfolio */}
           <div
             className={`flex items-center space-x-2 p-3 rounded-lg cursor-pointer text-[18px] font-['Roboto'] font-semibold

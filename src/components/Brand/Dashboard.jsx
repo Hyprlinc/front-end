@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Search,
   Bell,
@@ -21,9 +21,24 @@ import Analytics from './Analytics';
 import Messages from './Messages';
 
 const Dashboard = () => {
+  const [token, setToken] = useState("");
   const [isSidebarOpen, setSidebarOpen] = useState(true);
   const [isProfileMenuOpen, setProfileMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState('Dashboard');
+
+
+  
+
+  useEffect(() => { 
+    const token = localStorage.getItem('brandToken');
+    setToken(token);
+    if(!token){
+      window.location.href = "/";
+    }
+  }, []);
+  
+
+
 
   const metrics = [
     { label: 'Total Campaigns', value: '12 Campaigns Active' },
@@ -42,6 +57,9 @@ const Dashboard = () => {
     'Approve deliverables for Campaign ABC',
     'Finalize influencer selection for Campaign XYZ',
   ];
+
+
+
 
   return (
     <div className="flex h-screen bg-gray-50">
@@ -123,7 +141,13 @@ const Dashboard = () => {
                       <User className="w-4 h-4 mr-2" />
                       Profile Settings
                     </button>
-                    <button className="flex items-center w-full px-4 py-2 text-gray-600 hover:bg-blue-50">
+                    <button 
+                    onClick={() => {
+                      localStorage.removeItem('brandToken');
+                      window.location.reload();
+                    }}
+                    
+                    className="flex items-center w-full px-4 py-2 text-gray-600 hover:bg-blue-50">
                       <LogOut className="w-4 h-4 mr-2" />
                       Logout
                     </button>

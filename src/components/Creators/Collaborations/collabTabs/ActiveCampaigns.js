@@ -67,10 +67,19 @@ const ActiveCampaigns = ({ campaigns, loading }) => {
     const [currentPage, setCurrentPage] = useState(1);
     const [slideDirection, setSlideDirection] = useState('right');
     const [animating, setAnimating] = useState(false);
+    const [searchQuery, setSearchQuery] = useState('');
+    const [showFilters, setShowFilters] = useState(false);
 
     // Check if campaigns exists and has the expected structure
     const campaignData = campaigns?.data || [];
     const pagination = campaigns?.pagination || { currentPage: 1, totalPages: 1 };
+
+    // Filter campaigns based on search query
+    const filteredCampaigns = campaignData.filter(campaign => 
+        campaign.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        campaign.brand_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        campaign.description.toLowerCase().includes(searchQuery.toLowerCase())
+    );
 
     return (
         <Box sx={{ position: 'relative', overflow: 'hidden' }}>
@@ -82,6 +91,64 @@ const ActiveCampaigns = ({ campaigns, loading }) => {
                     }
                 `}
             </style>
+            
+            {/* Search and filter section */}
+            <Box sx={{ 
+                padding: '20px 20px 0 20px',
+                display: 'flex',
+                gap: '12px',
+                alignItems: 'flex-start'
+            }}>
+                <div style={{ flex: 1, position: 'relative' }}>
+                    <input
+                        type="text"
+                        placeholder="Search campaigns..."
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        style={{
+                            width: '100%',
+                            padding: '12px',
+                            borderRadius: '8px',
+                            border: '1px solid #ddd',
+                            fontSize: '16px'
+                        }}
+                    />
+                </div>
+                <button
+                    onClick={() => setShowFilters(!showFilters)}
+                    style={{
+                        padding: '12px 24px',
+                        borderRadius: '8px',
+                        border: '1px solid #ddd',
+                        backgroundColor: showFilters ? '#007BFF' : 'white',
+                        color: showFilters ? 'white' : '#333',
+                        cursor: 'pointer',
+                        fontSize: '16px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '8px'
+                    }}
+                >
+                    <span>Filter</span>
+                    <span style={{ fontSize: '18px' }}>
+                        {showFilters ? '▼' : '▲'}
+                    </span>
+                </button>
+            </Box>
+
+            {/* Filter options panel */}
+            {showFilters && (
+                <Box sx={{ 
+                    padding: '20px',
+                    backgroundColor: '#f5f5f5',
+                    margin: '0 20px 20px 20px',
+                    borderRadius: '8px'
+                }}>
+                    {/* Add your filter options here */}
+                    <div>Filter options will go here</div>
+                </Box>
+            )}
+
             <Box
                 sx={{
                     transition: 'all 0.3s ease-out',
@@ -94,7 +161,7 @@ const ActiveCampaigns = ({ campaigns, loading }) => {
                 {loading ? (
                     <ShimmerGrid />
                 ) : (
-                    <ActiveCampaignsCards campaigns={campaignData} />
+                    <ActiveCampaignsCards campaigns={filteredCampaigns} />
                 )}
             </Box>
             

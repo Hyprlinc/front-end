@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import Navbar from './comp/Navbar';
 import { 
   Download, 
   DollarSign, 
@@ -63,9 +64,22 @@ const dummyData = {
 };
 
 const EarningsDashboard = () => {
+
+
+  const defaultUser = {
+    fullName: "",
+    profilePicture: "https://avatar.iran.liara.run/public"
+  };
+
   const [activeTab, setActiveTab] = useState('earnings');
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   return (
+    <div className={`flex-1 transition-all duration-300 ${isSidebarOpen ? 'mr-80' : ''}`}>
+       <Navbar
+                user={defaultUser}
+                onSidebarToggle={() => setIsSidebarOpen(!isSidebarOpen)}
+            />
     <div className="p-6 space-y-6">
       {/* Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -304,6 +318,7 @@ const EarningsDashboard = () => {
           </div>
         </div>
       )}
+    </div>
     </div>
   );
 };

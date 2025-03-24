@@ -33,8 +33,8 @@ const Navbar = ({user, onSidebarToggle}) => {
                   className="w-[40px] h-[40px] rounded-full"
                 />
                 <div className="ml-3 text-left">
-                  <p className="text-sm font-medium text-gray-900">{user.name || "Anushka"}</p>
-                  <p className="text-xs text-gray-500">Influencer</p>
+                  <p className="text-sm font-medium text-gray-900">{user.fullName}</p>
+                  <p className="text-xs text-gray-500">{user.profileType || "Influencer"}</p>
                 </div>
               </button>
             </div>

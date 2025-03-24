@@ -102,6 +102,39 @@
   gap: 10px;
 }
 
+.portfolio-container {
+  width: 100%;
+  min-height: 100vh;
+}
+
+.tabs-container {
+  padding: 20px;
+}
+
+.tabs {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.tab {
+  padding: 10px 20px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-size: 16px;
+  border-bottom: 2px solid transparent;
+}
+
+.tab.active {
+  border-bottom: 2px solid #000;
+  font-weight: bold;
+}
+
+.tab-content {
+  padding: 20px 0;
+}
+
 .brand-logo {
   width: 30px;
   height: 30px;
