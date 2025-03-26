@@ -287,7 +287,7 @@ const BrandLoginForm = ({ setShowLoginForm }) => {
 
         try {
            const loginResponse =  await brandLogin(formData.email, formData.password);
-            storeToken(loginResponse.token);
+            storeToken(loginResponse.data.token);
             console.log('Login response:', loginResponse);
             navigate('/brandsDashboard');
             // Replace with navigation to dashboard

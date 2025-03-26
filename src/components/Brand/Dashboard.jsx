@@ -19,26 +19,44 @@ import DiscoverInfluencers from './DiscoverInfluencers';
 import CampaignManagement from './CampaignManagement';
 import Analytics from './Analytics';
 import Messages from './Messages';
+import { getBrandsInfo } from '../../services/brands/BrandsInformation';
+import ProfileMenu from './ProfileMenu';
 
 const Dashboard = () => {
   const [token, setToken] = useState("");
-  const [isSidebarOpen, setSidebarOpen] = useState(true);
   const [isProfileMenuOpen, setProfileMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState('Dashboard');
 
+  const [user, setUser] = useState({
+    brands_id: '',
+    brands_name: '',
+    email: '',
+    country: '',
+    product_categories: [],
+    target_audience_age: '',
+    market_fit_capture: '',
+    turnover: '',
+    brands_description: '',
+    brands_website: '',
+    brands_social_media: []
+  });
 
-  
-
-  useEffect(() => { 
+  useEffect(() => {
     const token = localStorage.getItem('brandToken');
     setToken(token);
-    if(!token){
+    if (!token) {
       window.location.href = "/";
+    } else {
+      // Update to handle the API response
+      getBrandsInfo(token)
+        .then(response => {
+          setUser(response);
+        })
+        .catch(error => {
+          console.error('Error fetching brand information:', error);
+        });
     }
   }, []);
-  
-
-
 
   const metrics = [
     { label: 'Total Campaigns', value: '12 Campaigns Active' },
@@ -58,18 +76,12 @@ const Dashboard = () => {
     'Finalize influencer selection for Campaign XYZ',
   ];
 
-
-
-
   return (
     <div className="flex h-screen bg-gray-50">
       {/* Sidebar */}
-      <div className={`fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-lg transform ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} transition-transform duration-300 ease-in-out`}>
+      <div className="fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-lg">
         <div className="flex items-center justify-between p-4 border-b">
           <h1 className="text-2xl font-bold text-blue-600">HyprLinc</h1>
-          <button onClick={() => setSidebarOpen(false)} className="lg:hidden">
-            <X className="w-6 h-6" />
-          </button>
         </div>
 
         <nav className="p-4 space-y-2">
@@ -85,8 +97,8 @@ const Dashboard = () => {
               key={index}
               onClick={() => setActiveSection(item.text)}
               className={`flex items-center w-full px-4 py-2 rounded-lg hover:bg-blue-50 hover:text-blue-600 ${activeSection === item.text
-                  ? 'bg-blue-50 text-blue-600'
-                  : 'text-gray-600'
+                ? 'bg-blue-50 text-blue-600'
+                : 'text-gray-600'
                 }`}
             >
               {item.icon}
@@ -97,17 +109,11 @@ const Dashboard = () => {
       </div>
 
       {/* Main Content */}
-      <div className={`flex-1 ${isSidebarOpen ? 'lg:ml-64' : ''}`}>
+      <div className="ml-64 flex-1">
         {/* Header */}
-        <header className="fixed top-0 right-0 left-0 lg:left-64 bg-white shadow-sm z-40">
+        <header className="fixed top-0 right-0 left-64 bg-white shadow-sm z-40">
           <div className="flex items-center justify-between px-4 py-3">
             <div className="flex items-center flex-1">
-              <button
-                onClick={() => setSidebarOpen(!isSidebarOpen)}
-                className="lg:hidden mr-4"
-              >
-                <Menu className="w-6 h-6" />
-              </button>
               <div className="max-w-lg w-full">
                 <div className="relative">
                   <input
@@ -126,40 +132,14 @@ const Dashboard = () => {
                 <span className="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full"></span>
               </button>
 
-              <div className="relative">
-                <button
-                  onClick={() => setProfileMenuOpen(!isProfileMenuOpen)}
-                  className="flex items-center space-x-2 p-2"
-                >
-                  <div className="w-8 h-8 bg-blue-500 rounded-full"></div>
-                  <ChevronDown className="w-4 h-4" />
-                </button>
-
-                {isProfileMenuOpen && (
-                  <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2">
-                    <button className="flex items-center w-full px-4 py-2 text-gray-600 hover:bg-blue-50">
-                      <User className="w-4 h-4 mr-2" />
-                      Profile Settings
-                    </button>
-                    <button 
-                    onClick={() => {
-                      localStorage.removeItem('brandToken');
-                      window.location.reload();
-                    }}
-                    
-                    className="flex items-center w-full px-4 py-2 text-gray-600 hover:bg-blue-50">
-                      <LogOut className="w-4 h-4 mr-2" />
-                      Logout
-                    </button>
-                  </div>
-                )}
-              </div>
+              <ProfileMenu user={user} onProfileMenuToggle={() => setProfileMenuOpen(!isProfileMenuOpen)} />
             </div>
           </div>
         </header>
 
         {/* Main Content Area */}
-        <main className="pt-16 p-6">
+        <main className="pt-24 p-6">
+        <div className={`flex-1 transition-all duration-300 ${isProfileMenuOpen ? 'mr-80' : ''}`}>
           {activeSection === 'Dashboard' && (
             <div className="grid gap-6">
               {/* Metrics Grid */}
@@ -206,19 +186,11 @@ const Dashboard = () => {
 
           {activeSection === 'Discover Influencers' && <DiscoverInfluencers />}
 
-          {activeSection === 'Campaigns' && <CampaignManagement />
+          {activeSection === 'Campaigns' && <CampaignManagement />}
 
-          }
+          {activeSection === 'Analytics' && <Analytics />}
 
-          {activeSection === 'Analytics' && <Analytics />
-
-
-          }
-
-          {activeSection === 'Messages' && <Messages/>
-          
-          
-          }
+          {activeSection === 'Messages' && <Messages />}
 
           {activeSection === 'Settings' && (
             <div className="text-center p-8">
@@ -226,6 +198,7 @@ const Dashboard = () => {
               <p className="text-gray-500 mt-2">Settings and configuration interface will be displayed here</p>
             </div>
           )}
+          </div>
         </main>
       </div>
     </div>
