@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { getInfluencers } from '../../services/brands/EnlistInfluencers';
 import {
   Search,
   Filter,
@@ -21,6 +22,10 @@ const DiscoverInfluencers = () => {
   const [compareMode, setCompareMode] = useState(false);
   const [selectedForComparison, setSelectedForComparison] = useState([]);
   const [isFilterExpanded, setIsFilterExpanded] = useState(true);
+  const [influencers, setInfluencers] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [followerRange, setFollowerRange] = useState([0, 1000000]);
+  const [engagementRange, setEngagementRange] = useState([0, 10]);
 
   const platforms = [
     { name: 'Instagram', icon: <Instagram className="w-5 h-5" /> },
@@ -29,42 +34,6 @@ const DiscoverInfluencers = () => {
   ];
 
   const niches = ['Fashion', 'Tech', 'Food', 'Travel', 'Lifestyle', 'Beauty', 'Gaming', 'Fitness'];
-
-  const influencers = [
-    {
-      id: 1,
-      name: 'Sarah Johnson',
-      username: '@sarahcreates',
-      platform: 'Instagram',
-      followers: '125K',
-      engagement: '3.2%',
-      location: 'Mumbai, India',
-      niche: 'Fashion',
-      avatar: 'https://avatar.iran.liara.run/public/53',
-      metrics: {
-        posts: 892,
-        avgLikes: '3.2K',
-        avgComments: '245'
-      }
-    },
-    {
-      id: 2,
-      name: 'Tech with Mike',
-      username: '@techreviewsmike',
-      platform: 'YouTube',
-      followers: '450K',
-      engagement: '4.5%',
-      location: 'Bangalore, India',
-      niche: 'Tech',
-      avatar: 'https://avatar.iran.liara.run/public/51',
-      metrics: {
-        posts: 245,
-        avgLikes: '15K',
-        avgComments: '1.2K'
-      }
-    },
-    // Add more influencer data here
-  ];
 
   const togglePlatform = (platform) => {
     if (selectedPlatforms.includes(platform)) {
@@ -88,6 +57,59 @@ const DiscoverInfluencers = () => {
     } else if (selectedForComparison.length < 3) {
       setSelectedForComparison([...selectedForComparison, influencerId]);
     }
+  };
+
+  const fetchInfluencers = async () => {
+    try {
+      setLoading(true);
+      const token = localStorage.getItem('brandToken');
+      
+      if (!token) {
+        throw new Error('Authentication token not found');
+      }
+
+      const filters = {
+        platform: selectedPlatforms.length > 0 ? selectedPlatforms[0].toLowerCase() : null,
+        niches: selectedNiches.length > 0 ? selectedNiches.join(',') : null,
+        minFollowers: followerRange[0],
+        maxFollowers: followerRange[1],
+        minEngagement: engagementRange[0],
+        maxEngagement: engagementRange[1]
+      };
+
+      const response = await getInfluencers(token, filters);
+      if (response.success) {
+        setInfluencers(response.data);
+      }
+    } catch (error) {
+      console.error('Failed to fetch influencers:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchInfluencers();
+  }, [selectedPlatforms, selectedNiches, followerRange, engagementRange]);
+
+  const handleFollowerRangeChange = (e) => {
+    const value = parseInt(e.target.value);
+    setFollowerRange([value, followerRange[1]]);
+  };
+
+  const handleMaxFollowerRangeChange = (e) => {
+    const value = parseInt(e.target.value);
+    setFollowerRange([followerRange[0], value]);
+  };
+
+  const handleEngagementRangeChange = (e) => {
+    const value = parseInt(e.target.value);
+    setEngagementRange([value, engagementRange[1]]);
+  };
+
+  const handleMaxEngagementRangeChange = (e) => {
+    const value = parseInt(e.target.value);
+    setEngagementRange([engagementRange[0], value]);
   };
 
   return (
@@ -173,30 +195,56 @@ const DiscoverInfluencers = () => {
                 {/* Follower Range */}
                 <div>
                   <h3 className="font-medium mb-3">Follower Range</h3>
-                  <input
-                    type="range"
-                    min="1000"
-                    max="1000000"
-                    className="w-full"
-                  />
-                  <div className="flex justify-between text-sm text-gray-500">
-                    <span>1K</span>
-                    <span>1M</span>
+                  <div className="space-y-2">
+                    <input
+                      type="range"
+                      min="1000"
+                      max="1000000"
+                      value={followerRange[0]}
+                      className="w-full"
+                      onChange={handleFollowerRangeChange}
+                    />
+                    <input
+                      type="range"
+                      min="1000"
+                      max="1000000"
+                      value={followerRange[1]}
+                      className="w-full"
+                      onChange={handleMaxFollowerRangeChange}
+                    />
+                    <div className="flex justify-between text-sm text-gray-500">
+                      <span>{followerRange[0].toLocaleString()}K</span>
+                      <span>{followerRange[1].toLocaleString()}K</span>
+                    </div>
                   </div>
                 </div>
 
                 {/* Engagement Rate */}
                 <div>
                   <h3 className="font-medium mb-3">Engagement Rate</h3>
-                  <input
-                    type="range"
-                    min="0"
-                    max="10"
-                    className="w-full"
-                  />
-                  <div className="flex justify-between text-sm text-gray-500">
-                    <span>0%</span>
-                    <span>10%</span>
+                  <div className="space-y-2">
+                    <input
+                      type="range"
+                      min="0"
+                      max="10"
+                      step="0.1"
+                      value={engagementRange[0]}
+                      className="w-full"
+                      onChange={handleEngagementRangeChange}
+                    />
+                    <input
+                      type="range"
+                      min="0"
+                      max="10"
+                      step="0.1"
+                      value={engagementRange[1]}
+                      className="w-full"
+                      onChange={handleMaxEngagementRangeChange}
+                    />
+                    <div className="flex justify-between text-sm text-gray-500">
+                      <span>{engagementRange[0]}%</span>
+                      <span>{engagementRange[1]}%</span>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -220,74 +268,84 @@ const DiscoverInfluencers = () => {
 
           {/* Influencer Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {influencers.map((influencer) => (
-              <div key={influencer.id} className="bg-white rounded-lg shadow-sm overflow-hidden">
-                <div className="p-4">
-                  <div className="flex items-start justify-between">
-                    <div className="flex items-center space-x-3">
-                      <img
-                        src={influencer.avatar}
-                        alt={influencer.name}
-                        className="w-16 h-16 rounded-full object-cover"
-                      />
-                      <div>
-                        <h3 className="font-medium">{influencer.name}</h3>
-                        <p className="text-sm text-gray-500">{influencer.username}</p>
-                        <div className="flex items-center mt-1 text-sm text-gray-500">
-                          <MapPin className="w-4 h-4 mr-1" />
-                          {influencer.location}
+            {loading ? (
+              <div>Loading...</div>
+            ) : (
+              influencers.map((influencer) => (
+                <div key={influencer.id} className="bg-white rounded-lg shadow-sm overflow-hidden">
+                  <div className="p-4">
+                    <div className="flex items-start justify-between">
+                      <div className="flex items-center space-x-3">
+                        <img
+                          src={`https://avatar.iran.liara.run/public/${Math.floor(Math.random() * 100)}`}
+                          alt={influencer.full_name}
+                          className="w-16 h-16 rounded-full object-cover"
+                        />
+                        <div>
+                          <h3 className="font-medium">{influencer.full_name}</h3>
+                          <p className="text-sm text-gray-500">{influencer.email}</p>
+                          <div className="flex items-center mt-1 text-sm text-gray-500">
+                            <MapPin className="w-4 h-4 mr-1" />
+                            {`${influencer.city}, ${influencer.country}`}
+                          </div>
                         </div>
                       </div>
+                      {compareMode && (
+                        <button
+                          onClick={() => toggleInfluencerComparison(influencer.id)}
+                          className={`p-2 rounded-lg ${
+                            selectedForComparison.includes(influencer.id)
+                              ? 'bg-blue-500 text-white'
+                              : 'bg-gray-100 text-gray-600'
+                          }`}
+                        >
+                          <Plus className="w-5 h-5" />
+                        </button>
+                      )}
                     </div>
-                    {compareMode && (
-                      <button
-                        onClick={() => toggleInfluencerComparison(influencer.id)}
-                        className={`p-2 rounded-lg ${
-                          selectedForComparison.includes(influencer.id)
-                            ? 'bg-blue-500 text-white'
-                            : 'bg-gray-100 text-gray-600'
-                        }`}
-                      >
-                        <Plus className="w-5 h-5" />
+
+                    <div className="mt-4 grid grid-cols-3 gap-4">
+                      <div className="text-center">
+                        <p className="text-sm text-gray-500">Followers</p>
+                        <p className="font-medium">
+                          {influencer.primaryplatform.includes('youtube') 
+                            ? influencer.subscribers_count_youtube 
+                            : influencer.ig_followers_count}
+                        </p>
+                      </div>
+                      <div className="text-center">
+                        <p className="text-sm text-gray-500">Engagement</p>
+                        <p className="font-medium">{influencer.eng_rate_ig}%</p>
+                      </div>
+                      <div className="text-center">
+                        <p className="text-sm text-gray-500">Platform</p>
+                        <p className="font-medium">{influencer.primaryplatform[0]}</p>
+                      </div>
+                    </div>
+
+                    <div className="mt-4 flex flex-wrap gap-2">
+                      <span className="px-2 py-1 bg-gray-100 rounded-full text-sm text-gray-600">
+                        {influencer.niches}
+                      </span>
+                      {influencer.content_lang.map((lang, index) => (
+                        <span key={index} className="px-2 py-1 bg-gray-100 rounded-full text-sm text-gray-600">
+                          {lang}
+                        </span>
+                      ))}
+                    </div>
+
+                    <div className="mt-4 flex justify-between">
+                      <button className="flex-1 mr-2 py-2 px-4 bg-blue-500 text-white rounded-lg hover:bg-blue-600">
+                        View Profile
                       </button>
-                    )}
-                  </div>
-
-                  <div className="mt-4 grid grid-cols-3 gap-4">
-                    <div className="text-center">
-                      <p className="text-sm text-gray-500">Followers</p>
-                      <p className="font-medium">{influencer.followers}</p>
+                      <button className="py-2 px-4 border border-gray-200 rounded-lg hover:bg-gray-50">
+                        <Share2 className="w-5 h-5 text-gray-600" />
+                      </button>
                     </div>
-                    <div className="text-center">
-                      <p className="text-sm text-gray-500">Engagement</p>
-                      <p className="font-medium">{influencer.engagement}</p>
-                    </div>
-                    <div className="text-center">
-                      <p className="text-sm text-gray-500">Posts</p>
-                      <p className="font-medium">{influencer.metrics.posts}</p>
-                    </div>
-                  </div>
-
-                  <div className="mt-4 flex space-x-2">
-                    <span className="px-2 py-1 bg-gray-100 rounded-full text-sm text-gray-600">
-                      {influencer.niche}
-                    </span>
-                    <span className="px-2 py-1 bg-gray-100 rounded-full text-sm text-gray-600">
-                      {influencer.platform}
-                    </span>
-                  </div>
-
-                  <div className="mt-4 flex justify-between">
-                    <button className="flex-1 mr-2 py-2 px-4 bg-blue-500 text-white rounded-lg hover:bg-blue-600">
-                      View Profile
-                    </button>
-                    <button className="py-2 px-4 border border-gray-200 rounded-lg hover:bg-gray-50">
-                      <Share2 className="w-5 h-5 text-gray-600" />
-                    </button>
                   </div>
                 </div>
-              </div>
-            ))}
+              ))
+            )}
           </div>
         </div>
       </div>
