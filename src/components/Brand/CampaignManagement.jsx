@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   PlusCircle,
   Calendar,
@@ -11,71 +11,108 @@ import {
   Youtube,
   Videotape,
   Image,
-  MessageSquare
+  MessageSquare,
+  X,
+  Upload,
 } from 'lucide-react';
+import { createCampaign, getBrandCampaigns } from '../../services/brands/CreateNewCampaign';
 
 const CampaignManagement = () => {
   const [activeTab, setActiveTab] = useState('active');
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [campaigns, setCampaigns] = useState({
+    active: [],
+    completed: [],
+    draft: []
+  });
 
-  const campaigns = {
-    active: [
-      {
-        id: 1,
-        name: 'Summer Collection Launch',
-        budget: '₹500,000',
-        startDate: '2025-02-01',
-        endDate: '2025-03-01',
-        deliverables: [
-          { type: 'Reel', count: 2, icon: <Videotape className="w-4 h-4" /> },
-          { type: 'Story', count: 3, icon: <Image className="w-4 h-4" /> },
-          { type: 'Post', count: 1, icon: <Instagram className="w-4 h-4" /> }
-        ],
-        influencers: [
-          { name: 'Sarah Johnson', status: 'Content Submitted', avatar: 'https://avatar.iran.liara.run/public/66' },
-          { name: 'Mike Chen', status: 'In Progress', avatar: 'https://avatar.iran.liara.run/public/100' }
-        ],
-        progress: 65,
-        platform: 'Instagram'
-      },
-      {
-        id: 2,
-        name: 'Tech Product Review',
-        budget: '₹750,000',
-        startDate: '2025-02-15',
-        endDate: '2025-03-15',
-        deliverables: [
-          { type: 'Video', count: 1, icon: <Youtube className="w-4 h-4" /> },
-          { type: 'Story', count: 2, icon: <Image className="w-4 h-4" /> }
-        ],
-        influencers: [
-          { name: 'Tech Reviews Pro', status: 'Approved', avatar: 'https://avatar.iran.liara.run/public/73' }
-        ],
-        progress: 30,
-        platform: 'YouTube'
-      }
-    ],
-    completed: [
-      {
-        id: 3,
-        name: 'Winter Collection',
-        budget: '₹600,000',
-        metrics: {
-          reach: '1.2M',
-          engagement: '4.5%',
-          roi: '2.8x'
-        },
-        platform: 'Instagram'
-      }
-    ],
-    draft: [
-      {
-        id: 4,
-        name: 'Spring Collection 2025',
-        budget: '₹400,000',
-        lastEdited: '2025-01-25',
-        platform: 'Instagram'
-      }
-    ]
+  useEffect(() => {
+    fetchCampaigns();
+  }, []);
+
+  const fetchCampaigns = async () => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      const response = await getBrandCampaigns();
+      
+      // Process and categorize campaigns
+      const categorizedCampaigns = {
+        active: [],
+        completed: [],
+        draft: []
+      };
+
+      response.data.forEach(campaign => {
+        // Create a base campaign object with common properties
+        const baseCampaign = {
+          id: campaign.id,
+          name: campaign.name,
+          budget: `₹${campaign.budget}`,
+          // If campaign_media is already a base64 string, use it directly
+          campaign_media: campaign.campaign_media?.includes('data:') 
+            ? campaign.campaign_media 
+            : campaign.campaign_media 
+              ? `data:image/jpeg;base64,${campaign.campaign_media}` 
+              : null
+        };
+
+        switch (campaign.status) {
+          case 'ACTIVE':
+            categorizedCampaigns.active.push({
+              ...baseCampaign,
+              startDate: new Date(campaign.start_date).toISOString().split('T')[0],
+              endDate: new Date(campaign.end_date).toISOString().split('T')[0],
+              description: campaign.description,
+              progress: calculateProgress(campaign.start_date, campaign.end_date),
+              platform: 'Instagram',
+              target_audience: campaign.target_audience
+            });
+            break;
+          case 'COMPLETED':
+            categorizedCampaigns.completed.push({
+              ...baseCampaign,
+              metrics: {
+                reach: '0',
+                engagement: '0%',
+                roi: '0x'
+              }
+            });
+            break;
+          case 'DRAFT':
+            categorizedCampaigns.draft.push({
+              ...baseCampaign,
+              lastEdited: new Date(campaign.updated_at).toISOString().split('T')[0]
+            });
+            break;
+          default:
+            break;
+        }
+      });
+
+      setCampaigns(categorizedCampaigns);
+    } catch (error) {
+      setError(error.message);
+      console.error('Failed to fetch campaigns:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const calculateProgress = (startDate, endDate) => {
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+    const current = new Date();
+    
+    if (current < start) return 0;
+    if (current > end) return 100;
+    
+    const total = end - start;
+    const progress = current - start;
+    return Math.round((progress / total) * 100);
   };
 
   const getProgressColor = (progress) => {
@@ -89,6 +126,15 @@ const CampaignManagement = () => {
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
       {campaigns.active.map(campaign => (
         <div key={campaign.id} className="bg-white rounded-lg shadow-sm overflow-hidden">
+          {campaign.campaign_media && (
+            <div className="w-full h-48 overflow-hidden">
+              <img 
+                src={campaign.campaign_media} 
+                alt={campaign.name}
+                className="w-full h-full object-cover"
+              />
+            </div>
+          )}
           <div className="p-6">
             <div className="flex justify-between items-start mb-4">
               <div>
@@ -110,16 +156,6 @@ const CampaignManagement = () => {
                 <span>{campaign.startDate} - {campaign.endDate}</span>
               </div>
 
-              {/* Deliverables */}
-              <div className="flex flex-wrap gap-3">
-                {campaign.deliverables.map((deliverable, idx) => (
-                  <div key={idx} className="flex items-center bg-gray-50 px-3 py-1 rounded-full text-sm">
-                    {deliverable.icon}
-                    <span className="ml-2">{deliverable.count}x {deliverable.type}</span>
-                  </div>
-                ))}
-              </div>
-
               {/* Progress Bar */}
               <div>
                 <div className="flex justify-between items-center mb-2">
@@ -135,7 +171,7 @@ const CampaignManagement = () => {
               </div>
 
               {/* Influencers */}
-              <div>
+              {/* <div>
                 <h4 className="text-sm font-medium mb-2">Assigned Influencers</h4>
                 <div className="space-y-2">
                   {campaign.influencers.map((influencer, idx) => (
@@ -152,7 +188,7 @@ const CampaignManagement = () => {
                     </div>
                   ))}
                 </div>
-              </div>
+              </div> */}
             </div>
 
             <button className="mt-4 w-full py-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors">
@@ -168,13 +204,22 @@ const CampaignManagement = () => {
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
       {campaigns.completed.map(campaign => (
         <div key={campaign.id} className="bg-white rounded-lg shadow-sm p-6">
+          {campaign.campaign_media && (
+            <div className="w-full h-40 mb-4 overflow-hidden rounded-lg">
+              <img 
+                src={campaign.campaign_media} 
+                alt={campaign.name}
+                className="w-full h-full object-cover"
+              />
+            </div>
+          )}
           <div className="flex justify-between items-start mb-4">
             <h3 className="font-semibold">{campaign.name}</h3>
             <span className="px-3 py-1 bg-green-100 text-green-600 rounded-full text-sm">
               Completed
             </span>
           </div>
-          
+
           <div className="text-gray-500 mb-4">
             <DollarSign className="inline w-4 h-4 mr-1" />
             {campaign.budget}
@@ -203,13 +248,22 @@ const CampaignManagement = () => {
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
       {campaigns.draft.map(campaign => (
         <div key={campaign.id} className="bg-white rounded-lg shadow-sm p-6">
+          {campaign.campaign_media && (
+            <div className="w-full h-40 mb-4 overflow-hidden rounded-lg">
+              <img 
+                src={campaign.campaign_media} 
+                alt={campaign.name}
+                className="w-full h-full object-cover"
+              />
+            </div>
+          )}
           <div className="flex justify-between items-start mb-4">
             <h3 className="font-semibold">{campaign.name}</h3>
             <span className="px-3 py-1 bg-gray-100 text-gray-600 rounded-full text-sm">
               Draft
             </span>
           </div>
-          
+
           <div className="flex items-center text-gray-500 mb-4">
             <DollarSign className="w-4 h-4 mr-1" />
             <span>{campaign.budget}</span>
@@ -228,13 +282,79 @@ const CampaignManagement = () => {
     </div>
   );
 
+  const handleCreateCampaign = async (campaignData) => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      const response = await createCampaign(campaignData);
+
+      // Update the local state with the new campaign
+      const newCampaign = {
+        id: response.id,
+        name: response.campaignName,
+        budget: response.campaignBudget,
+        lastEdited: new Date().toISOString().split('T')[0],
+        platform: 'Instagram', // You might want to make this dynamic
+        ...response
+      };
+
+      // If all required fields are filled, add to active campaigns
+      // Otherwise, add to drafts
+      const isComplete = [
+        campaignData.name,
+        campaignData.description,
+        campaignData.startDate,
+        campaignData.endDate,
+        campaignData.budget,
+        campaignData.targetAudience
+      ].every(field => field && field.trim() !== '');
+
+      setCampaigns(prev => ({
+        ...prev,
+        [isComplete ? 'active' : 'draft']: [
+          ...prev[isComplete ? 'active' : 'draft'],
+          newCampaign
+        ]
+      }));
+
+      setIsCreateModalOpen(false);
+      // Show success message (you'll need to implement this)
+
+    } catch (error) {
+      setError(error.message);
+      console.error('Failed to create campaign:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading && !campaigns.active.length && !campaigns.completed.length && !campaigns.draft.length) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex items-center justify-center h-screen text-red-500">
+        <p>Error loading campaigns: {error}</p>
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-col h-full bg-gray-50">
       {/* Header */}
       <div className="bg-white border-b p-4">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center space-y-4 md:space-y-0">
           <h1 className="text-2xl font-bold text-gray-800">Campaigns</h1>
-          <button className="flex items-center px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors">
+          <button
+            onClick={() => setIsCreateModalOpen(true)}
+            className="flex items-center px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+          >
             <PlusCircle className="w-5 h-5 mr-2" />
             Create New Campaign
           </button>
@@ -250,11 +370,10 @@ const CampaignManagement = () => {
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`pb-3 relative ${
-                activeTab === tab.id
+              className={`pb-3 relative ${activeTab === tab.id
                   ? 'text-blue-600 font-medium'
                   : 'text-gray-500 hover:text-gray-700'
-              }`}
+                }`}
             >
               <span>{tab.label}</span>
               <span className="ml-2 text-sm text-gray-400">({tab.count})</span>
@@ -272,8 +391,218 @@ const CampaignManagement = () => {
         {activeTab === 'completed' && renderCompletedCampaigns()}
         {activeTab === 'draft' && renderDraftCampaigns()}
       </div>
+
+      <CreateCampaignModal
+        isOpen={isCreateModalOpen}
+        onClose={() => setIsCreateModalOpen(false)}
+        onSubmit={handleCreateCampaign}
+        loading={loading}
+      />
     </div>
   );
 };
 
 export default CampaignManagement;
+
+
+
+
+const CreateCampaignModal = ({ isOpen, onClose, onSubmit, loading }) => {
+  const [formData, setFormData] = useState({
+    name: '',
+    description: '',
+    startDate: '',
+    endDate: '',
+    budget: '',
+    targetAudience: '',
+    mediaFiles: []
+  });
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleFileChange = (e) => {
+    const files = Array.from(e.target.files);
+    const validFiles = files.filter(file => file.size <= 5 * 1024 * 1024); // 5MB limit
+
+    setFormData(prev => ({
+      ...prev,
+      mediaFiles: [...prev.mediaFiles, ...validFiles]
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    // Check if at least the name is provided
+    if (!formData.name.trim()) {
+      alert('Campaign name is required');
+      return;
+    }
+
+    try {
+      await onSubmit(formData);
+    } catch (error) {
+      // Handle error (show error message to user)
+      console.error('Error creating campaign:', error);
+    }
+  };
+
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div className="bg-white rounded-lg w-full max-w-2xl p-6 max-h-[90vh] overflow-y-auto">
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-xl font-bold">Create New Campaign</h2>
+          <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
+            <X className="w-6 h-6" />
+          </button>
+        </div>
+
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Campaign Name
+            </label>
+            <input
+              type="text"
+              name="name"
+              required
+              className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+              onChange={handleInputChange}
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Description
+            </label>
+            <textarea
+              name="description"
+              rows="3"
+              className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+              onChange={handleInputChange}
+            />
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Start Date
+              </label>
+              <input
+                type="date"
+                name="startDate"
+                required
+                className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                onChange={handleInputChange}
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                End Date
+              </label>
+              <input
+                type="date"
+                name="endDate"
+                required
+                className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                onChange={handleInputChange}
+              />
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Budget (₹)
+            </label>
+            <input
+              type="number"
+              name="budget"
+              required
+              className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+              onChange={handleInputChange}
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Target Audience
+            </label>
+            <textarea
+              name="targetAudience"
+              rows="2"
+              className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+              placeholder="Describe your target audience..."
+              onChange={handleInputChange}
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Media Files (Max 5MB each)
+            </label>
+            <div className="border-2 border-dashed border-gray-300 rounded-lg p-4">
+              <input
+                type="file"
+                multiple
+                accept="image/*,video/*"
+                onChange={handleFileChange}
+                className="hidden"
+                id="mediaFiles"
+              />
+              <label
+                htmlFor="mediaFiles"
+                className="flex flex-col items-center cursor-pointer"
+              >
+                <Upload className="w-8 h-8 text-gray-400" />
+                <span className="mt-2 text-sm text-gray-500">
+                  Click to upload or drag and drop
+                </span>
+              </label>
+            </div>
+            {formData.mediaFiles.length > 0 && (
+              <div className="mt-2">
+                <p className="text-sm text-gray-500">
+                  {formData.mediaFiles.length} file(s) selected
+                </p>
+              </div>
+            )}
+          </div>
+
+          <div className="flex justify-end space-x-4">
+            <button
+              type="button"
+              onClick={onClose}
+              className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg"
+              disabled={loading}
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              className={`px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 flex items-center ${loading ? 'opacity-50 cursor-not-allowed' : ''
+                }`}
+              disabled={loading}
+            >
+              {loading ? (
+                <>
+                  <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  Creating...
+                </>
+              ) : (
+                'Create Campaign'
+              )}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+};
