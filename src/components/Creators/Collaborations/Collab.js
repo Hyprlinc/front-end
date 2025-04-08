@@ -13,22 +13,23 @@ const Collab = () => {
     const [campaigns, setCampaigns] = useState([]);
     const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        const fetchCampaigns = async () => {
-            try {
-                const searchParams = {
-                    page: 1,
-                    limit: 20
-                };
-                const response = await searchCampaigns(searchParams);
-                setCampaigns(response);
-            } catch (error) {
-                console.error('Error fetching campaigns:', error);
-            } finally {
-                setLoading(false);
-            }
-        };
 
+    const fetchCampaigns = async () => {
+        try {
+            const searchParams = {
+                page: 1,
+                limit: 20
+            };
+            const response = await searchCampaigns(searchParams);
+            setCampaigns(response);
+        } catch (error) {
+            console.error('Error fetching campaigns:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
         fetchCampaigns();
     }, []);
 
@@ -51,42 +52,42 @@ const Collab = () => {
 
     return (
         <div className={`flex-1 transition-all duration-300 ${isSidebarOpen ? 'mr-80' : ''}`}>
-        <Box sx={{ width: '100%', position: 'relative' }}>
-            <Navbar
-                user={defaultUser}
-                onSidebarToggle={() => setIsSidebarOpen(!isSidebarOpen)}
-            />
-            <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-                <Tabs value={activeTab} onChange={handleTabChange}>
-                    <Tab label="Active Campaigns" sx={{ marginRight: 3 }} />
-                    <Tab label="New Opportunities" sx={{ marginRight: 3 }} />
-                    <Tab label="History" />
-                </Tabs>
-            </Box>
-
-            <TabPanel value={activeTab} index={0}>
-                <ActiveCampaigns campaigns={campaigns} loading={loading} />
-            </TabPanel>
-
-            <TabPanel value={activeTab} index={1}>
-                <Invitations/>
-            </TabPanel>
-
-            <TabPanel value={activeTab} index={2}>
-                <PastCampaigns/>
-            </TabPanel>
-
-            {isSidebarOpen && (
-                <Box sx={{ position: 'absolute', right: 0, top: 0, height: '100%' }}>
-                    <div className="sidebar">
-                        <Sidebar
-                isOpen={isSidebarOpen} 
-                onClose={() => setIsSidebarOpen(false)} 
-            />
-                    </div>
+            <Box sx={{ width: '100%', position: 'relative' }}>
+                <Navbar
+                    user={defaultUser}
+                    onSidebarToggle={() => setIsSidebarOpen(!isSidebarOpen)}
+                />
+                <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+                    <Tabs value={activeTab} onChange={handleTabChange}>
+                        <Tab label="Active Campaigns" sx={{ marginRight: 3 }} />
+                        <Tab label="New Opportunities" sx={{ marginRight: 3 }} />
+                        <Tab label="History" />
+                    </Tabs>
                 </Box>
-            )}
-        </Box>
+
+                <TabPanel value={activeTab} index={0}>
+                    <ActiveCampaigns campaigns={campaigns} loading={loading} onRefresh={fetchCampaigns} />
+                </TabPanel>
+
+                <TabPanel value={activeTab} index={1}>
+                    <Invitations />
+                </TabPanel>
+
+                <TabPanel value={activeTab} index={2}>
+                    <PastCampaigns />
+                </TabPanel>
+
+                {isSidebarOpen && (
+                    <Box sx={{ position: 'absolute', right: 0, top: 0, height: '100%' }}>
+                        <div className="sidebar">
+                            <Sidebar
+                                isOpen={isSidebarOpen}
+                                onClose={() => setIsSidebarOpen(false)}
+                            />
+                        </div>
+                    </Box>
+                )}
+            </Box>
         </div>
     );
 };

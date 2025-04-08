@@ -182,3 +182,44 @@ export const searchCampaigns = async (searchParams) => {
 };
 
 
+export const applyCampaign = async (campaignId, message) => {
+    const token = localStorage.getItem('jwt');
+
+    try {
+        const response = await axios.post(
+            `${API_BASE_URL}/creators/applyCampaign/apply/${campaignId}`,
+            { message },
+            {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            }
+        );
+
+        return response.data;
+    } catch (error) {
+        console.error('Error applying to campaign:', error);
+        
+        if (error.response) {
+            // Handle specific error cases
+            switch (error.response.status) {
+                case 400:
+                    throw new Error(error.response.data.error || 'Invalid application request');
+                case 401:
+                    throw new Error('Unauthorized access');
+                case 404:
+                    throw new Error('Campaign not found');
+                default:
+                    throw new Error('Error applying to campaign: ' + (error.response.data.error || error.message));
+            }
+        } else {
+            throw new Error('Network error while applying to campaign');
+        }
+    }
+};
+
+
+
+
+
