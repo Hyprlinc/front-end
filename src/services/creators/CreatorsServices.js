@@ -13,7 +13,7 @@ export const registerUser = async (registrationData) => {
             }
         });
 
-        // Handle successful registration
+
         console.log('Registration successful:', response.data);
         const token = response.data.token;
         console.log("Token", token);
@@ -23,16 +23,14 @@ export const registerUser = async (registrationData) => {
         // Handle registration error
         console.error('Registration failed:', error.response ? error.response.data : error.message);
 
-        // Show user-friendly error message
         if (error.response) {
-            // The request was made and the server responded with a status code
-            // that falls out of the range of 2xx
+
             alert(error.response.data.message || 'Registration failed. Please try again.');
         } else if (error.request) {
-            // The request was made but no response was received
+
             alert('No response from server. Please check your internet connection.');
         } else {
-            // Something happened in setting up the request that triggered an Error
+
             alert('Error in registration process. Please try again.');
         }
 
@@ -98,9 +96,7 @@ export const creatorLogin = async (email, password) => {
 
 export const fetchCreatorProfile = async (token) => {
     try {
-        // Retrieve the JWT token from localStorage or cookies// Adjust storage retrieval as needed
-
-        // Make the API request
+        
         const response = await axios.get(`${API_BASE_URL}/auth/profile`, {
             headers: {
                 'Authorization': `Bearer ${token}`, // Attach the token in the Authorization header
@@ -200,7 +196,7 @@ export const applyCampaign = async (campaignId, message) => {
         return response.data;
     } catch (error) {
         console.error('Error applying to campaign:', error);
-        
+
         if (error.response) {
             // Handle specific error cases
             switch (error.response.status) {

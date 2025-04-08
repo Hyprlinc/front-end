@@ -18,7 +18,7 @@ export const createCampaign = async (campaignData) => {
         formData.append('campaignEndDate', campaignData.endDate);
         formData.append('campaignBudget', campaignData.budget);
         formData.append('targetAudience', campaignData.targetAudience);
-        formData.append('campaignStatus', 'DRAFT'); // Default status for new campaigns
+        formData.append('campaignStatus', 'ACTIVE'); // Default status for new campaigns
 
         if (campaignData.mediaFiles && campaignData.mediaFiles.length > 0) {
             formData.append('campaignMedia', campaignData.mediaFiles[0]); // Taking first file as the main campaign media
