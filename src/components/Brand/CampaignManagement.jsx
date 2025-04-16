@@ -16,6 +16,7 @@ import {
   Upload,
 } from 'lucide-react';
 import { createCampaign, getBrandCampaigns } from '../../services/brands/CreateNewCampaign';
+import { getCampaignResponses } from '../../services/brands/GetCampaignResponses';
 
 const CampaignManagement = () => {
   const [activeTab, setActiveTab] = useState('active');
@@ -27,6 +28,7 @@ const CampaignManagement = () => {
     completed: [],
     draft: []
   });
+  const [campaignResponses, setCampaignResponses] = useState([]);
 
   useEffect(() => {
     fetchCampaigns();
@@ -101,6 +103,28 @@ const CampaignManagement = () => {
       setLoading(false);
     }
   };
+
+  const fetchCampaignResponses = async () => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      const response = await getCampaignResponses()
+      console.log("Campaign responses from api====>",response)
+      setCampaignResponses(response.data);
+    } catch (error) {
+      setError(error.message);
+      console.error('Failed to fetch campaign responses:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (activeTab === 'responses') {
+      fetchCampaignResponses();
+    }
+  }, [activeTab]);
 
   const calculateProgress = (startDate, endDate) => {
     const start = new Date(startDate);
@@ -282,6 +306,111 @@ const CampaignManagement = () => {
     </div>
   );
 
+  const renderResponses = () => (
+    <div className="space-y-6">
+      {campaignResponses.map(campaign => (
+        <div key={campaign.campaign_id} className="bg-white rounded-lg shadow-sm p-6">
+          <div className="flex justify-between items-start mb-6">
+            <div>
+              <h3 className="text-lg font-semibold">{campaign.campaign_title}</h3>
+              <p className="text-sm text-gray-500">
+                Created: {new Date(campaign.campaign_created_at).toLocaleDateString()}
+              </p>
+            </div>
+            <div className="flex items-center space-x-3">
+              <span className="text-sm text-gray-500">
+                {campaign.applications.length} responses
+              </span>
+              <span className={`px-3 py-1 rounded-full text-sm ${
+                campaign.campaign_status === 'ACTIVE' 
+                  ? 'bg-green-100 text-green-600'
+                  : 'bg-gray-100 text-gray-600'
+              }`}>
+                {campaign.campaign_status}
+              </span>
+            </div>
+          </div>
+
+          {campaign.applications.length > 0 ? (
+            <div className="space-y-4">
+              <h4 className="font-medium text-gray-700">Applications ({campaign.applications.length})</h4>
+              <div className="divide-y">
+                {campaign.applications.map(application => (
+                  <div key={application.application_id} className="py-4">
+                    <div className="flex justify-between items-start mb-2">
+                      <div className="flex items-center">
+                        <div className="mr-3">
+                          <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                            <Users className="w-5 h-5 text-blue-600" />
+                          </div>
+                        </div>
+                        <div>
+                          <h5 className="font-medium">{application.influencer.name}</h5>
+                          <p className="text-sm text-gray-500">{application.influencer.email}</p>
+                        </div>
+                      </div>
+                      <div className="flex items-center space-x-3">
+                        <span className="px-3 py-1 bg-blue-100 text-blue-600 rounded-full text-sm">
+                          {application.status}
+                        </span>
+                        {application.status === 'applied' && (
+                          <button 
+                            className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors text-sm"
+                            onClick={() => {
+                              // Add your chat functionality here
+                              console.log('Proceed to talk with:', application.influencer.name);
+                            }}
+                          >
+                            Proceed to Talk
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                    
+                    <div className="ml-13 pl-13">
+                      <p className="text-gray-600 bg-gray-50 p-3 rounded-lg">
+                        {application.message}
+                      </p>
+                      
+                      <div className="mt-2 flex items-center space-x-4">
+                        <p className="text-sm text-gray-500">
+                          Applied: {new Date(application.applied_at).toLocaleString()}
+                        </p>
+                        {application.influencer.social_media_handles.map((handle, idx) => (
+                          <a 
+                            key={idx}
+                            href={handle}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-blue-500 hover:text-blue-600"
+                          >
+                            <Instagram className="w-4 h-4" />
+                          </a>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : (
+            <p className="text-center text-gray-500 py-4">No applications received yet</p>
+          )}
+        </div>
+      ))}
+      
+      {campaignResponses.length === 0 && (
+        <div className="text-center py-10">
+          <div className="mb-4">
+            <MessageSquare className="w-12 h-12 text-gray-400 mx-auto" />
+          </div>
+          <h3 className="text-lg font-medium text-gray-900">No responses yet</h3>
+          <p className="text-gray-500">When influencers apply to your campaigns, they'll appear here.</p>
+        </div>
+      )}
+    </div>
+  );
+
   const handleCreateCampaign = async (campaignData) => {
     setLoading(true);
     setError(null);
@@ -365,7 +494,8 @@ const CampaignManagement = () => {
           {[
             { id: 'active', label: 'Active Campaigns', count: campaigns.active.length },
             { id: 'completed', label: 'Completed', count: campaigns.completed.length },
-            { id: 'draft', label: 'Drafts', count: campaigns.draft.length }
+            { id: 'draft', label: 'Draft', count: campaigns.draft.length },
+            { id: 'responses', label: 'Responses', count: campaignResponses?.length || 0 }
           ].map(tab => (
             <button
               key={tab.id}
@@ -390,6 +520,7 @@ const CampaignManagement = () => {
         {activeTab === 'active' && renderActiveCampaigns()}
         {activeTab === 'completed' && renderCompletedCampaigns()}
         {activeTab === 'draft' && renderDraftCampaigns()}
+        {activeTab === 'responses' && renderResponses()}
       </div>
 
       <CreateCampaignModal
