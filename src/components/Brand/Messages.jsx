@@ -1,44 +1,12 @@
 import React, { useState } from 'react';
 import { MessageCircle, Paperclip, Search, Filter, Archive, Mail, MailOpen } from 'lucide-react';
+import { useMessages } from '../Brand/Context/MessagesContext';
 
 const Messages = () => {
-  // Sample chat data
-  const [chats, setChats] = useState([
-    {
-      id: 1,
-      influencer: 'John Doe',
-      platform: 'Instagram',
-      campaign: 'Campaign XYZ',
-      lastMessage: 'Hey, I’ve submitted the content draft.',
-      unread: true,
-      archived: false,
-      attachments: ['draft.pdf'],
-    },
-    {
-      id: 2,
-      influencer: 'Jane Smith',
-      platform: 'YouTube',
-      campaign: 'Campaign ABC',
-      lastMessage: 'Can you share the campaign brief?',
-      unread: false,
-      archived: false,
-      attachments: [],
-    },
-    {
-      id: 3,
-      influencer: 'Alice Johnson',
-      platform: 'TikTok',
-      campaign: 'Campaign DEF',
-      lastMessage: 'Here’s the final video for review.',
-      unread: false,
-      archived: true,
-      attachments: ['video.mp4'],
-    },
-  ]);
-
+  const { chats, setChats } = useMessages();
   const [filters, setFilters] = useState({
     search: '',
-    status: 'all', // all, unread, archived
+    status: 'all',
   });
 
   const handleFilterChange = (e) => {
@@ -54,6 +22,19 @@ const Messages = () => {
       (filters.status === 'archived' && chat.archived);
     return matchesSearch && matchesStatus;
   });
+
+  // Sort chats by most recent first
+  const sortedChats = [...filteredChats].sort((a, b) => 
+    new Date(b.updatedAt) - new Date(a.updatedAt)
+  );
+
+  const markAsRead = (chatId) => {
+    setChats(prevChats =>
+      prevChats.map(chat =>
+        chat.id === chatId ? { ...chat, unread: false } : chat
+      )
+    );
+  };
 
   return (
     <div className="p-6">
@@ -91,55 +72,64 @@ const Messages = () => {
 
       {/* Chat List */}
       <div className="space-y-4">
-        {filteredChats.map((chat) => (
-          <div
-            key={chat.id}
-            className={`bg-white p-4 rounded-lg shadow-md ${chat.unread ? 'border-l-4 border-blue-500' : ''}`}
-          >
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-4">
-                {chat.unread ? <Mail className="text-blue-500" /> : <MailOpen className="text-gray-500" />}
-                <div>
-                  <p className="font-bold">{chat.influencer}</p>
-                  <p className="text-gray-500">{chat.platform} - {chat.campaign}</p>
+        {sortedChats.length > 0 ? (
+          sortedChats.map((chat) => (
+            <div
+              key={chat.id}
+              className={`bg-white p-4 rounded-lg shadow-md ${chat.unread ? 'border-l-4 border-blue-500' : ''}`}
+              onClick={() => markAsRead(chat.id)}
+            >
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-4">
+                  {chat.unread ? <Mail className="text-blue-500" /> : <MailOpen className="text-gray-500" />}
+                  <div>
+                    <p className="font-bold">{chat.influencer}</p>
+                    <p className="text-gray-500">{chat.platform} - {chat.campaign}</p>
+                  </div>
                 </div>
+                <button className="bg-blue-500 text-white px-4 py-2 rounded-lg">Reply</button>
               </div>
-              <button className="bg-blue-500 text-white px-4 py-2 rounded-lg">Reply</button>
-            </div>
-            <p className="mt-4">{chat.lastMessage}</p>
-            {chat.attachments.length > 0 && (
-              <div className="mt-4 flex items-center space-x-2">
-                <Paperclip className="text-gray-500" />
-                <span className="text-gray-500">Attachments: {chat.attachments.join(', ')}</span>
-              </div>
-            )}
-            <div className="mt-4 flex space-x-2">
-              {chat.archived ? (
-                <button
-                  className="flex items-center bg-gray-100 px-4 py-2 rounded-lg"
-                  onClick={() =>
-                    setChats((prev) =>
-                      prev.map((c) => (c.id === chat.id ? { ...c, archived: false } : c))
-                    )
-                  }
-                >
-                  <Archive className="mr-2" /> Unarchive
-                </button>
-              ) : (
-                <button
-                  className="flex items-center bg-gray-100 px-4 py-2 rounded-lg"
-                  onClick={() =>
-                    setChats((prev) =>
-                      prev.map((c) => (c.id === chat.id ? { ...c, archived: true } : c))
-                    )
-                  }
-                >
-                  <Archive className="mr-2" /> Archive
-                </button>
+              <p className="mt-4">{chat.lastMessage}</p>
+              {chat.attachments.length > 0 && (
+                <div className="mt-4 flex items-center space-x-2">
+                  <Paperclip className="text-gray-500" />
+                  <span className="text-gray-500">Attachments: {chat.attachments.join(', ')}</span>
+                </div>
               )}
+              <div className="mt-4 flex space-x-2">
+                {chat.archived ? (
+                  <button
+                    className="flex items-center bg-gray-100 px-4 py-2 rounded-lg"
+                    onClick={() =>
+                      setChats((prev) =>
+                        prev.map((c) => (c.id === chat.id ? { ...c, archived: false } : c))
+                      )
+                    }
+                  >
+                    <Archive className="mr-2" /> Unarchive
+                  </button>
+                ) : (
+                  <button
+                    className="flex items-center bg-gray-100 px-4 py-2 rounded-lg"
+                    onClick={() =>
+                      setChats((prev) =>
+                        prev.map((c) => (c.id === chat.id ? { ...c, archived: true } : c))
+                      )
+                    }
+                  >
+                    <Archive className="mr-2" /> Archive
+                  </button>
+                )}
+              </div>
             </div>
+          ))
+        ) : (
+          <div className="text-center py-10">
+            <MessageCircle className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+            <h3 className="text-lg font-medium text-gray-900">No messages yet</h3>
+            <p className="text-gray-500">When you start conversations with influencers, they'll appear here.</p>
           </div>
-        ))}
+        )}
       </div>
     </div>
   );

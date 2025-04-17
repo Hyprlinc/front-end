@@ -14,9 +14,12 @@ import {
   MessageSquare,
   X,
   Upload,
+  Send,
+  Paperclip
 } from 'lucide-react';
 import { createCampaign, getBrandCampaigns } from '../../services/brands/CreateNewCampaign';
 import { getCampaignResponses } from '../../services/brands/GetCampaignResponses';
+import { useMessages } from '../Brand/Context/MessagesContext';
 
 const CampaignManagement = () => {
   const [activeTab, setActiveTab] = useState('active');
@@ -29,6 +32,8 @@ const CampaignManagement = () => {
     draft: []
   });
   const [campaignResponses, setCampaignResponses] = useState([]);
+  const [isChatOpen, setIsChatOpen] = useState(false);
+  const [selectedInfluencer, setSelectedInfluencer] = useState(null);
 
   useEffect(() => {
     fetchCampaigns();
@@ -357,8 +362,8 @@ const CampaignManagement = () => {
                           <button 
                             className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors text-sm"
                             onClick={() => {
-                              // Add your chat functionality here
-                              console.log('Proceed to talk with:', application.influencer.name);
+                              setSelectedInfluencer(application.influencer);
+                              setIsChatOpen(true);
                             }}
                           >
                             Proceed to Talk
@@ -528,6 +533,12 @@ const CampaignManagement = () => {
         onClose={() => setIsCreateModalOpen(false)}
         onSubmit={handleCreateCampaign}
         loading={loading}
+      />
+
+      <ChatModal 
+        isOpen={isChatOpen}
+        onClose={() => setIsChatOpen(false)}
+        influencer={selectedInfluencer}
       />
     </div>
   );
@@ -733,6 +744,145 @@ const CreateCampaignModal = ({ isOpen, onClose, onSubmit, loading }) => {
             </button>
           </div>
         </form>
+      </div>
+    </div>
+  );
+};
+
+
+
+// Add this component at the bottom of the file
+const ChatModal = ({ isOpen, onClose, influencer }) => {
+  const { addMessage } = useMessages();
+  const [message, setMessage] = useState('');
+  const [messages, setMessages] = useState([
+    // Sample messages for demo
+    {
+      id: 1,
+      sender: 'influencer',
+      text: 'Hi! Im interested in your campaign.',
+      timestamp: new Date().toISOString(),
+    },
+    {
+      id: 2,
+      sender: 'brand',
+      text: 'Hello! Thanks for your interest. Lets discuss the details.',
+      timestamp: new Date().toISOString(),
+    }
+  ]);
+
+  const handleSendMessage = (e) => {
+    e.preventDefault();
+    if (!message.trim()) return;
+
+    const newMessage = {
+      id: Date.now(),
+      sender: 'brand',
+      text: message,
+      timestamp: new Date().toISOString(),
+    };
+
+    // Add to messages state
+    setMessages([...messages, newMessage]);
+    
+    // Update global message context
+    addMessage(influencer.id, {
+      text: message,
+      influencerName: influencer.name,
+      campaignTitle: influencer.campaign, // Make sure this is passed in props
+      timestamp: new Date().toISOString(),
+      attachments: []
+    });
+
+    setMessage('');
+  };
+
+  const handleFileAttachment = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    // Handle file upload logic here
+    console.log('File attached:', file);
+  };
+
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-end">
+      <div className="w-full max-w-md bg-white h-full flex flex-col">
+        {/* Header */}
+        <div className="p-4 border-b flex items-center justify-between bg-white">
+          <div className="flex items-center">
+            <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+              <Users className="w-5 h-5 text-blue-600" />
+            </div>
+            <div className="ml-3">
+              <h3 className="font-medium">{influencer?.name}</h3>
+              <p className="text-sm text-gray-500">{influencer?.email}</p>
+            </div>
+          </div>
+          <button 
+            onClick={onClose}
+            className="text-gray-500 hover:text-gray-700"
+          >
+            <X className="w-6 h-6" />
+          </button>
+        </div>
+
+        {/* Messages */}
+        <div className="flex-1 overflow-y-auto p-4 space-y-4">
+          {messages.map((msg) => (
+            <div
+              key={msg.id}
+              className={`flex ${msg.sender === 'brand' ? 'justify-end' : 'justify-start'}`}
+            >
+              <div
+                className={`max-w-[80%] rounded-lg p-3 ${
+                  msg.sender === 'brand'
+                    ? 'bg-blue-500 text-white'
+                    : 'bg-gray-100 text-gray-800'
+                }`}
+              >
+                <p>{msg.text}</p>
+                <p className="text-xs mt-1 opacity-70">
+                  {new Date(msg.timestamp).toLocaleTimeString()}
+                </p>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Input Area */}
+        <div className="p-4 border-t bg-white">
+          <form onSubmit={handleSendMessage} className="flex space-x-4">
+            <input
+              type="file"
+              id="attachment"
+              className="hidden"
+              onChange={handleFileAttachment}
+              accept="image/*,.pdf,.doc,.docx"
+            />
+            <label
+              htmlFor="attachment"
+              className="p-2 text-gray-500 hover:text-gray-700 cursor-pointer"
+            >
+              <Paperclip className="w-6 h-6" />
+            </label>
+            <input
+              type="text"
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+              placeholder="Type your message..."
+              className="flex-1 p-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+            />
+            <button
+              type="submit"
+              className="p-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+            >
+              <Send className="w-6 h-6" />
+            </button>
+          </form>
+        </div>
       </div>
     </div>
   );

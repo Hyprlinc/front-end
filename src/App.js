@@ -8,21 +8,23 @@ import LoginPage from './components/Agencies/LoginPage';
 import AgencyDashboard from './components/Agencies/AgencyDashboard';
 import AgencyProfile from './components/Agencies/AgencyProfile';
 import BrandsDashboard2 from './components/Brand/Dashboard';
-
+import { MessageProvider } from './components/Brand/Context/MessagesContext';
 
 function App() {
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<BrandRegistrationForm />} />
-        <Route path="/brandsDashboard" element={<BrandsDashboard2 />} />
-        <Route path="/creatorsAuth" element={<RegistrationForm />} />
-        <Route path="/dashboard" element={<CreatorDashboard />} />
-        <Route path="/agencyProfile" element={<AgencyProfile />} />
-        <Route path="/agencyLogin" element={<LoginPage/>} />
-        <Route path="/agencyDashboard" element={<AgencyDashboard/>} />
-      </Routes>
-    </Router>
+    <MessageProvider>
+      <Router>
+        <Routes>
+          <Route path="/" element={<BrandRegistrationForm />} />
+          <Route path="/brandsDashboard" element={<BrandsDashboard2 />} />
+          <Route path="/creatorsAuth" element={<RegistrationForm />} />
+          <Route path="/dashboard" element={<CreatorDashboard />} />
+          <Route path="/agencyProfile" element={<AgencyProfile />} />
+          <Route path="/agencyLogin" element={<LoginPage/>} />
+          <Route path="/agencyDashboard" element={<AgencyDashboard/>} />
+        </Routes>
+      </Router>
+    </MessageProvider>
   );
 }
 
