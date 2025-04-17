@@ -13,7 +13,12 @@ import {
   ChevronDown,
   Plus,
   BarChart,
-  Share2
+  Share2,
+  X,
+  Mail,
+  User,
+  Clock,
+  Check,
 } from 'lucide-react';
 
 const DiscoverInfluencers = () => {
@@ -26,6 +31,7 @@ const DiscoverInfluencers = () => {
   const [loading, setLoading] = useState(false);
   const [followerRange, setFollowerRange] = useState([0, 1000000]);
   const [engagementRange, setEngagementRange] = useState([0, 10]);
+  const [selectedInfluencer, setSelectedInfluencer] = useState(null);
 
   const platforms = [
     { name: 'Instagram', icon: <Instagram className="w-5 h-5" /> },
@@ -110,6 +116,10 @@ const DiscoverInfluencers = () => {
   const handleMaxEngagementRangeChange = (e) => {
     const value = parseInt(e.target.value);
     setEngagementRange([engagementRange[0], value]);
+  };
+
+  const handleViewProfile = (influencer) => {
+    setSelectedInfluencer(influencer);
   };
 
   return (
@@ -335,7 +345,10 @@ const DiscoverInfluencers = () => {
                     </div>
 
                     <div className="mt-4 flex justify-between">
-                      <button className="flex-1 mr-2 py-2 px-4 bg-blue-500 text-white rounded-lg hover:bg-blue-600">
+                      <button 
+                        onClick={() => handleViewProfile(influencer)}
+                        className="flex-1 mr-2 py-2 px-4 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+                      >
                         View Profile
                       </button>
                       <button className="py-2 px-4 border border-gray-200 rounded-lg hover:bg-gray-50">
@@ -349,8 +362,209 @@ const DiscoverInfluencers = () => {
           </div>
         </div>
       </div>
+      {selectedInfluencer && (
+        <InfluencerModal
+          influencer={selectedInfluencer}
+          onClose={() => setSelectedInfluencer(null)}
+        />
+      )}
     </div>
   );
 };
 
 export default DiscoverInfluencers;
+
+
+
+const InfluencerModal = ({ influencer, onClose }) => {
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+      <div className="bg-white rounded-xl w-full max-w-4xl max-h-[90vh] overflow-y-auto">
+        <div className="sticky top-0 bg-white border-b p-4 flex justify-between items-center">
+          <h2 className="text-2xl font-bold">Influencer Profile</h2>
+          <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-full">
+            <X className="w-6 h-6" />
+          </button>
+        </div>
+
+        <div className="p-6 space-y-6">
+          {/* Basic Info Section */}
+          <div className="flex items-start space-x-6">
+            <img
+              src={`https://avatar.iran.liara.run/public/${Math.floor(Math.random() * 100)}`}
+              alt={influencer.full_name}
+              className="w-24 h-24 rounded-full object-cover"
+            />
+            <div className="flex-1">
+              <h3 className="text-2xl font-bold">{influencer.full_name}</h3>
+              <div className="flex items-center space-x-4 mt-2 text-gray-600">
+                <div className="flex items-center">
+                  <Mail className="w-4 h-4 mr-2" />
+                  {influencer.email}
+                </div>
+                <div className="flex items-center">
+                  <MapPin className="w-4 h-4 mr-2" />
+                  {`${influencer.city}, ${influencer.country}`}
+                </div>
+                <div className="flex items-center">
+                  <User className="w-4 h-4 mr-2" />
+                  {`${influencer.age} years • ${influencer.gender === 'M' ? 'Male' : 'Female'}`}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Platform Stats */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* YouTube Stats */}
+            {influencer.primaryplatform.includes('youtube') && (
+              <div className="bg-gray-50 p-6 rounded-xl">
+                <div className="flex items-center space-x-2 mb-4">
+                  <Youtube className="w-6 h-6 text-red-600" />
+                  <h4 className="text-lg font-semibold">YouTube Statistics</h4>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="bg-white p-4 rounded-lg">
+                    <p className="text-gray-500 text-sm">Subscribers</p>
+                    <p className="text-xl font-bold">{influencer.subscribers_count_youtube.toLocaleString()}</p>
+                  </div>
+                  <div className="bg-white p-4 rounded-lg">
+                    <p className="text-gray-500 text-sm">Avg. Views</p>
+                    <p className="text-xl font-bold">{influencer.avg_views_youtube.toLocaleString()}</p>
+                  </div>
+                  <div className="bg-white p-4 rounded-lg">
+                    <p className="text-gray-500 text-sm">Channel Age</p>
+                    <p className="text-xl font-bold">{influencer.channel_age_youtube} years</p>
+                  </div>
+                  <div className="bg-white p-4 rounded-lg">
+                    <p className="text-gray-500 text-sm">Content Type</p>
+                    <p className="text-xl font-bold">{influencer.content_type_youtube}</p>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Instagram Stats */}
+            <div className="bg-gray-50 p-6 rounded-xl">
+              <div className="flex items-center space-x-2 mb-4">
+                <Instagram className="w-6 h-6 text-pink-600" />
+                <h4 className="text-lg font-semibold">Instagram Statistics</h4>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="bg-white p-4 rounded-lg">
+                  <p className="text-gray-500 text-sm">Followers</p>
+                  <p className="text-xl font-bold">{influencer.ig_followers_count.toLocaleString()}</p>
+                </div>
+                <div className="bg-white p-4 rounded-lg">
+                  <p className="text-gray-500 text-sm">Engagement Rate</p>
+                  <p className="text-xl font-bold">{influencer.eng_rate_ig}%</p>
+                </div>
+                <div className="bg-white p-4 rounded-lg">
+                  <p className="text-gray-500 text-sm">Avg. Reel Views</p>
+                  <p className="text-xl font-bold">{influencer.avg_ig_reel_views.toLocaleString()}</p>
+                </div>
+                <div className="bg-white p-4 rounded-lg">
+                  <p className="text-gray-500 text-sm">Avg. Likes</p>
+                  <p className="text-xl font-bold">{influencer.avg_ig_likes_count.toLocaleString()}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Content & Collaboration */}
+          <div className="space-y-4">
+            <h4 className="text-lg font-semibold">Content & Collaboration</h4>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="bg-gray-50 p-4 rounded-lg">
+                <h5 className="font-medium mb-2">Content Languages</h5>
+                <div className="flex flex-wrap gap-2">
+                  {influencer.content_lang.map((lang, index) => (
+                    <span key={index} className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-sm">
+                      {lang}
+                    </span>
+                  ))}
+                </div>
+              </div>
+              <div className="bg-gray-50 p-4 rounded-lg">
+                <h5 className="font-medium mb-2">Niches</h5>
+                <span className="bg-green-100 text-green-800 px-2 py-1 rounded-full text-sm">
+                  {influencer.niches}
+                </span>
+              </div>
+              <div className="bg-gray-50 p-4 rounded-lg">
+                <h5 className="font-medium mb-2">Collaboration Type</h5>
+                <span className="bg-purple-100 text-purple-800 px-2 py-1 rounded-full text-sm">
+                  {influencer.collab_type}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* Packages Section */}
+          <div className="space-y-4">
+            <h4 className="text-lg font-semibold">Collaboration Packages</h4>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {influencer.packages.map((pkg) => (
+                <div 
+                  key={pkg.package_type} 
+                  className="bg-white border rounded-xl shadow-sm hover:shadow-md transition-shadow duration-200 flex flex-col"
+                >
+                  <div className={`p-6 rounded-t-xl ${
+                    pkg.package_type === 'premium' 
+                      ? 'bg-gradient-to-r from-purple-500 to-purple-600' 
+                      : pkg.package_type === 'standard'
+                      ? 'bg-gradient-to-r from-blue-500 to-blue-600'
+                      : 'bg-gradient-to-r from-gray-500 to-gray-600'
+                  }`}>
+                    <h3 className="text-xl font-bold text-white capitalize">
+                      {pkg.package_type}
+                    </h3>
+                    <div className="mt-4">
+                      <span className="text-3xl font-bold text-white">₹{pkg.price.toLocaleString()}</span>
+                    </div>
+                  </div>
+
+                  <div className="p-6 flex-1 flex flex-col">
+                    <div className="flex-1">
+                      <div className="flex items-center text-gray-700 mb-4">
+                        <Clock className="w-5 h-5 mr-2 text-gray-400" />
+                        <span>{pkg.delivery_time_days} days delivery</span>
+                      </div>
+                      <div className="border-t pt-4">
+                        <h4 className="font-medium mb-2">What's Included:</h4>
+                        {pkg.features.split(',').map((feature, index) => (
+                          <div key={index} className="flex items-start space-x-2 mb-2">
+                            <Check className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
+                            <span className="text-gray-600">{feature.trim()}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                    
+                    <button 
+                      className={`w-full py-3 px-4 rounded-lg font-medium transition-colors duration-200 mt-6 ${
+                        pkg.package_type === 'premium'
+                          ? 'bg-purple-600 hover:bg-purple-700 text-white'
+                          : pkg.package_type === 'standard'
+                          ? 'bg-blue-600 hover:bg-blue-700 text-white'
+                          : 'bg-gray-600 hover:bg-gray-700 text-white'
+                      }`}
+                    >
+                      Buy Package
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Description */}
+          <div className="bg-gray-50 p-6 rounded-xl">
+            <h4 className="text-lg font-semibold mb-3">Content Description</h4>
+            <p className="text-gray-700">{influencer.content_desc}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
