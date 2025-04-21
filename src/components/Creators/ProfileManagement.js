@@ -3,6 +3,9 @@ import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from './comp/Navbar';
 import Sidebar from './comp/SideBar';
+import CreatorPackagesAPI from '../../services/creators/CreatorsPackagesServices';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const ProfileManagement = ({name, email, location, phoneNumber, bio, niches}) => {
     const [activeTab, setActiveTab] = useState('profile');
@@ -35,6 +38,8 @@ const ProfileManagement = ({name, email, location, phoneNumber, bio, niches}) =>
                 return <KYCTab/>;
             case 'bankAccounts':
                 return <BankAccountsTab/>;
+            case 'packages':
+                return <PackagesTab />;
             default:
                 return <div>Profile Content</div>;
         }
@@ -116,6 +121,15 @@ const ProfileManagement = ({name, email, location, phoneNumber, bio, niches}) =>
                             }}>
                                 Coming Soon
                             </span>
+                        </button>
+                        <button 
+                            ref={el => tabsRef.current['packages'] = el}
+                            style={{...styles.tabButton, 
+                                color: activeTab === 'packages' ? '#082777' : '#717B8C'
+                            }}
+                            onClick={() => setActiveTab('packages')}
+                        >
+                            Packages
                         </button>
                     </div>
                     <div className="tab-content" style={styles.tabContent}>
@@ -1048,6 +1062,558 @@ const ProfileTab = ({name, email, location, phoneNumber, bio}) => {
                     Reset
                 </button>
             </div>
+        </div>
+    );
+};
+
+const PackagesTab = () => {
+    const [packageMode, setPackageMode] = useState('broadcast');
+    const [packages, setPackages] = useState([]);
+    const [isCreating, setIsCreating] = useState(false);
+    const [editingPackage, setEditingPackage] = useState(null);
+    const [loading, setLoading] = useState(false);
+
+    const defaultPackage = {
+        package_type: '',
+        price: '',
+        features: [], // Initialize as empty array instead of string
+        delivery_time_days: '',
+        target_brand: null
+    };
+
+    const [formData, setFormData] = useState(defaultPackage);
+
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        if (name === 'features') {
+            setFormData(prev => ({
+                ...prev,
+                features: value.split('\n').filter(feature => feature.trim() !== '')
+            }));
+        } else {
+            setFormData(prev => ({
+                ...prev,
+                [name]: value
+            }));
+        }
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setLoading(true);
+        try {
+            const packageData = {
+                ...formData,
+                target_brand: packageMode === 'targeted' ? formData.target_brand : null
+            };
+
+            if (editingPackage) {
+                await CreatorPackagesAPI.updatePackage(editingPackage.id, packageData);
+                toast.success('Package updated successfully!');
+            } else {
+                await CreatorPackagesAPI.createPackage(packageData);
+                toast.success('Package created successfully!');
+            }
+            setIsCreating(false);
+            setEditingPackage(null);
+            setFormData(defaultPackage);
+            await fetchPackages();
+        } catch (error) {
+            console.error('Error:', error);
+            toast.error(error.message || 'An error occurred while saving the package');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    // Add loading state for initial data fetch
+    const [isLoadingPackages, setIsLoadingPackages] = useState(true);
+
+    // Fetch packages on component mount
+    useEffect(() => {
+        fetchPackages();
+    }, []);
+
+    // Add function to fetch packages
+    const fetchPackages = async () => {
+        try {
+            setIsLoadingPackages(true);
+            const response = await CreatorPackagesAPI.getPackages();
+            setPackages(response.data || []);
+        } catch (error) {
+            console.error('Error fetching packages:', error);
+            // Show error notification/message here
+        } finally {
+            setIsLoadingPackages(false);
+        }
+    };
+
+    // Add loading state UI
+    if (isLoadingPackages) {
+        return (
+            <div style={{ padding: '24px', maxWidth: '800px' }}>
+                <div style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    marginBottom: '24px'
+                }}>
+                    <h2 style={{
+                        fontSize: '24px',
+                        fontWeight: '600',
+                        color: '#082777'
+                    }}>Your Packages</h2>
+                </div>
+                <div style={{
+                    padding: '20px',
+                    backgroundColor: '#F8FAFC',
+                    borderRadius: '12px',
+                    textAlign: 'center'
+                }}>
+                    Loading packages...
+                </div>
+            </div>
+        );
+    }
+
+    const PackageCard = ({ pkg, onEdit }) => (
+        <div style={{
+            backgroundColor: '#FFFFFF',
+            borderRadius: '12px',
+            padding: '24px',
+            boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
+            marginBottom: '20px',
+            border: '1px solid #E0E4EC',
+            position: 'relative'
+        }}>
+            {pkg.target_brand && (
+                <div style={{
+                    position: 'absolute',
+                    top: '12px',
+                    right: '12px',
+                    backgroundColor: '#FFF3E0',
+                    color: '#F57C00',
+                    padding: '4px 8px',
+                    borderRadius: '12px',
+                    fontSize: '12px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '4px'
+                }}>
+                    <span>🎯</span>
+                    Targeted Package
+                </div>
+            )}
+            <div style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                marginBottom: '16px'
+            }}>
+                <h3 style={{
+                    fontSize: '20px',
+                    fontWeight: '600',
+                    color: '#082777'
+                }}>{pkg.package_type}</h3>
+                <div style={{
+                    fontSize: '24px',
+                    fontWeight: 'bold',
+                    color: '#000'
+                }}>₹{pkg.price}</div>
+            </div>
+
+            <div style={{
+                marginBottom: '16px',
+                color: '#4C535F'
+            }}>
+                <h4 style={{
+                    fontSize: '16px',
+                    fontWeight: '600',
+                    marginBottom: '8px'
+                }}>Features:</h4>
+                <ul style={{
+                    listStyle: 'none',
+                    padding: 0
+                }}>
+                    {pkg.features.map((feature, index) => (
+                        <li key={index} style={{
+                            marginBottom: '8px',
+                            display: 'flex',
+                            alignItems: 'center'
+                        }}>
+                            <span style={{
+                                marginRight: '8px',
+                                color: '#2196F3'
+                            }}>✓</span>
+                            {feature}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+
+            <div style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                borderTop: '1px solid #E0E4EC',
+                paddingTop: '16px'
+            }}>
+                <div style={{
+                    color: '#717B8C'
+                }}>
+                    Delivery in {pkg.delivery_time_days} days
+                </div>
+                <div style={{
+                    display: 'flex',
+                    gap: '8px'
+                }}>
+                    <button
+                        onClick={() => onEdit(pkg)}
+                        style={{
+                            backgroundColor: '#EDF2F6',
+                            color: '#082777',
+                            border: 'none',
+                            padding: '8px 16px',
+                            borderRadius: '6px',
+                            cursor: 'pointer',
+                            fontWeight: '500'
+                        }}
+                    >
+                        Edit Package
+                    </button>
+                </div>
+            </div>
+        </div>
+    );
+
+    const PackageForm = () => {
+        // const [packageMode, setPackageMode] = useState('broadcast'); // 'broadcast' or 'targeted'
+    
+        return (
+            <form onSubmit={handleSubmit} style={{
+                backgroundColor: '#FFFFFF',
+                borderRadius: '12px',
+                padding: '24px',
+                boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
+                border: '1px solid #E0E4EC'
+            }}>
+                {/* Package Mode Selection */}
+                <div style={{ marginBottom: '24px' }}>
+                    <label style={{
+                        display: 'block',
+                        marginBottom: '12px',
+                        fontWeight: '600'
+                    }}>
+                        Package Mode
+                    </label>
+                    <div style={{
+                        display: 'flex',
+                        gap: '12px'
+                    }}>
+                        <button
+                            type="button"
+                            onClick={() => setPackageMode('broadcast')}
+                            style={{
+                                flex: 1,
+                                padding: '16px',
+                                borderRadius: '8px',
+                                border: '2px solid',
+                                borderColor: packageMode === 'broadcast' ? '#082777' : '#E0E4EC',
+                                backgroundColor: packageMode === 'broadcast' ? '#EDF2F6' : '#FFFFFF',
+                                color: packageMode === 'broadcast' ? '#082777' : '#717B8C',
+                                cursor: 'pointer',
+                                transition: 'all 0.2s ease',
+                                display: 'flex',
+                                flexDirection: 'column',
+                                alignItems: 'center',
+                                gap: '8px'
+                            }}
+                        >
+                            <span style={{ fontSize: '20px' }}>🌐</span>
+                            <div>
+                                <div style={{ fontWeight: '600', marginBottom: '4px' }}>Broadcast</div>
+                                <div style={{ fontSize: '12px' }}>Available to all brands</div>
+                            </div>
+                        </button>
+                        <button
+                            type="button"
+                            onClick={() => setPackageMode('targeted')}
+                            style={{
+                                flex: 1,
+                                padding: '16px',
+                                borderRadius: '8px',
+                                border: '2px solid',
+                                borderColor: packageMode === 'targeted' ? '#082777' : '#E0E4EC',
+                                backgroundColor: packageMode === 'targeted' ? '#EDF2F6' : '#FFFFFF',
+                                color: packageMode === 'targeted' ? '#082777' : '#717B8C',
+                                cursor: 'pointer',
+                                transition: 'all 0.2s ease',
+                                display: 'flex',
+                                flexDirection: 'column',
+                                alignItems: 'center',
+                                gap: '8px'
+                            }}
+                        >
+                            <span style={{ fontSize: '20px' }}>🎯</span>
+                            <div>
+                                <div style={{ fontWeight: '600', marginBottom: '4px' }}>Targeted</div>
+                                <div style={{ fontSize: '12px' }}>Specific to one brand</div>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+    
+                {/* Brand ID field for targeted mode */}
+                {packageMode === 'targeted' && (
+                    <div style={{ marginBottom: '20px' }}>
+                        <label style={{
+                            display: 'block',
+                            marginBottom: '8px',
+                            fontWeight: '600'
+                        }}>
+                            Brand ID
+                        </label>
+                        <input
+                            type="text"
+                            name="target_brand"
+                            value={formData.target_brand || ''}
+                            onChange={handleInputChange}
+                            style={{
+                                width: '100%',
+                                padding: '12px',
+                                borderRadius: '6px',
+                                border: '1px solid #E0E4EC'
+                            }}
+                            placeholder="Enter the brand's UUID"
+                            required={packageMode === 'targeted'}
+                        />
+                        <div style={{
+                            fontSize: '12px',
+                            color: '#717B8C',
+                            marginTop: '4px'
+                        }}>
+                            This package will only be visible to the specified brand
+                        </div>
+                    </div>
+                )}
+    
+                {/* Existing form fields */}
+                <div style={{ marginBottom: '20px' }}>
+                    <label style={{
+                        display: 'block',
+                        marginBottom: '8px',
+                        fontWeight: '600'
+                    }}>
+                        Package Type
+                    </label>
+                    <input
+                        type="text"
+                        name="package_type"
+                        value={formData.package_type}
+                        onChange={handleInputChange}
+                        style={{
+                            width: '100%',
+                            padding: '12px',
+                            borderRadius: '6px',
+                            border: '1px solid #E0E4EC'
+                        }}
+                        placeholder="e.g., Basic, Standard, Premium"
+                        required
+                    />
+                </div>
+    
+                <div style={{ marginBottom: '20px' }}>
+                    <label style={{
+                        display: 'block',
+                        marginBottom: '8px',
+                        fontWeight: '600'
+                    }}>
+                        Price (₹)
+                    </label>
+                    <input
+                        type="number"
+                        name="price"
+                        value={formData.price}
+                        onChange={handleInputChange}
+                        style={{
+                            width: '100%',
+                            padding: '12px',
+                            borderRadius: '6px',
+                            border: '1px solid #E0E4EC'
+                        }}
+                        placeholder="Enter price"
+                        required
+                    />
+                </div>
+    
+                <div style={{ marginBottom: '20px' }}>
+                    <label style={{
+                        display: 'block',
+                        marginBottom: '8px',
+                        fontWeight: '600'
+                    }}>
+                        Features (one per line)
+                    </label>
+                    <textarea
+                        name="features"
+                        value={ formData.features.join('\n')}
+                        onChange={handleInputChange}
+                        style={{
+                            width: '100%',
+                            padding: '12px',
+                            borderRadius: '6px',
+                            border: '1px solid #E0E4EC',
+                            minHeight: '120px'
+                        }}
+                        placeholder="Enter features (one per line)"
+                        required
+                    />
+                </div>
+    
+                <div style={{ marginBottom: '24px' }}>
+                    <label style={{
+                        display: 'block',
+                        marginBottom: '8px',
+                        fontWeight: '600'
+                    }}>
+                        Delivery Time (days)
+                    </label>
+                    <input
+                        type="number"
+                        name="delivery_time_days"
+                        value={formData.delivery_time_days}
+                        onChange={handleInputChange}
+                        style={{
+                            width: '100%',
+                            padding: '12px',
+                            borderRadius: '6px',
+                            border: '1px solid #E0E4EC'
+                        }}
+                        placeholder="Enter delivery time in days"
+                        required
+                    />
+                </div>
+    
+                <div style={{
+                    display: 'flex',
+                    gap: '12px'
+                }}>
+                    <button
+                        type="submit"
+                        disabled={loading}
+                        style={{
+                            backgroundColor: '#082777',
+                            color: '#FFFFFF',
+                            border: 'none',
+                            padding: '12px 24px',
+                            borderRadius: '6px',
+                            cursor: loading ? 'not-allowed' : 'pointer',
+                            opacity: loading ? 0.7 : 1
+                        }}
+                    >
+                        {loading ? 'Saving...' : (editingPackage ? 'Update Package' : 'Create Package')}
+                    </button>
+                    <button
+                        type="button"
+                        onClick={() => {
+                            setIsCreating(false);
+                            setEditingPackage(null);
+                            setFormData(defaultPackage);
+                        }}
+                        style={{
+                            backgroundColor: '#EDF2F6',
+                            color: '#717B8C',
+                            border: 'none',
+                            padding: '12px 24px',
+                            borderRadius: '6px',
+                            cursor: 'pointer'
+                        }}
+                    >
+                        Cancel
+                    </button>
+                </div>
+            </form>
+        );
+    };
+
+    return (
+        <div style={{ padding: '24px', maxWidth: '800px' }}>
+            <div style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                marginBottom: '24px'
+            }}>
+                <h2 style={{
+                    fontSize: '24px',
+                    fontWeight: '600',
+                    color: '#082777'
+                }}>Your Packages</h2>
+                {!isCreating && !editingPackage && (
+                    <button
+                        onClick={() => setIsCreating(true)}
+                        style={{
+                            backgroundColor: '#082777',
+                            color: '#FFFFFF',
+                            border: 'none',
+                            padding: '12px 24px',
+                            borderRadius: '6px',
+                            cursor: 'pointer'
+                        }}
+                    >
+                        Create New Package
+                    </button>
+                )}
+            </div>
+
+            {(isCreating || editingPackage) ? (
+                <PackageForm />
+            ) : (
+                <div>
+                    {packages.length === 0 ? (
+                        <div style={{
+                            textAlign: 'center',
+                            padding: '48px',
+                            backgroundColor: '#F8FAFC',
+                            borderRadius: '12px'
+                        }}>
+                            <p style={{
+                                color: '#717B8C',
+                                marginBottom: '16px'
+                            }}>You haven't created any packages yet</p>
+                            <button
+                                onClick={() => setIsCreating(true)}
+                                style={{
+                                    backgroundColor: '#082777',
+                                    color: '#FFFFFF',
+                                    border: 'none',
+                                    padding: '12px 24px',
+                                    borderRadius: '6px',
+                                    cursor: 'pointer'
+                                }}
+                            >
+                                Create Your First Package
+                            </button>
+                        </div>
+                    ) : (
+                        packages.map(pkg => (
+                            <PackageCard
+                                key={pkg.id}
+                                pkg={pkg}
+                                onEdit={(pkg) => {
+                                    setEditingPackage(pkg);
+                                    setFormData({
+                                        package_type: pkg.package_type,
+                                        price: pkg.price,
+                                        features: pkg.features,
+                                        delivery_time_days: pkg.delivery_time_days
+                                    });
+                                }}
+                            />
+                        ))
+                    )}
+                </div>
+            )}
         </div>
     );
 };

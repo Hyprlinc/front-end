@@ -54,7 +54,6 @@ const CampaignManagement = () => {
       };
 
       response.data.forEach(campaign => {
-        // Create a base campaign object with common properties
         const baseCampaign = {
           id: campaign.id,
           name: campaign.name,
