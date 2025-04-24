@@ -79,19 +79,18 @@ class CreatorPackagesAPI {
     // Add helper method to parse features
     static parseFeatures(featuresString) {
         try {
-            // Remove PostgreSQL array notation and extra escaping
+          
             const cleaned = featuresString
-                .replace(/^\{|\}$/g, '') // Remove outer curly braces
-                .replace(/\\/g, '')      // Remove escape characters
-                .replace(/^""|""$/g, '') // Remove extra quotes at start/end
-                .split('","');           // Split into array
-
-            // Clean each feature
+                .replace(/^\{|\}$/g, '') 
+                .replace(/\\/g, '')      
+                .replace(/^""|""$/g, '') 
+                .split('","');
+          
             return cleaned.map(feature => 
                 feature
-                    .replace(/^"|"$/g, '')  // Remove remaining quotes
-                    .trim()                 // Remove whitespace
-            ).filter(Boolean);              // Remove empty strings
+                    .replace(/^"|"$/g, '') 
+                    .trim()                 
+            ).filter(Boolean);              
         } catch (error) {
             console.error('Error parsing features:', error);
             return [];
