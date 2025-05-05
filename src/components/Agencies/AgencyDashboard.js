@@ -4,6 +4,8 @@ import { Search, Bell, User, Home, Users, Briefcase, MessageSquare,
 
 
 import { useNavigate } from 'react-router-dom';
+import DiscoverInfluencersInAgency from '../Agencies/DiscoverInfluencersInAgency'
+import DiscoverCampaignsInAgency from './DiscoverCampaignsInAgency'
 
 const DashboardLayout = () => {
 
@@ -14,7 +16,7 @@ const DashboardLayout = () => {
   const menuItems = [
     { id: 'dashboard', label: 'Dashboard', icon: Home },
     { id: 'discover-influencers', label: 'Discover Influencers', icon: Users },
-    { id: 'discover-campaigns', label: 'Discover Campaigns', icon: Briefcase },
+    { id: 'discover-campaigns', label: 'Campaign Management', icon: Briefcase },
     { id: 'campaigns', label: 'Campaigns', icon: Briefcase },
     { id: 'messages', label: 'Messages', icon: MessageSquare },
     { id: 'portfolio', label: 'Portfolio', icon: FolderOpen },
@@ -83,6 +85,8 @@ const DashboardLayout = () => {
           <div className="max-w-7xl mx-auto">
             {activeSection === 'dashboard' && <DashboardHome />}
             {/* Other sections will be added here */}
+            {activeSection === 'discover-influencers' && <DiscoverInfluencersInAgency />}
+            {activeSection === 'discover-campaigns' &&  <DiscoverCampaignsInAgency/>}
           </div>
         </main>
       </div>

@@ -1,13 +1,17 @@
 import React, { useState } from 'react';
 import { Building2, Lock, Mail, AlertCircle } from 'lucide-react';
+import AgencyAuth from '../../services/agencies/AgencyAuth';
+import { useNavigate } from 'react-router-dom';
 
 const LoginPage = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     email: '',
     password: '',
     agencyName: ''
   });
   const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleInputChange = (e) => {
     setFormData({
@@ -17,22 +21,40 @@ const LoginPage = () => {
     setError('');
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
     
     // Basic validation
-    if (!formData.email || !formData.password || !formData.agencyName) {
-      setError('All fields are required');
+    if (!formData.email || !formData.password) {
+      setError('Email and password are required');
+      setIsLoading(false);
       return;
     }
 
     if (!formData.email.includes('@')) {
       setError('Please enter a valid email address');
+      setIsLoading(false);
       return;
     }
 
-    // Here you would typically make an API call to authenticate
-    console.log('Form submitted:', formData);
+    try {
+      const response = await AgencyAuth.login({
+        email: formData.email,
+        password: formData.password
+      });
+
+      // Store the token and agency ID
+      localStorage.setItem('agencyId', response.id);
+      
+      // Redirect to dashboard or home page
+      navigate('/agencyDashboard');
+      
+    } catch (error) {
+      setError(error.error || 'Login failed. Please check your credentials.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -83,6 +105,7 @@ const LoginPage = () => {
                 className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors"
                 value={formData.email}
                 onChange={handleInputChange}
+                disabled={isLoading}
               />
             </div>
           </div>
@@ -104,6 +127,7 @@ const LoginPage = () => {
                 className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors"
                 value={formData.password}
                 onChange={handleInputChange}
+                disabled={isLoading}
               />
             </div>
           </div>
@@ -117,9 +141,10 @@ const LoginPage = () => {
 
           <button
             type="submit"
-            className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 font-medium transition-colors"
+            className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            disabled={isLoading}
           >
-            Login
+            {isLoading ? 'Logging in...' : 'Login'}
           </button>
         </form>
 
