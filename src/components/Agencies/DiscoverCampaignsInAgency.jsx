@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Tabs, Tab, Box, Button, CircularProgress, Grid, Typography } from '@mui/material';
 import { Add as AddIcon } from '@mui/icons-material';
-import { agencyApplyCampaign, searchCampaignsInAgency } from '../../services/agencies/SearchCampaign';
+import { agencyApplyCampaign, searchCampaignsInAgency, createAgencyCampaign } from '../../services/agencies/SearchCampaign';
 import { Card, CardContent, CardActions } from '@mui/material';
 import {
   Dialog,
@@ -11,6 +11,7 @@ import {
   Divider,
   IconButton,
   TextField,
+  DialogActions
 } from '@mui/material';
 import {
   Calendar,
@@ -22,13 +23,26 @@ import {
   Instagram,
   Clock,
 } from 'lucide-react';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { LocalizationProvider, DatePicker } from '@mui/x-date-pickers';
 
 const DiscoverCampaignsInAgency = () => {
+    const [createModalOpen, setCreateModalOpen] = useState(false);
     const [activeTab, setActiveTab] = useState(0);
     const [campaigns, setCampaigns] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const [selectedCampaign, setSelectedCampaign] = useState(null);
+
+    const handleCreateCampaign = async (campaignData) => {
+      try {
+          await createAgencyCampaign(campaignData);
+          // Refresh the campaigns list
+          fetchCampaigns();
+      } catch (error) {
+          throw error;
+      }
+  };
 
     const fetchCampaigns = async () => {
         try {
@@ -72,7 +86,7 @@ const DiscoverCampaignsInAgency = () => {
                     variant="contained"
                     color="primary"
                     startIcon={<AddIcon />}
-                    onClick={() => {/* Add navigation to create campaign */}}
+                    onClick={() => setCreateModalOpen(true)}
                 >
                     Create Campaign
                 </Button>
@@ -122,6 +136,11 @@ const DiscoverCampaignsInAgency = () => {
                 campaign={selectedCampaign}
                 onApply={fetchCampaigns}
             />
+            <CreateCampaignModal
+        open={createModalOpen}
+        onClose={() => setCreateModalOpen(false)}
+        onSubmit={handleCreateCampaign}
+    />
         </Box>
     );
 };
@@ -129,45 +148,56 @@ const DiscoverCampaignsInAgency = () => {
 export default DiscoverCampaignsInAgency;
 
 const CampaignCard = ({ campaign, onClick }) => {
-    return (
-        <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }} onClick={onClick}>
-            <CardContent sx={{ flexGrow: 1 }}>
-                <Typography 
-                    gutterBottom 
-                    variant="h6" 
-                    component="div"
-                    sx={{
-                        fontWeight: 600,
-                        color: 'primary.main',
-                        borderBottom: '2px solid',
-                        borderColor: 'primary.light',
-                        pb: 1,
-                        mb: 2
-                    }}
-                >
-                    {campaign.name}
-                </Typography>
-                <Typography 
-                    variant="subtitle1" 
-                    color="text.secondary"
-                    sx={{ mb: 1, fontWeight: 500 }}
-                >
-                    Brand: {campaign.brand_name}
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                    Budget: Rs.{campaign.budget}
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                    Duration: {new Date(campaign.start_date).toLocaleDateString()} - {new Date(campaign.end_date).toLocaleDateString()}
-                </Typography>
-            </CardContent>
-            <CardActions>
-                <Button size="small" color="primary">
-                    View Details
-                </Button>
-            </CardActions>
-        </Card>
-    );
+  return (
+      <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }} onClick={onClick}>
+          <CardContent sx={{ flexGrow: 1 }}>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                  <Typography 
+                      gutterBottom 
+                      variant="h6" 
+                      component="div"
+                      sx={{
+                          fontWeight: 600,
+                          color: 'primary.main',
+                          borderBottom: '2px solid',
+                          borderColor: 'primary.light',
+                          pb: 1,
+                          mb: 2,
+                          flex: 1
+                      }}
+                  >
+                      {campaign.name}
+                  </Typography>
+                  {campaign.application_status && (
+                      <Chip
+                          label="Applied"
+                          size="small"
+                          color="success"
+                          sx={{ ml: 1 }}
+                      />
+                  )}
+              </Box>
+              <Typography 
+                  variant="subtitle1" 
+                  color="text.secondary"
+                  sx={{ mb: 1, fontWeight: 500 }}
+              >
+                  Brand: {campaign.brand_name}
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                  Budget: Rs.{campaign.budget}
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                  Duration: {new Date(campaign.start_date).toLocaleDateString()} - {new Date(campaign.end_date).toLocaleDateString()}
+              </Typography>
+          </CardContent>
+          <CardActions>
+              <Button size="small" color="primary">
+                  View Details
+              </Button>
+          </CardActions>
+      </Card>
+  );
 };
 
 const CampaignDetailModal = ({ isOpen, onClose, campaign, onApply }) => {
@@ -343,38 +373,60 @@ const CampaignDetailModal = ({ isOpen, onClose, campaign, onApply }) => {
 
           {/* Apply Section */}
           <Box sx={{ p: 3, bgcolor: 'background.neutral', mt: 2 }}>
-            <Typography variant="h6" sx={{ mb: 2, fontWeight: 600 }}>
-              Apply for Campaign
-            </Typography>
+    <Typography variant="h6" sx={{ mb: 2, fontWeight: 600 }}>
+        {campaign.application_status === "applied" ? "Application Status" : "Apply for Campaign"}
+    </Typography>
+    
+    {campaign.application_status === "applied" ? (
+        <Typography 
+            variant="body1" 
+            sx={{ 
+                color: 'success.main',
+                display: 'flex',
+                alignItems: 'center',
+                gap: 1 
+            }}
+        >
+            <Chip
+                label="Already Applied"
+                color="success"
+                size="medium"
+            />
+            Your application for this campaign has been submitted
+        </Typography>
+    ) : (
+        <>
             <TextField
-              fullWidth
-              multiline
-              rows={4}
-              placeholder="Write a message to the brand about why you'd be a great fit for this campaign..."
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
-              error={!!error}
-              helperText={error}
-              sx={{ mb: 2 }}
+                fullWidth
+                multiline
+                rows={4}
+                placeholder="Write a message to the brand about why you'd be a great fit for this campaign..."
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
+                error={!!error}
+                helperText={error}
+                sx={{ mb: 2 }}
             />
             <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 2 }}>
-              <Button
-                variant="outlined"
-                onClick={onClose}
-                disabled={isApplying}
-              >
-                Cancel
-              </Button>
-              <Button
-                variant="contained"
-                onClick={handleApply}
-                disabled={isApplying}
-                startIcon={isApplying ? <CircularProgress size={20} /> : null}
-              >
-                {isApplying ? 'Applying...' : 'Apply Now'}
-              </Button>
+                <Button
+                    variant="outlined"
+                    onClick={onClose}
+                    disabled={isApplying}
+                >
+                    Cancel
+                </Button>
+                <Button
+                    variant="contained"
+                    onClick={handleApply}
+                    disabled={isApplying}
+                    startIcon={isApplying ? <CircularProgress size={20} /> : null}
+                >
+                    {isApplying ? 'Applying...' : 'Apply Now'}
+                </Button>
             </Box>
-          </Box>
+        </>
+    )}
+</Box>
         </DialogContent>
       </Box>
     </Dialog>
@@ -439,3 +491,186 @@ const calculateDaysRemaining = (endDate) => {
   const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
   return diffDays;
 };
+
+
+
+const CreateCampaignModal = ({ open, onClose, onSubmit }) => {
+    const [loading, setLoading] = useState(false);
+    const [formData, setFormData] = useState({
+        name: '',
+        description: '',
+        startDate: null,
+        endDate: null,
+        budget: '',
+        targetAudience: '',
+        mediaFiles: []
+    });
+    const [errors, setErrors] = useState({});
+
+    const handleChange = (field) => (event) => {
+        setFormData({ ...formData, [field]: event.target.value });
+        setErrors({ ...errors, [field]: '' });
+    };
+
+    const handleFileChange = (event) => {
+        const files = Array.from(event.target.files);
+        setFormData({ ...formData, mediaFiles: files });
+    };
+
+    const validate = () => {
+        const newErrors = {};
+        if (!formData.name) newErrors.name = 'Campaign name is required';
+        if (!formData.description) newErrors.description = 'Description is required';
+        if (!formData.startDate) newErrors.startDate = 'Start date is required';
+        if (!formData.endDate) newErrors.endDate = 'End date is required';
+        if (!formData.budget) newErrors.budget = 'Budget is required';
+        if (!formData.targetAudience) newErrors.targetAudience = 'Target audience is required';
+
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        if (!validate()) return;
+
+        setLoading(true);
+        try {
+            await onSubmit(formData);
+            onClose();
+        } catch (error) {
+            setErrors({ submit: error.message });
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    return (
+        <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
+            <DialogTitle sx={{ m: 0, p: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <Typography variant="h6">Create New Campaign</Typography>
+                <IconButton onClick={onClose}>
+                    <CloseIcon />
+                </IconButton>
+            </DialogTitle>
+            <form onSubmit={handleSubmit}>
+                <DialogContent dividers>
+                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                        <TextField
+                            label="Campaign Name"
+                            fullWidth
+                            value={formData.name}
+                            onChange={handleChange('name')}
+                            error={!!errors.name}
+                            helperText={errors.name}
+                        />
+                        
+                        <TextField
+                            label="Description"
+                            fullWidth
+                            multiline
+                            rows={4}
+                            value={formData.description}
+                            onChange={handleChange('description')}
+                            error={!!errors.description}
+                            helperText={errors.description}
+                        />
+
+                        <LocalizationProvider dateAdapter={AdapterDateFns}>
+                            <Box sx={{ display: 'flex', gap: 2 }}>
+                                <DatePicker
+                                    label="Start Date"
+                                    value={formData.startDate}
+                                    onChange={(date) => setFormData({ ...formData, startDate: date })}
+                                    slotProps={{
+                                        textField: {
+                                            fullWidth: true,
+                                            error: !!errors.startDate,
+                                            helperText: errors.startDate
+                                        }
+                                    }}
+                                />
+                                <DatePicker
+                                    label="End Date"
+                                    value={formData.endDate}
+                                    onChange={(date) => setFormData({ ...formData, endDate: date })}
+                                    slotProps={{
+                                        textField: {
+                                            fullWidth: true,
+                                            error: !!errors.endDate,
+                                            helperText: errors.endDate
+                                        }
+                                    }}
+                                />
+                            </Box>
+                        </LocalizationProvider>
+
+                        <TextField
+                            label="Budget"
+                            type="number"
+                            fullWidth
+                            value={formData.budget}
+                            onChange={handleChange('budget')}
+                            error={!!errors.budget}
+                            helperText={errors.budget}
+                            InputProps={{
+                                startAdornment: '₹'
+                            }}
+                        />
+
+                        <TextField
+                            label="Target Audience"
+                            fullWidth
+                            value={formData.targetAudience}
+                            onChange={handleChange('targetAudience')}
+                            error={!!errors.targetAudience}
+                            helperText={errors.targetAudience}
+                        />
+
+                        <Box>
+                            <Button
+                                variant="outlined"
+                                component="label"
+                                fullWidth
+                            >
+                                Upload Campaign Media
+                                <input
+                                    type="file"
+                                    hidden
+                                    accept="image/*"
+                                    onChange={handleFileChange}
+                                />
+                            </Button>
+                            {formData.mediaFiles.length > 0 && (
+                                <Typography variant="caption" sx={{ mt: 1 }}>
+                                    Selected file: {formData.mediaFiles[0].name}
+                                </Typography>
+                            )}
+                        </Box>
+
+                        {errors.submit && (
+                            <Typography color="error" variant="body2">
+                                {errors.submit}
+                            </Typography>
+                        )}
+                    </Box>
+                </DialogContent>
+                <DialogActions sx={{ p: 2 }}>
+                    <Button onClick={onClose} disabled={loading}>
+                        Cancel
+                    </Button>
+                    <Button
+                        type="submit"
+                        variant="contained"
+                        disabled={loading}
+                        startIcon={loading && <CircularProgress size={20} />}
+                    >
+                        {loading ? 'Creating...' : 'Create Campaign'}
+                    </Button>
+                </DialogActions>
+            </form>
+        </Dialog>
+    );
+};
+
+

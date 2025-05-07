@@ -20,7 +20,7 @@ export const searchCampaignsInAgency = async (searchParams) => {
             limit: searchParams.limit || 20
         });
 
-        const response = await axios.get(`${API_BASE_URL}/agency/campaignManagement/campaignSearch?${queryParams}`, {
+        const response = await axios.get(`${API_BASE_URL}/agency/campaignManagement/agencyCampaignSearch?${queryParams}`, {
             headers: {
                 'Authorization': `Bearer ${token}`
             }
@@ -41,7 +41,7 @@ export const agencyApplyCampaign = async (campaignId, msg) => {
     const token = localStorage.getItem('agency_token');
     try {
         const response = await axios.post(
-            `${API_BASE_URL}/agency/campaignManagement/applyCampaignAgency/${campaignId}`, { msg }, {
+            `${API_BASE_URL}/agency/campaignManagement/applyCampaignAgency/${campaignId}`, {message : msg}, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json'
@@ -69,3 +69,46 @@ export const agencyApplyCampaign = async (campaignId, msg) => {
         }
     }
 } 
+
+
+
+
+export const createAgencyCampaign = async (campaignData) => {
+    try {
+        const token = localStorage.getItem('agency_token');
+        if (!token) {
+            throw new Error('Authentication token not found');
+        }
+
+        const formData = new FormData();
+
+        formData.append('campaignName', campaignData.name);
+        formData.append('campaignDescription', campaignData.description);
+        formData.append('campaignStartDate', campaignData.startDate);
+        formData.append('campaignEndDate', campaignData.endDate);
+        formData.append('campaignBudget', campaignData.budget);
+        formData.append('targetAudience', campaignData.targetAudience);
+        formData.append('campaignStatus', 'ACTIVE'); // Default status for new campaigns
+
+        if (campaignData.mediaFiles && campaignData.mediaFiles.length > 0) {
+            formData.append('campaignMedia', campaignData.mediaFiles[0]); // Taking first file as the main campaign media
+        }
+
+        const config = {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'multipart/form-data'
+            },
+        };
+
+        const response = await axios.post(`${API_BASE_URL}/agency/campaignManagement/createAgencyCampaign`, formData, config);
+        return response.data;
+
+    } catch (error) {
+        console.error('Create campaign error:', error);
+        if (error.response) {
+            throw new Error(error.response.data.error || 'Failed to create campaign');
+        }
+        throw error;
+    }
+};
