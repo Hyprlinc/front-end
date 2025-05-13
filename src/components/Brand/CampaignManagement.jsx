@@ -113,9 +113,10 @@ const CampaignManagement = () => {
     setError(null);
 
     try {
-      const response = await getCampaignResponses()
-      console.log("Campaign responses from api====>",response)
-      setCampaignResponses(response.data);
+      const response = await getCampaignResponses();
+      if (response.data) {
+        setCampaignResponses(response.data);
+      }
     } catch (error) {
       setError(error.message);
       console.error('Failed to fetch campaign responses:', error);
@@ -323,7 +324,7 @@ const CampaignManagement = () => {
             </div>
             <div className="flex items-center space-x-3">
               <span className="text-sm text-gray-500">
-                {campaign.applications.length} responses
+                {campaign.applications?.length || 0} responses
               </span>
               <span className={`px-3 py-1 rounded-full text-sm ${
                 campaign.campaign_status === 'ACTIVE' 
@@ -335,7 +336,7 @@ const CampaignManagement = () => {
             </div>
           </div>
 
-          {campaign.applications.length > 0 ? (
+          {campaign.applications && campaign.applications.length > 0 ? (
             <div className="space-y-4">
               <h4 className="font-medium text-gray-700">Applications ({campaign.applications.length})</h4>
               <div className="divide-y">
@@ -380,17 +381,6 @@ const CampaignManagement = () => {
                         <p className="text-sm text-gray-500">
                           Applied: {new Date(application.applied_at).toLocaleString()}
                         </p>
-                        {application.influencer.social_media_handles.map((handle, idx) => (
-                          <a 
-                            key={idx}
-                            href={handle}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-blue-500 hover:text-blue-600"
-                          >
-                            <Instagram className="w-4 h-4" />
-                          </a>
-                        ))}
                       </div>
                     </div>
                   </div>

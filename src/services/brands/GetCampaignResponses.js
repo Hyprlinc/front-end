@@ -2,7 +2,7 @@ import axios from 'axios';
 
 
 
-const ENLIST_CAMPAIGN_RESPONSES = 'http://192.168.0.123:5000/api/v1/brands/enlistCampaignApplication/my-campaigns/applications';
+const ENLIST_CAMPAIGN_RESPONSES = 'http://localhost:5001/api/v1/brands/enlistCampaignApplication/my-campaigns/applications';
 
 /**
  * Fetches all campaigns and their applications for the authenticated brand

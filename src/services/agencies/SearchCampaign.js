@@ -2,7 +2,7 @@ import axios from 'axios';
 
 
 
-const API_BASE_URL = 'http://localhost:5000/api/v1';
+const API_BASE_URL = 'http://localhost:5001/api/v1';
 
 export const searchCampaignsInAgency = async (searchParams) => {
     const token = localStorage.getItem('agency_token');

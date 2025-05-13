@@ -1,7 +1,7 @@
 import axios from 'axios';
 
-const CAMPAIGN_CREATION_URL = 'http://192.168.0.123:5000/api/v1/brandCampaignGateway/createCampaign';
-const CAMPAIGN_FETCH_URL = 'http://192.168.0.123:5000/api/v1/brandCampaignGateway/getBrandCampaigns';
+const CAMPAIGN_CREATION_URL = 'http://localhost:5001/api/v1/brandCampaignGateway/createCampaign';
+const CAMPAIGN_FETCH_URL = 'http://localhost:5001/api/v1/brandCampaignGateway/getBrandCampaigns';
 
 export const createCampaign = async (campaignData) => {
     try {

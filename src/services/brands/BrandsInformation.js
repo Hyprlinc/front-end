@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const BRANDS_INFO = 'http://192.168.0.123:5000/api/v1/brandProfile';
+const BRANDS_INFO = 'http://localhost:5001/api/v1/brandProfile';
 
 export const getBrandsInfo = async (token) => {
     try {
