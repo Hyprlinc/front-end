@@ -113,9 +113,10 @@ const CampaignManagement = () => {
     setError(null);
 
     try {
-      const response = await getCampaignResponses()
-      console.log("Campaign responses from api====>",response)
-      setCampaignResponses(response.data);
+      const response = await getCampaignResponses();
+      if (response.data) {
+        setCampaignResponses(response.data);
+      }
     } catch (error) {
       setError(error.message);
       console.error('Failed to fetch campaign responses:', error);
@@ -380,17 +381,6 @@ const CampaignManagement = () => {
                         <p className="text-sm text-gray-500">
                           Applied: {new Date(application.applied_at).toLocaleString()}
                         </p>
-                        {application.influencer.social_media_handles.map((handle, idx) => (
-                          <a 
-                            key={idx}
-                            href={handle}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-blue-500 hover:text-blue-600"
-                          >
-                            <Instagram className="w-4 h-4" />
-                          </a>
-                        ))}
                       </div>
                     </div>
                   </div>
