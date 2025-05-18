@@ -6,6 +6,8 @@ import { Search, Bell, User, Home, Users, Briefcase, MessageSquare,
 import { useNavigate } from 'react-router-dom';
 import DiscoverInfluencersInAgency from '../Agencies/DiscoverInfluencersInAgency'
 import DiscoverCampaignsInAgency from './DiscoverCampaignsInAgency'
+import Messages from './Messages';
+import { AgenciesMessagesProvider } from './Context/MessagesContext';
 
 const DashboardLayout = () => {
 
@@ -87,6 +89,7 @@ const DashboardLayout = () => {
             {/* Other sections will be added here */}
             {activeSection === 'discover-influencers' && <DiscoverInfluencersInAgency />}
             {activeSection === 'discover-campaigns' &&  <DiscoverCampaignsInAgency/>}
+            {activeSection === 'messages' && <AgenciesMessagesProvider> <Messages/> </AgenciesMessagesProvider>}
           </div>
         </main>
       </div>
