@@ -14,7 +14,8 @@ const AgencyProfile = () => {
   const [activeSection, setActiveSection] = useState('agency');
   const [isEditing, setIsEditing] = useState(true);
 
-  const [packages, setPackages] = useState([]);
+  const [fetchedPackages, setFetchedPackages] = useState([]);
+  const [edittedPackage, setEditedPackage] = useState();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [isPackagesModified, setIsPackagesModified] = useState(false);
@@ -24,7 +25,7 @@ const AgencyProfile = () => {
       setLoading(true);
       try {
         const response = await AgencyPackagesAPI.getPackages();
-        setPackages(response.data);
+        setFetchedPackages(response.data);
       } catch (err) {
         setError(err.message);
       } finally {
@@ -79,22 +80,43 @@ const AgencyProfile = () => {
   };
 
 
-  // Add this function inside the AgencyProfile component
+  const handleModifiedPackages = (index, field, value) => {
+    const updatedPackages = [...fetchedPackages];
+    updatedPackages[index] = {
+      ...updatedPackages[index],
+      [field]: value
+    };
+    setFetchedPackages(updatedPackages);
+    setIsPackagesModified(true);
+  };
+
+
   const handleSavePackages = async () => {
     if (!isEditing) return;
 
     try {
       setLoading(true);
-      for (const pkg of packages) {
-        if (pkg.id && typeof pkg.id === 'number') {
-          // Update existing package
-          await AgencyPackagesAPI.updatePackage(pkg.id, pkg);
-        } else {
-          // Create new package
-          await AgencyPackagesAPI.createPackage(pkg);
-        }
+      console.log(fetchedPackages, "packages");
+      
+      // Separate new and existing packages
+      const newPackages = fetchedPackages.filter(pkg => !pkg.hasOwnProperty('id'));
+      const existingPackages = fetchedPackages.filter(pkg => pkg.hasOwnProperty('id'));
+
+      // Handle new packages
+      for (const pkg of newPackages) {
+        await AgencyPackagesAPI.createPackage(pkg);
       }
+
+      // Handle existing packages
+      for (const pkg of existingPackages) {
+        await AgencyPackagesAPI.updatePackage(pkg.id, pkg);
+      }
+
+      // Refresh the packages list after saving
+      const response = await AgencyPackagesAPI.getPackages();
+      setFetchedPackages(response.data);
       setIsEditing(false);
+      setIsPackagesModified(false);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -239,8 +261,7 @@ const AgencyProfile = () => {
                   <div className="space-x-2">
                     <button
                       onClick={() => {
-                        setPackages([...packages, {
-                          id: Date.now(),
+                        setFetchedPackages([...fetchedPackages, {
                           package_type: '',
                           price: '',
                           features: [],
@@ -268,7 +289,7 @@ const AgencyProfile = () => {
                 </div>
 
                 <div className="grid md:grid-cols-2 gap-6">
-                  {packages.map((pkg, index) => (
+                  {fetchedPackages.map((pkg, index) => (
                     <div key={pkg.id} className="border rounded-lg p-4 space-y-4 bg-white shadow">
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -278,12 +299,12 @@ const AgencyProfile = () => {
                           type="text"
                           value={pkg.package_type}
                           onChange={(e) => {
-                            const updatedPackages = [...packages];
+                            const updatedPackages = [...fetchedPackages];
                             updatedPackages[index] = {
                               ...pkg,
                               package_type: e.target.value
                             };
-                            setPackages(updatedPackages);
+                            setFetchedPackages(updatedPackages);
                             setIsPackagesModified(true);
                           }}
                           className={`w-full px-3 py-2 border rounded-lg bg-white`}
@@ -299,12 +320,12 @@ const AgencyProfile = () => {
                           type="number"
                           value={pkg.price}
                           onChange={(e) => {
-                            const updatedPackages = [...packages];
+                            const updatedPackages = [...fetchedPackages];
                             updatedPackages[index] = {
                               ...pkg,
                               price: e.target.value
                             };
-                            setPackages(updatedPackages);
+                            setFetchedPackages(updatedPackages);
                             setIsPackagesModified(true);
                           }}
                           className={`w-full px-3 py-2 border rounded-lg bg-white`}
@@ -319,12 +340,12 @@ const AgencyProfile = () => {
                         <textarea
                           value={pkg.features.join('\n')}
                           onChange={(e) => {
-                            const updatedPackages = [...packages];
+                            const updatedPackages = [...fetchedPackages];
                             updatedPackages[index] = {
                               ...pkg,
                               features: e.target.value.split('\n').filter(Boolean)
                             };
-                            setPackages(updatedPackages);
+                            setFetchedPackages(updatedPackages);
                             setIsPackagesModified(true);
                           }}
                           rows={4}
@@ -341,12 +362,12 @@ const AgencyProfile = () => {
                           type="number"
                           value={pkg.delivery_time_days}
                           onChange={(e) => {
-                            const updatedPackages = [...packages];
+                            const updatedPackages = [...fetchedPackages];
                             updatedPackages[index] = {
                               ...pkg,
                               delivery_time_days: e.target.value
                             };
-                            setPackages(updatedPackages);
+                            setFetchedPackages(updatedPackages);
                             setIsPackagesModified(true);
                           }}
                           className={`w-full px-3 py-2 border rounded-lg bg-white`}
@@ -357,8 +378,8 @@ const AgencyProfile = () => {
                       {isEditing && (
                         <button
                           onClick={() => {
-                            const updatedPackages = packages.filter((_, i) => i !== index);
-                            setPackages(updatedPackages);
+                            const updatedPackages = fetchedPackages.filter((_, i) => i !== index);
+                            setFetchedPackages(updatedPackages);
                             setIsPackagesModified(true);
                           }}
                           className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600"

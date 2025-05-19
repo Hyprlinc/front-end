@@ -8,7 +8,7 @@ class AgencyPackagesAPI {
     static async createPackage(packageData) {
         try {
             const response = await axios.post(
-                `${API_BASE_URL}/agencyPackages`,
+                `${API_BASE_URL}/createPackage`,
                 packageData,
                 {
                     headers: {
@@ -96,6 +96,7 @@ class AgencyPackagesAPI {
     }
 
     static handleError(error) {
+    
         if (error.response) {
             return {
                 status: error.response.status,
