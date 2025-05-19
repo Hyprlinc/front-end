@@ -1,24 +1,30 @@
 import React, { useState } from 'react';
-import { Search, Bell, User, Home, Users, Briefcase, MessageSquare, 
-         FolderOpen, BarChart2, Settings } from 'lucide-react';
+import {
+  Search, Bell, User, Home, Users, Briefcase, MessageSquare,
+  FolderOpen, BarChart2, Settings, User2
+} from 'lucide-react';
 
 
 import { useNavigate } from 'react-router-dom';
 import DiscoverInfluencersInAgency from '../Agencies/DiscoverInfluencersInAgency'
 import DiscoverCampaignsInAgency from './DiscoverCampaignsInAgency'
+
 import Messages from './Messages';
-import { AgenciesMessagesProvider } from './Context/MessagesContext';
+
+import AgencyProfile from './AgencyProfile';
+
 
 const DashboardLayout = () => {
 
-    const navigate = useNavigate();
+  const navigate = useNavigate();
 
   const [activeSection, setActiveSection] = useState('dashboard');
-  
+
   const menuItems = [
     { id: 'dashboard', label: 'Dashboard', icon: Home },
     { id: 'discover-influencers', label: 'Discover Influencers', icon: Users },
     { id: 'discover-campaigns', label: 'Campaign Management', icon: Briefcase },
+    { id: 'profile', label: 'Profile Management', icon: User2 },
     { id: 'campaigns', label: 'Campaigns', icon: Briefcase },
     { id: 'messages', label: 'Messages', icon: MessageSquare },
     { id: 'portfolio', label: 'Portfolio', icon: FolderOpen },
@@ -72,8 +78,8 @@ const DashboardLayout = () => {
                 <span className="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full"></span>
               </button>
               <button
-              onClick={() => navigate('/agencyProfile')}
-              className="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded-lg">
+                onClick={() => navigate('/agencyProfile')}
+                className="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded-lg">
                 <User className="w-6 h-6 text-gray-600" />
                 <span className="text-sm font-medium text-gray-700">Profile</span>
               </button>
@@ -87,9 +93,14 @@ const DashboardLayout = () => {
           <div className="max-w-7xl mx-auto">
             {activeSection === 'dashboard' && <DashboardHome />}
             {/* Other sections will be added here */}
+            {activeSection === 'profile' && <AgencyProfile/>}
             {activeSection === 'discover-influencers' && <DiscoverInfluencersInAgency />}
+
             {activeSection === 'discover-campaigns' &&  <DiscoverCampaignsInAgency/>}
-            {activeSection === 'messages' && <AgenciesMessagesProvider> <Messages/> </AgenciesMessagesProvider>}
+           
+
+            {activeSection === 'discover-campaigns' && <DiscoverCampaignsInAgency />}
+
           </div>
         </main>
       </div>
@@ -109,7 +120,7 @@ const DashboardHome = () => {
   return (
     <div className="space-y-6">
       <h2 className="text-2xl font-bold text-gray-800">Dashboard Overview</h2>
-      
+
       {/* Quick Stats */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {stats.map((stat, index) => (
