@@ -8,7 +8,11 @@ import {
 import { useNavigate } from 'react-router-dom';
 import DiscoverInfluencersInAgency from '../Agencies/DiscoverInfluencersInAgency'
 import DiscoverCampaignsInAgency from './DiscoverCampaignsInAgency'
+
+import Messages from './Messages';
+
 import AgencyProfile from './AgencyProfile';
+
 
 const DashboardLayout = () => {
 
@@ -91,7 +95,12 @@ const DashboardLayout = () => {
             {/* Other sections will be added here */}
             {activeSection === 'profile' && <AgencyProfile/>}
             {activeSection === 'discover-influencers' && <DiscoverInfluencersInAgency />}
+
+            {activeSection === 'discover-campaigns' &&  <DiscoverCampaignsInAgency/>}
+           
+
             {activeSection === 'discover-campaigns' && <DiscoverCampaignsInAgency />}
+
           </div>
         </main>
       </div>

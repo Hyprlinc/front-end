@@ -324,7 +324,7 @@ const CampaignManagement = () => {
             </div>
             <div className="flex items-center space-x-3">
               <span className="text-sm text-gray-500">
-                {campaign.applications.length} responses
+                {campaign.applications?.length || 0} responses
               </span>
               <span className={`px-3 py-1 rounded-full text-sm ${
                 campaign.campaign_status === 'ACTIVE' 
@@ -336,7 +336,7 @@ const CampaignManagement = () => {
             </div>
           </div>
 
-          {campaign.applications.length > 0 ? (
+          {campaign.applications && campaign.applications.length > 0 ? (
             <div className="space-y-4">
               <h4 className="font-medium text-gray-700">Applications ({campaign.applications.length})</h4>
               <div className="divide-y">

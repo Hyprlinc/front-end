@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_BASE_URL = 'http://192.168.0.123:5000/api/v1/agencyAuth';
+const API_BASE_URL = 'http://localhost:5001/api/v1/agencyAuth';
 
 class AgencyAuth {
   // Store the JWT token

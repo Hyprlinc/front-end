@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const ENLIST_INFLUENCERS = 'http://192.168.0.123:5000/api/v1/fuzzyListing/enlistInfluencers';
+const ENLIST_INFLUENCERS = 'http://localhost:5001/api/v1/fuzzyListing/enlistInfluencers';
 
 export const getInfluencers = async (token, filters) => {
     try {
