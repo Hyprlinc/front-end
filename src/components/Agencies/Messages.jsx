@@ -1,6 +1,22 @@
 import React, { useState } from 'react';
-import { MessageCircle, Paperclip, Search, Filter, Archive, Mail, MailOpen } from 'lucide-react';
+import { 
+  MessageCircle, 
+  Paperclip, 
+  Search, 
+  Filter, 
+  Archive, 
+  Mail, 
+  MailOpen,
+  Send,
+  X as CloseIcon,
+  Image as ImageIcon,
+  Smile
+} from 'lucide-react';
 import { useMessages } from '../Agencies/Context/MessagesContext';
+import { 
+  Dialog,
+  DialogContent,
+} from '@mui/material';
 
 const Messages = () => {
   const { chats, setChats } = useMessages();
@@ -8,6 +24,7 @@ const Messages = () => {
     search: '',
     status: 'all',
   });
+  const [activeChatId, setActiveChatId] = useState(null);
 
   const handleFilterChange = (e) => {
     setFilters({ ...filters, [e.target.name]: e.target.value });
@@ -35,8 +52,13 @@ const Messages = () => {
     );
   };
 
+  const handleReply = (chatId, e) => {
+    e.stopPropagation(); // Prevent chat marking as read
+    setActiveChatId(chatId);
+  };
+
   return (
-    <div className="p-6">
+    <div className="p-6 relative">
       <h1 className="text-2xl font-bold mb-6 flex items-center">
         <MessageCircle className="mr-2" /> Messages
       </h1>
@@ -86,7 +108,12 @@ const Messages = () => {
                     <p className="text-gray-500">{chat.campaign}</p>
                   </div>
                 </div>
-                <button className="bg-blue-500 text-white px-4 py-2 rounded-lg">Reply</button>
+                <button 
+                  className="bg-blue-500 text-white px-4 py-2 rounded-lg"
+                  onClick={(e) => handleReply(chat.id, e)}
+                >
+                  Reply
+                </button>
               </div>
               <p className="mt-4">{chat.lastMessage}</p>
               {chat.attachments.length > 0 && (
@@ -130,7 +157,131 @@ const Messages = () => {
           </div>
         )}
       </div>
+
+      {/* Add ChatWindow component */}
+      {activeChatId && (
+        <ChatWindow
+          chat={chats.find(chat => chat.id === activeChatId)}
+          onClose={() => setActiveChatId(null)}
+        />
+      )}
     </div>
+  );
+};
+
+// Replace the existing ChatWindow component with this updated version
+const ChatWindow = ({ chat, onClose }) => {
+  const [message, setMessage] = useState('');
+  const [messages, setMessages] = useState([
+    // Dummy messages - replace with actual chat history
+    { id: 1, text: 'Hello! I m interested in your campaign.', sender: 'user', timestamp: new Date() },
+    { id: 2, text: 'Great! Let s discuss the details.', sender: 'brand', timestamp: new Date() }
+  ]);
+
+  const handleSendMessage = (e) => {
+    e.preventDefault();
+    if (!message.trim()) return;
+
+    const newMessage = {
+      id: messages.length + 1,
+      text: message,
+      sender: 'user',
+      timestamp: new Date()
+    };
+
+    setMessages([...messages, newMessage]);
+    setMessage('');
+    // Add API call to send message here
+  };
+
+  return (
+    <Dialog 
+      open={true} 
+      onClose={onClose}
+      maxWidth="md"
+      fullWidth
+    >
+      <div className="flex flex-col" style={{ height: '80vh' }}>
+        {/* Chat Header */}
+        <div className="p-4 border-b flex justify-between items-center bg-blue-500 text-white">
+          <div>
+            <h3 className="font-bold text-xl">{chat.brandName}</h3>
+            <p className="text-sm opacity-90">{chat.campaign}</p>
+          </div>
+          <button onClick={onClose} className="p-2 hover:bg-blue-600 rounded">
+            <CloseIcon size={24} />
+          </button>
+        </div>
+
+        {/* Messages Area */}
+        <DialogContent className="flex-1 overflow-y-auto p-4 space-y-4">
+          {messages.map((msg) => (
+            <div
+              key={msg.id}
+              className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}
+            >
+              <div
+                className={`max-w-[60%] p-4 rounded-lg ${
+                  msg.sender === 'user'
+                    ? 'bg-blue-500 text-white rounded-br-none'
+                    : 'bg-gray-100 text-gray-800 rounded-bl-none'
+                }`}
+              >
+                <p className="text-base">{msg.text}</p>
+                <span className="text-xs opacity-75 mt-2 block">
+                  {msg.timestamp.toLocaleTimeString([], { 
+                    hour: '2-digit', 
+                    minute: '2-digit',
+                    hour12: true 
+                  })}
+                </span>
+              </div>
+            </div>
+          ))}
+        </DialogContent>
+
+        {/* Message Input */}
+        <form onSubmit={handleSendMessage} className="p-4 border-t bg-white">
+          <div className="flex items-center space-x-3">
+            <button
+              type="button"
+              className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+              title="Add attachment"
+            >
+              <Paperclip size={22} className="text-gray-600" />
+            </button>
+            <button
+              type="button"
+              className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+              title="Add image"
+            >
+              <ImageIcon size={22} className="text-gray-600" />
+            </button>
+            <input
+              type="text"
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+              placeholder="Type your message..."
+              className="flex-1 p-3 border rounded-full focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+            />
+            <button
+              type="button"
+              className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+              title="Add emoji"
+            >
+              <Smile size={22} className="text-gray-600" />
+            </button>
+            <button
+              type="submit"
+              className="p-3 bg-blue-500 text-white rounded-full hover:bg-blue-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              disabled={!message.trim()}
+            >
+              <Send size={22} />
+            </button>
+          </div>
+        </form>
+      </div>
+    </Dialog>
   );
 };
 

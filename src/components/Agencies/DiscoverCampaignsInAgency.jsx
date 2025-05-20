@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Tabs, Tab, Box, Button, CircularProgress, Grid, Typography } from '@mui/material';
 import { Add as AddIcon } from '@mui/icons-material';
-import { agencyApplyCampaign, searchCampaignsInAgency, createAgencyCampaign } from '../../services/agencies/SearchCampaign';
+import { agencyApplyCampaign, searchCampaignsInAgency, createAgencyCampaign, getCampaignResponses } from '../../services/agencies/SearchCampaign';
 import { Card, CardContent, CardActions } from '@mui/material';
 import {
   Dialog,
@@ -25,6 +25,8 @@ import {
 } from 'lucide-react';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider, DatePicker } from '@mui/x-date-pickers';
+import { Message as MessageIcon } from '@mui/icons-material';
+
 
 const DiscoverCampaignsInAgency = () => {
     const [createModalOpen, setCreateModalOpen] = useState(false);
@@ -33,6 +35,9 @@ const DiscoverCampaignsInAgency = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const [selectedCampaign, setSelectedCampaign] = useState(null);
+    const [responses, setResponses] = useState([]);
+    const [responsesLoading, setResponsesLoading] = useState(false);
+    const [responsesError, setResponsesError] = useState(null);
 
     const handleCreateCampaign = async (campaignData) => {
       try {
@@ -60,9 +65,28 @@ const DiscoverCampaignsInAgency = () => {
         }
     };
 
+    const fetchResponses = async () => {
+        setResponsesLoading(true);
+        setResponsesError(null);
+        try {
+            const response = await getCampaignResponses();
+            setResponses(response.data);
+        } catch (error) {
+            setResponsesError(error.message);
+        } finally {
+            setResponsesLoading(false);
+        }
+    };
+
     useEffect(() => {
         fetchCampaigns();
     }, []);
+
+    useEffect(() => {
+        if (activeTab === 2) {
+            fetchResponses();
+        }
+    }, [activeTab]);
 
     const handleTabChange = (event, newValue) => {
         setActiveTab(newValue);
@@ -99,6 +123,7 @@ const DiscoverCampaignsInAgency = () => {
             >
                 <Tab label="Brand Campaigns" />
                 <Tab label="My Campaigns" />
+                <Tab label="Responses" />
             </Tabs>
 
             <Box sx={{ mt: 2 }}>
@@ -127,6 +152,92 @@ const DiscoverCampaignsInAgency = () => {
                     <Typography sx={{ textAlign: 'center', mt: 2 }}>
                         My Campaigns section coming soon...
                     </Typography>
+                )}
+                {activeTab === 2 && (
+                    <Box sx={{ mt: 2 }}>
+                        {responsesLoading ? (
+                            <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
+                                <CircularProgress />
+                            </Box>
+                        ) : responsesError ? (
+                            <Typography color="error" sx={{ textAlign: 'center', mt: 2 }}>
+                                {responsesError}
+                            </Typography>
+                        ) : (
+                            <>
+                                {responses.length > 0 ? (
+                                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+                                        {responses.map((response) => (
+                                            <Card
+                                                key={response.application_id}
+                                                sx={{
+                                                    bgcolor: 'background.paper',
+                                                    borderRadius: 1,
+                                                    boxShadow: 1
+                                                }}
+                                            >
+                                                <CardContent>
+                                                    <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
+                                                        <Box>
+                                                            <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+                                                                {response.name}
+                                                            </Typography>
+                                                            <Typography variant="body2" color="text.secondary">
+                                                                {response.email}
+                                                            </Typography>
+                                                        </Box>
+                                                        <Chip
+                                                            label={response.status}
+                                                            color={response.status === 'applied' ? 'success' : 'default'}
+                                                            size="small"
+                                                        />
+                                                    </Box>
+                                                    
+                                                    <Typography variant="body1" sx={{ mb: 2 }}>
+                                                        {response.message}
+                                                    </Typography>
+                                                    
+                                                    <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
+                                                        <Typography variant="caption" color="text.secondary">
+                                                            Applied on: {new Date(response.applied_at).toLocaleDateString()}
+                                                        </Typography>
+                                                        {response.channel_links?.map((link, index) => (
+                                                            <Chip
+                                                                key={index}
+                                                                icon={<Instagram size={16} />}
+                                                                label="Instagram"
+                                                                size="small"
+                                                                component="a"
+                                                                href={link}
+                                                                target="_blank"
+                                                                clickable
+                                                            />
+                                                        ))}
+                                                    </Box>
+                                                </CardContent>
+                                                <CardActions sx={{ justifyContent: 'flex-end', p: 2, pt: 0 }}>
+                                                    <Button
+                                                        variant="contained"
+                                                        startIcon={<MessageIcon />}
+                                                        onClick={() => {
+                                                            // Handle chat initiation
+                                                            console.log(`Initiating chat with ${response.name}`);
+                                                        }}
+                                                    >
+                                                        Start Chat
+                                                    </Button>
+                                                </CardActions>
+                                            </Card>
+                                        ))}
+                                    </Box>
+                                ) : (
+                                    <Typography variant="h6" sx={{ textAlign: 'center', mt: 4 }}>
+                                        No responses to your campaigns yet
+                                    </Typography>
+                                )}
+                            </>
+                        )}
+                    </Box>
                 )}
             </Box>
 

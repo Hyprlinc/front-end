@@ -12,6 +12,7 @@ import DiscoverCampaignsInAgency from './DiscoverCampaignsInAgency'
 import Messages from './Messages';
 
 import AgencyProfile from './AgencyProfile';
+import { AgenciesMessagesProvider } from './Context/MessagesContext';
 
 
 const DashboardLayout = () => {
@@ -97,9 +98,9 @@ const DashboardLayout = () => {
             {activeSection === 'discover-influencers' && <DiscoverInfluencersInAgency />}
 
             {activeSection === 'discover-campaigns' &&  <DiscoverCampaignsInAgency/>}
-           
+            {activeSection === 'messages' && <AgenciesMessagesProvider> <Messages/>  </AgenciesMessagesProvider>}
 
-            {activeSection === 'discover-campaigns' && <DiscoverCampaignsInAgency />}
+            
 
           </div>
         </main>

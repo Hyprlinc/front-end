@@ -112,3 +112,19 @@ export const createAgencyCampaign = async (campaignData) => {
         throw error;
     }
 };
+
+export const getCampaignResponses = async () => {
+    try {
+      const response = await axios.get(`${API_BASE_URL}/agency/campaignManagement/my-campaigns/applications`, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('agency_token')}`,
+          'Content-Type': 'application/json',
+        }
+      });
+  
+      return response.data;
+    } catch (error) {
+      const errorMessage = error.response?.data?.error || 'Failed to fetch campaign responses';
+      throw new Error(errorMessage);
+    }
+  };
