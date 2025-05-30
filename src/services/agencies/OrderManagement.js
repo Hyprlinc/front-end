@@ -1,16 +1,18 @@
-import { config } from "../../config/env";
 import axios from "axios";
 
-class OrderManagement {
+import { config } from "../../config/env";
 
-    static API_BASE_URL = `${config.ORDER_MANAGEMENT}`
+
+class OrderManagement { 
+    static API_BASE_URL = `${config.ORDER_MANAGEMENT}`;
+
     static async getOrders() {
         try {
             const response = await axios.get(
                 `${this.API_BASE_URL}/dashboard/orders`,
                 {
                     headers: {
-                        'Authorization': `Bearer ${localStorage.getItem('brandToken')}`,
+                        'Authorization': `Bearer ${localStorage.getItem('agencyToken')}`,
                         'Content-Type': 'application/json'
                     }
                 }
@@ -21,19 +23,18 @@ class OrderManagement {
         }
     }
 
-    static async placeOrderFromBrand(agencyId, influencerId, packageId) {
+    static async placeOrderFromAgency(influencerId, packageId) {
         try {
             const response = await axios.post(
                 `${this.API_BASE_URL}/order`,
                 {
-                    agencyId: agencyId,
                     influencerId: influencerId,
-                    status: "pending", //have to change this to status if needed
+                    status: "pending", //change this to status if needed
                     packageId: packageId
                 },
                 {
                     headers: {
-                        'Authorization': `Bearer ${localStorage.getItem('brandToken')}`,
+                        'Authorization': `Bearer ${localStorage.getItem('agencyToken')}`,
                         'Content-Type': 'application/json'
                     }
                 }
@@ -42,7 +43,16 @@ class OrderManagement {
         } catch (error) {
             throw this.handleError(error);
         }
+    }
 
+    static handleError(error) {
+        if (error.response) {
+            return error.response.data;
+        } else if (error.request) {
+            return { message: "No response received from server." };
+        } else {
+            return { message: error.message };
+        }
     }
 }
 

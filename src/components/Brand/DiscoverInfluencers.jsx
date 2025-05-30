@@ -380,6 +380,7 @@ export default DiscoverInfluencers;
 
 const InfluencerModal = ({ influencer, onClose }) => {
   const [loadingPackageId, setLoadingPackageId] = useState(null);
+  console.log("This is the object of Influencer",influencer)
 
   const handleBuyPackage = async (pkg) => {
     setLoadingPackageId(pkg.package_id);
