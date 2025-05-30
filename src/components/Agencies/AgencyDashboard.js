@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import {
   Search, Bell, User, Home, Users, Briefcase, MessageSquare,
-  FolderOpen, BarChart2, Settings, User2
+  FolderOpen, BarChart2, Settings, User2, Package
 } from 'lucide-react';
 
 
@@ -12,6 +12,7 @@ import DiscoverCampaignsInAgency from './DiscoverCampaignsInAgency'
 import Messages from './Messages';
 
 import AgencyProfile from './AgencyProfile';
+import Orders from './Orders';
 import { AgenciesMessagesProvider } from './Context/MessagesContext';
 
 
@@ -28,6 +29,7 @@ const DashboardLayout = () => {
     { id: 'profile', label: 'Profile Management', icon: User2 },
     { id: 'campaigns', label: 'Campaigns', icon: Briefcase },
     { id: 'messages', label: 'Messages', icon: MessageSquare },
+    { id: 'orders', label: 'Orders', icon: Package },
     { id: 'portfolio', label: 'Portfolio', icon: FolderOpen },
     { id: 'reports', label: 'Reports & Analytics', icon: BarChart2 },
     { id: 'settings', label: 'Settings', icon: Settings }
@@ -99,7 +101,7 @@ const DashboardLayout = () => {
 
             {activeSection === 'discover-campaigns' &&  <DiscoverCampaignsInAgency/>}
             {activeSection === 'messages' && <AgenciesMessagesProvider> <Messages/>  </AgenciesMessagesProvider>}
-
+            {activeSection === 'orders' && <Orders/>}
             
 
           </div>

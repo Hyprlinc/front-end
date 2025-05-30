@@ -1,6 +1,7 @@
 import axios from 'axios';
 
-const API_BASE_URL = 'http://localhost:5001/api/v1/creators/packages';
+import { config } from '../../config/env';
+const API_BASE_URL = config.CREATOR_PACKAGE_URL;
 
 class CreatorPackagesAPI {
     // Create a new package

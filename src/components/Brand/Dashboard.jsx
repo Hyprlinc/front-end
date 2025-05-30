@@ -13,6 +13,7 @@ import {
   User,
   LogOut,
   GitCompareArrows,
+  Package
 } from 'lucide-react';
 
 import DiscoverInfluencers from './DiscoverInfluencers';
@@ -21,6 +22,7 @@ import Analytics from './Analytics';
 import Messages from './Messages';
 import { getBrandsInfo } from '../../services/brands/BrandsInformation';
 import ProfileMenu from './ProfileMenu';
+import Orders from './Orders'
 
 const Dashboard = () => {
   const [token, setToken] = useState("");
@@ -92,6 +94,7 @@ const Dashboard = () => {
             { icon: <BarChart2 />, text: 'Analytics' },
             { icon: <MessageSquare />, text: 'Messages' },
             { icon: <Settings />, text: 'Settings' },
+            { icon: <Package />, text: 'Orders' },
           ].map((item, index) => (
             <button
               key={index}
@@ -198,6 +201,7 @@ const Dashboard = () => {
               <p className="text-gray-500 mt-2">Settings and configuration interface will be displayed here</p>
             </div>
           )}
+          {activeSection === 'Orders' && <Orders />}
           </div>
         </main>
       </div>

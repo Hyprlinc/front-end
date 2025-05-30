@@ -2,7 +2,8 @@ import axios from 'axios';
 
 
 
-const API_BASE_URL = 'http://localhost:5001/api/v1';
+import { config } from '../../config/env';
+const API_BASE_URL = config.API_BASE_URL;
 
 export const searchCampaignsInAgency = async (searchParams) => {
     const token = localStorage.getItem('agency_token');

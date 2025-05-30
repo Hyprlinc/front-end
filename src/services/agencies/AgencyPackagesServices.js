@@ -1,6 +1,7 @@
 import axios from 'axios';
 
-const API_BASE_URL = 'http://192.168.0.123:5001/api/v1/agency/packageManagement';
+import { config } from '../../config/env';
+const API_BASE_URL = config.AGENCY_PACKAGE_URL;
 
 
 class AgencyPackagesAPI {
