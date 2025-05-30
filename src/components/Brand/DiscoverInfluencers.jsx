@@ -382,12 +382,12 @@ const InfluencerModal = ({ influencer, onClose }) => {
   const [loadingPackageId, setLoadingPackageId] = useState(null);
 
   const handleBuyPackage = async (pkg) => {
-    setLoadingPackageId(pkg.id);
+    setLoadingPackageId(pkg.package_id);
     try {
       await OrderManagement.placeOrderFromBrand(
         influencer.agency_id,
         influencer.id,
-        pkg.id
+        pkg.package_id
       );
       
       toast.success('Order placed successfully!');
@@ -565,17 +565,17 @@ const InfluencerModal = ({ influencer, onClose }) => {
                     
                     <button 
                       onClick={() => handleBuyPackage(pkg)}
-                      disabled={loadingPackageId === pkg.id}
+                      disabled={loadingPackageId === pkg.package_id}
                       className={`w-full py-3 px-4 rounded-lg font-medium transition-colors duration-200 mt-6 
                         ${pkg.package_type === 'premium'
                           ? 'bg-purple-600 hover:bg-purple-700 text-white'
                           : pkg.package_type === 'standard'
                           ? 'bg-blue-600 hover:bg-blue-700 text-white'
                           : 'bg-gray-600 hover:bg-gray-700 text-white'}
-                        ${loadingPackageId === pkg.id ? 'opacity-75 cursor-not-allowed' : ''}
+                        ${loadingPackageId === pkg.package_id ? 'opacity-75 cursor-not-allowed' : ''}
                       `}
                     >
-                      {loadingPackageId === pkg.id ? (
+                      {loadingPackageId === pkg.package_id ? (
                         <div className="flex items-center justify-center">
                           <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
