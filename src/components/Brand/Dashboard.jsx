@@ -23,6 +23,8 @@ import Messages from './Messages';
 import { getBrandsInfo } from '../../services/brands/BrandsInformation';
 import ProfileMenu from './ProfileMenu';
 import Orders from './Orders'
+import { getAgencies } from '../../services/brands/EnlistAgencies';
+import DiscoverAgencies from './DiscoverAgencies';
 
 const Dashboard = () => {
   const [token, setToken] = useState("");
@@ -92,9 +94,11 @@ const Dashboard = () => {
             { icon: <Users />, text: 'Discover Influencers' },
             { icon: <GitCompareArrows />, text: 'Campaigns' },
             { icon: <BarChart2 />, text: 'Analytics' },
+            { icon: <Users/>, text: 'Discover Agencies' },
             { icon: <MessageSquare />, text: 'Messages' },
             { icon: <Settings />, text: 'Settings' },
             { icon: <Package />, text: 'Orders' },
+
           ].map((item, index) => (
             <button
               key={index}
@@ -192,6 +196,8 @@ const Dashboard = () => {
           {activeSection === 'Campaigns' && <CampaignManagement />}
 
           {activeSection === 'Analytics' && <Analytics />}
+
+          {activeSection === 'Discover Agencies' && <DiscoverAgencies/>}
 
           {activeSection === 'Messages' && <Messages />}
 
