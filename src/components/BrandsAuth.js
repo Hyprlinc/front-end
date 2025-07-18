@@ -1,376 +1,486 @@
-import React, { useState } from 'react';
-import { AlertCircle } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
-import { brandLogin, registerBrand } from '../services/brands/BrandsServices';
+import { useState } from "react";
+import {
+  Building2,
+  Lock,
+  Mail,
+  MailIcon,
+  Map,
+} from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { brandLogin, registerBrand } from "../services/brands/BrandsServices";
+import { Button } from "./ui/button";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { showToast } from "./lib/toast";
 
 const BrandRegistrationForm = () => {
-    const [formData, setFormData] = useState({
-        brandsName: '',
-        email: '',
-        country: '',
-        password: '',
-        confirmPassword: ''
-    });
-    const [errors, setErrors] = useState({});
-    const [isSubmitting, setIsSubmitting] = useState(false);
-    const [submitStatus, setSubmitStatus] = useState(null);
-    const [showLoginForm, setShowLoginForm] = useState(false);
+  const [formData, setFormData] = useState({
+    brandsName: "",
+    email: "",
+    country: "",
+    password: "",
+    confirmPassword: "",
+  });
+  const [errors, setErrors] = useState({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState(null);
+  const [showLoginForm, setShowLoginForm] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-    const validateForm = () => {
-        const newErrors = {};
+  const validateForm = () => {
+    const newErrors = {};
 
-        if (!formData.brandsName.trim()) {
-            newErrors.brandsName = 'Brand name is required';
-        }
-
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!formData.email) {
-            newErrors.email = 'Email is required';
-        } else if (!emailRegex.test(formData.email)) {
-            newErrors.email = 'Please enter a valid work email';
-        }
-
-        if (!formData.country) {
-            newErrors.country = 'Please select your country';
-        }
-
-        if (!formData.password) {
-            newErrors.password = 'Password is required';
-        } else if (formData.password.length < 8) {
-            newErrors.password = 'Password must be at least 8 characters long';
-        }
-
-        if (formData.password !== formData.confirmPassword) {
-            newErrors.confirmPassword = 'Passwords do not match';
-        }
-
-        return newErrors;
-    };
-
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData(prev => ({
-            ...prev,
-            [name]: value
-        }));
-    };
-
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        setIsSubmitting(true);
-        setSubmitStatus(null);
-
-        const formErrors = validateForm();
-        if (Object.keys(formErrors).length > 0) {
-            setErrors(formErrors);
-            setIsSubmitting(false);
-            return;
-        }
-
-        try {
-            const registrationData = {
-                brandsName: formData.brandsName,
-                email: formData.email,
-                country: formData.country,
-                password: formData.password
-            };
-
-            const response = await registerBrand(registrationData);
-            setSubmitStatus('success');
-            setFormData({
-                brandsName: '',
-                email: '',
-                country: '',
-                password: '',
-                confirmPassword: ''
-            });
-            // After successful registration, switch to login form
-            setShowLoginForm(true);
-        } catch (error) {
-            console.error('Registration error:', error);
-            setSubmitStatus('error');
-        }
-
-        setIsSubmitting(false);
-    };
-
-    const countries = [
-        'United States', 'United Kingdom', 'Canada', 'Australia',
-        'Germany', 'France', 'Japan', 'India', 'Other'
-    ];
-
-    if (showLoginForm) {
-        return <BrandLoginForm setShowLoginForm={setShowLoginForm} />;
+    if (!formData.brandsName.trim()) {
+      newErrors.brandsName = "Brand name is required";
     }
 
-    return (
-        <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
-            <div className="sm:mx-auto sm:w-full sm:max-w-md">
-                <h2 className="mt-6 text-center text-3xl font-bold tracking-tight text-gray-900">
-                    Register Your Brand
-                </h2>
-            </div>
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!formData.email) {
+      newErrors.email = "Email is required";
+    } else if (!emailRegex.test(formData.email)) {
+      newErrors.email = "Please enter a valid work email";
+    }
 
-            <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-                <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
-                    {submitStatus === 'success' && (
-                        <div className="mb-6 p-4 flex items-center gap-2 bg-green-50 border border-green-200 rounded-lg">
-                            <AlertCircle className="text-green-600" />
-                            <p className="text-green-700">Registration successful! Welcome aboard.</p>
-                        </div>
-                    )}
+    if (!formData.country) {
+      newErrors.country = "Please select your country";
+    }
 
-                    {submitStatus === 'error' && (
-                        <div className="mb-6 p-4 flex items-center gap-2 bg-red-50 border border-red-200 rounded-lg">
-                            <AlertCircle className="text-red-600" />
-                            <p className="text-red-700">{errors.submit || 'Registration failed. Please try again.'}</p>
-                        </div>
-                    )}
+    if (!formData.password) {
+      newErrors.password = "Password is required";
+    } else if (formData.password.length < 8) {
+      newErrors.password = "Password must be at least 8 characters long";
+    }
 
-                    <form className="space-y-6" onSubmit={handleSubmit}>
-                        <div>
-                            <label htmlFor="brandsName" className="block text-sm font-medium text-gray-700">
-                                Brand Name
-                            </label>
-                            <div className="mt-1">
-                                <input
-                                    id="brandsName"
-                                    name="brandsName"
-                                    type="text"
-                                    required
-                                    value={formData.brandsName}
-                                    onChange={handleChange}
-                                    className="block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                                />
-                                {errors.brandsName && (
-                                    <p className="mt-1 text-sm text-red-600">{errors.brandsName}</p>
-                                )}
-                            </div>
-                        </div>
+    if (formData.password !== formData.confirmPassword) {
+      newErrors.confirmPassword = "Passwords do not match";
+    }
 
-                        <div>
-                            <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-                                Work Email
-                            </label>
-                            <div className="mt-1">
-                                <input
-                                    id="email"
-                                    name="email"
-                                    type="email"
-                                    required
-                                    value={formData.email}
-                                    onChange={handleChange}
-                                    className="block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                                />
-                                {errors.email && (
-                                    <p className="mt-1 text-sm text-red-600">{errors.email}</p>
-                                )}
-                            </div>
-                        </div>
+    return newErrors;
+  };
 
-                        <div>
-                            <label htmlFor="country" className="block text-sm font-medium text-gray-700">
-                                Country
-                            </label>
-                            <div className="mt-1">
-                                <select
-                                    id="country"
-                                    name="country"
-                                    required
-                                    value={formData.country}
-                                    onChange={handleChange}
-                                    className="block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                                >
-                                    <option value="">Select a country</option>
-                                    {countries.map(country => (
-                                        <option key={country} value={country}>{country}</option>
-                                    ))}
-                                </select>
-                                {errors.country && (
-                                    <p className="mt-1 text-sm text-red-600">{errors.country}</p>
-                                )}
-                            </div>
-                        </div>
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
 
-                        <div>
-                            <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-                                Password
-                            </label>
-                            <div className="mt-1">
-                                <input
-                                    id="password"
-                                    name="password"
-                                    type="password"
-                                    required
-                                    value={formData.password}
-                                    onChange={handleChange}
-                                    className="block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                                />
-                                {errors.password && (
-                                    <p className="mt-1 text-sm text-red-600">{errors.password}</p>
-                                )}
-                            </div>
-                        </div>
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    setSubmitStatus(null);
 
-                        <div>
-                            <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">
-                                Confirm Password
-                            </label>
-                            <div className="mt-1">
-                                <input
-                                    id="confirmPassword"
-                                    name="confirmPassword"
-                                    type="password"
-                                    required
-                                    value={formData.confirmPassword}
-                                    onChange={handleChange}
-                                    className="block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                                />
-                                {errors.confirmPassword && (
-                                    <p className="mt-1 text-sm text-red-600">{errors.confirmPassword}</p>
-                                )}
-                            </div>
-                        </div>
+    const formErrors = validateForm();
+    if (Object.keys(formErrors).length > 0) {
+      setErrors(formErrors);
+      setIsSubmitting(false);
+      return;
+    }
 
-                        <div>
-                            <button
-                                type="submit"
-                                disabled={isSubmitting}
-                                className="flex w-full justify-center rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"
-                            >
-                                {isSubmitting ? 'Registering...' : 'Register Brand'}
-                            </button>
-                        </div>
+    try {
+      const registrationData = {
+        brandsName: formData.brandsName,
+        email: formData.email,
+        country: formData.country,
+        password: formData.password,
+      };
 
-                        <div>
-                            <button
-                                type="button"
-                                onClick={() => setShowLoginForm(true)}
-                                className="flex w-full justify-center rounded-md bg-gray-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-gray-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600"
-                            >
-                                Already have an account? Login
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
+      const response = await registerBrand(registrationData);
+      setSubmitStatus("success");
+      setFormData({
+        brandsName: "",
+        email: "",
+        country: "",
+        password: "",
+        confirmPassword: "",
+      });
+      // After successful registration, switch to login form
+      setShowLoginForm(true);
+    } catch (error) {
+      console.error("Registration error:", error);
+      setErrors({ submit: "Registration failed. Please try again." });
+      setSubmitStatus("error");
+    }
+
+    setIsSubmitting(false);
+  };
+
+  const countries = [
+    "United States",
+    "United Kingdom",
+    "Canada",
+    "Australia",
+    "Germany",
+    "France",
+    "Japan",
+    "India",
+    "Other",
+  ];
+
+  if (showLoginForm) {
+    return <BrandLoginForm setShowLoginForm={setShowLoginForm} />;
+  }
+
+  return (
+    <div className="min-h-screen bg-black flex flex-col justify-center md:py-12 lg:px-8">
+      {/* {submitStatus === "success" && (
+        <div className="mb-4 mx-auto max-w-md p-4 flex items-center gap-2 bg-green-50 border border-green-200 rounded-lg">
+          <AlertCircle className="text-green-600" />
+          <p className="text-green-700">
+            Registration successful! Welcome aboard.
+          </p>
         </div>
-    );
+      )} */}
+
+      {/* {submitStatus === "error" && (
+        <div className="mb-4 mx-auto max-w-md p-4 flex items-center gap-2 bg-red-50 border border-red-200 rounded-lg">
+          <AlertCircle className="text-red-600" />
+          <p className="text-red-700">
+            {errors.submit || "Registration failed. Please try again."}
+          </p>
+        </div>
+      )} */}
+
+      <div className="max-w-md mx-auto p-6 sm:p-8 bg-white/90 md:rounded-2xl shadow-2xl">
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div className="text-center">
+            <h1 className="text-3xl sm:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-500 mb-2">
+              Register Your Brand
+            </h1>
+            <p className="text-gray-900 text-sm sm:text-base">
+              Join our platform and connect with influencers
+            </p>
+          </div>
+
+          <div className="space-y-4">
+            <div>
+              <label
+                htmlFor="brandsName"
+                className="block text-sm font-medium text-gray-900 mb-2"
+              >
+                Brand Name
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                  <Building2 className="h-5 w-5 text-gray-400" />
+                </div>
+                <input
+                  id="brandsName"
+                  name="brandsName"
+                  type="text"
+                  placeholder="Enter your brand name"
+                  autoComplete="off"
+                  required
+                  value={formData.brandsName}
+                  onChange={handleChange}
+                  className="w-full pl-10 pr-4 py-3 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-gray-400 transition-all autofill:bg-gray-700 autofill:text-white"
+                />
+              </div>
+              {errors.brandsName && (
+                <p className="mt-1 text-sm text-red-600">{errors.brandsName}</p>
+              )}
+            </div>
+
+            <div>
+              <label
+                htmlFor="email"
+                className="block text-sm font-medium text-gray-900 mb-2"
+              >
+                Work Email
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                  <Mail className="h-5 w-5 text-gray-400" />
+                </div>
+                <input
+                  id="email"
+                  name="email"
+                  type="email"
+                  placeholder="Enter your work email"
+                  required
+                  value={formData.email}
+                  onChange={handleChange}
+                  className="w-full pl-10 pr-4 py-3 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white transition-all"
+                />
+              </div>
+              {errors.email && (
+                <p className="mt-1 text-sm text-red-600">{errors.email}</p>
+              )}
+            </div>
+
+            <div>
+              <label
+                htmlFor="country"
+                className="block text-sm font-medium text-gray-900 mb-2"
+              >
+                Country
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                  <Map className="h-5 w-5 text-gray-400" />
+                </div>
+                <select
+                  id="country"
+                  name="country"
+                  required
+                  value={formData.country}
+                  onChange={handleChange}
+                  className="w-full pl-10 pr-6 py-3  bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-gray-400 transition-all"
+                >
+                  <option value="">Select a country</option>
+                  {countries.map((country) => (
+                    <option key={country} value={country} className="pr-4">
+                      {country}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              {errors.country && (
+                <p className="mt-1 text-sm text-red-600">{errors.country}</p>
+              )}
+            </div>
+
+            <div className="relative">
+              <label
+                htmlFor="password"
+                className="block text-sm font-medium text-gray-900 mb-2"
+              >
+                Password
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                  <Lock className="h-5 w-5 text-gray-400" />
+                </div>
+                <input
+                  id="password"
+                  name="password"
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Enter your password"
+                  required
+                  value={formData.password}
+                  onChange={handleChange}
+                  className="w-full pl-10 pr-4 py-3 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white transition-all"
+                />
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-11 flex items-center text-gray-400 hover:text-gray-300 focus:outline-none"
+              >
+                {showPassword ? <FaEyeSlash /> : <FaEye />}
+              </button>
+              {errors.password && (
+                <p className="mt-1 text-sm text-red-600">{errors.password}</p>
+              )}
+            </div>
+
+            <div className="relative">
+              <label
+                htmlFor="confirmPassword"
+                className="block text-sm font-medium text-gray-900 mb-2"
+              >
+                Confirm Password
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                  <Lock className="h-5 w-5 text-gray-400" />
+                </div>
+                <input
+                  id="confirmPassword"
+                  name="confirmPassword"
+                  type={showConfirmPassword ? "text" : "password"}
+                  placeholder="Enter your confirm password"
+                  required
+                  value={formData.confirmPassword}
+                  onChange={handleChange}
+                  className="w-full pl-10 pr-4 py-3 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white transition-all"
+                />
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                className="absolute right-3 top-11 flex items-center text-gray-400 hover:text-gray-300 focus:outline-none"
+              >
+                {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
+              </button>
+              {errors.confirmPassword && (
+                <p className="mt-1 text-sm text-red-600">
+                  {errors.confirmPassword}
+                </p>
+              )}
+            </div>
+
+            <Button
+              type="submit"
+              variant="default"
+              size="full"
+              disabled={isSubmitting}
+              className="py-3 text-lg text-white font-semibold bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 transition-all transform hover:scale-[1.01] shadow-lg disabled:opacity-70"
+            >
+              {isSubmitting ? "Registering..." : "Register Brand"}
+            </Button>
+
+            <div className="relative flex items-center py-4">
+              <div className="flex-grow border-t border-gray-800"></div>
+              <span className="flex-shrink mx-4 text-gray-800 text-sm">OR</span>
+              <div className="flex-grow border-t border-gray-800"></div>
+            </div>
+
+            <p className="text-center text-gray-700 text-sm">
+              Already have an account?{" "}
+              <button
+                type="button"
+                onClick={() => setShowLoginForm(true)}
+                className="font-medium text-blue-500 hover:text-blue-900 hover:underline focus:outline-none transition-colors"
+              >
+                Login
+              </button>
+            </p>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
 };
 
 const BrandLoginForm = ({ setShowLoginForm }) => {
-    const navigate = useNavigate();
-    const [formData, setFormData] = useState({ email: '', password: '' });
-    const [errors, setErrors] = useState({});
-    const [isSubmitting, setIsSubmitting] = useState(false);
+  const navigate = useNavigate();
+  const [formData, setFormData] = useState({ email: "", password: "" });
+  const [errors, setErrors] = useState({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
+  const storeToken = (token) => {
+    localStorage.setItem("brandToken", token);
+  };
 
-    const storeToken = (token) => {
-        localStorage.setItem('brandToken', token);
-    };
+  const getToken = () => {
+    return localStorage.getItem("brandToken");
+  };
 
-    const getToken = () => {
-        return localStorage.getItem('brandToken');
-    };
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
 
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData((prev) => ({
-            ...prev,
-            [name]: value
-        }));
-    };
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setIsSubmitting(true);
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        setIsSubmitting(true);
+    try {
+      const loginResponse = await brandLogin(formData.email, formData.password);
+      storeToken(loginResponse.data.token);
+      console.log("Login response:", loginResponse);
+      navigate("/brandsDashboard");
+      // Replace with navigation to dashboard
+    } catch (error) {
+      console.error("Login error:", error);
+      showToast.error("Invalid credentials. Please try again.");
+      setErrors({ submit: "Invalid credentials. Please try again." });
+    }
+    setIsSubmitting(false);
+  };
 
-        try {
-           const loginResponse =  await brandLogin(formData.email, formData.password);
-            storeToken(loginResponse.data.token);
-            console.log('Login response:', loginResponse);
-            navigate('/brandsDashboard');
-            // Replace with navigation to dashboard
-        } catch (error) {
-            console.error('Login error:', error);
-            setErrors({ submit: 'Invalid credentials. Please try again.' });
-        }
-        setIsSubmitting(false);
-    };
+  return (
+    <div className="min-h-screen bg-black flex flex-col justify-center md:py-12 lg:px-8">
+      <div className="max-w-md mx-auto p-6 sm:p-8 bg-white/90 md:rounded-2xl shadow-2xl">
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div className="text-center">
+            <h1 className="text-3xl sm:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-500 mb-2">
+              Login to Your Brand Account
+            </h1>
+            <p className="text-gray-900 text-sm sm:text-base">
+              Welcome back! Please enter your details
+            </p>
+          </div>
 
-    return (
-        <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
-            <div className="sm:mx-auto sm:w-full sm:max-w-md">
-                <h2 className="mt-6 text-center text-3xl font-bold tracking-tight text-gray-900">
-                    Login to Your Brand Account
-                </h2>
-            </div>
-
-            <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-                <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
-                    <form className="space-y-6" onSubmit={handleSubmit}>
-                        <div>
-                            <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-                                Work Email
-                            </label>
-                            <div className="mt-1">
-                                <input
-                                    id="email"
-                                    name="email"
-                                    type="email"
-                                    required
-                                    value={formData.email}
-                                    onChange={handleChange}
-                                    className="block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                                />
-                            </div>
-                        </div>
-
-                        <div>
-                            <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-                                Password
-                            </label>
-                            <div className="mt-1">
-                                <input
-                                    id="password"
-                                    name="password"
-                                    type="password"
-                                    required
-                                    value={formData.password}
-                                    onChange={handleChange}
-                                    className="block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                                />
-                            </div>
-                        </div>
-
-                        {errors.submit && (
-                            <p className="mt-1 text-sm text-red-600">{errors.submit}</p>
-                        )}
-
-                        <div>
-                            <button
-                                type="submit"
-                                disabled={isSubmitting}
-                                className="flex w-full justify-center rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"
-                            >
-                                {isSubmitting ? 'Logging in...' : 'Login'}
-                            </button>
-                        </div>
-
-                        <div>
-                            <button
-                                type="button"
-                                onClick={() => setShowLoginForm(false)}
-                                className="flex w-full justify-center rounded-md bg-gray-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-gray-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600"
-                            >
-                                Don't have an account? Register
-                            </button>
-                        </div>
-                    </form>
+          <div className="space-y-4">
+            <div>
+              <label
+                htmlFor="email"
+                className="block text-sm font-medium text-gray-900 mb-2"
+              >
+                Work Email
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                  <MailIcon className="h-5 w-5 text-gray-400" />
                 </div>
+                <input
+                  id="email"
+                  name="email"
+                  type="email"
+                  placeholder="Enter your work email"
+                  required
+                  value={formData.email}
+                  onChange={handleChange}
+                  className="w-full pl-10 pr-4 py-3 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-gray-400 transition-all"
+                />
+              </div>
             </div>
-        </div>
-    );
+
+            <div>
+              <label
+                htmlFor="password"
+                className="block text-sm font-medium text-gray-900 mb-2"
+              >
+                Password
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                  <Lock className="h-5 w-5 text-gray-400" />
+                </div>
+                <input
+                  id="password"
+                  name="password"
+                  type="password"
+                  placeholder="Enter your password"
+                  required
+                  value={formData.password}
+                  onChange={handleChange}
+                  className="w-full pl-10 pr-4 py-3 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-gray-400 transition-all"
+                />
+              </div>
+            </div>
+
+            {errors.submit && (
+              <p className="mt-1 text-sm text-red-600">{errors.submit}</p>
+            )}
+
+            <Button
+              type="submit"
+              variant="default"
+              size="full"
+              disabled={isSubmitting}
+              className="py-3 text-lg text-white font-semibold bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 transition-all transform hover:scale-[1.01] shadow-lg disabled:opacity-70"
+            >
+              {isSubmitting ? "Logging in..." : "Login"}
+            </Button>
+
+            <div className="relative flex items-center py-4">
+              <div className="flex-grow border-t border-gray-800"></div>
+              <span className="flex-shrink mx-4 text-gray-800 text-sm">OR</span>
+              <div className="flex-grow border-t border-gray-800"></div>
+            </div>
+
+            <p className="text-center text-gray-700 text-sm">
+              Don't have an account?{" "}
+              <button
+                type="button"
+                onClick={() => setShowLoginForm(false)}
+                className="font-medium text-blue-500 hover:text-blue-900 hover:underline focus:outline-none transition-colors"
+              >
+                Register
+              </button>
+            </p>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
 };
 
 export default BrandRegistrationForm;

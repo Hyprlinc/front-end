@@ -3,6 +3,7 @@ import axios from 'axios';
 
 
 import { config } from '../../config/env';
+import { showToast } from '../../components/lib/toast';
 const API_BASE_URL = config.API_BASE_URL;
 
 // Function to handle API registration
@@ -26,13 +27,13 @@ export const registerUser = async (registrationData) => {
 
         if (error.response) {
 
-            alert(error.response.data.message || 'Registration failed. Please try again.');
+            showToast(error.response.data.message || 'Registration failed. Please try again.');
         } else if (error.request) {
 
-            alert('No response from server. Please check your internet connection.');
+            showToast('No response from server. Please check your internet connection.');
         } else {
 
-            alert('Error in registration process. Please try again.');
+            showToast('Error in registration process. Please try again.');
         }
 
         throw error;
@@ -55,13 +56,13 @@ export const registerChannelDetails = async (channelDetails) => {
     } catch (error) {
         console.error('Registration failed', error.response ? error.response.data : error.message);
         if (error.response) {
-            alert(error.response.data.message || 'Channel Details Submission failed. Try Again!');
+            showToast(error.response.data.message || 'Channel Details Submission failed. Try Again!');
         } else if (error.request) {
             // The request was made but no response was received
-            alert('No response from server. Please check your internet connection.');
+            showToast('No response from server. Please check your internet connection.');
         } else {
             // Something happened in setting up the request that triggered an Error
-            alert('Error in registration process. Please try again.');
+            showToast('Error in registration process. Please try again.');
         }
         throw error;
     }
@@ -85,11 +86,11 @@ export const creatorLogin = async (email, password) => {
 
     try {
         const response = await axios.request(config);
-        return response; // Return the full response object
+        return response;
     } catch (error) {
         console.error('Login API failed:', error);
-        alert(`Login failed. Please try again. ${error.message}`);
-        throw error; // Rethrow the error so the caller knows about it
+        showToast(`Login failed. Please try again. ${error.message}`);
+        throw error;
     }
 }
 
