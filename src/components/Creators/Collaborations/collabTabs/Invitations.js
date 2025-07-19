@@ -1,12 +1,16 @@
+import React, { useState } from 'react';
+import { motion } from 'framer-motion';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 const Invitations = () => {
-    // Sample data - replace with your actual data
-    const invitations = [
+    const [invitations, setInvitations] = useState([
         {
             id: 1,
             campaignName: 'Summer Collection 2024',
             brand: {
                 name: 'Nike',
-                logo: '/path-to-logo.png'
+                logo: 'https://logo.clearbit.com/nike.com'
             },
             status: 'Active',
             budget: '$5000',
@@ -16,7 +20,7 @@ const Invitations = () => {
             campaignName: 'Fall Fashion Week',
             brand: {
                 name: 'Zara',
-                logo: '/zara-logo.png'
+                logo: 'https://logo.clearbit.com/zara.com'
             },
             status: 'Active',
             budget: '$3500',
@@ -26,7 +30,7 @@ const Invitations = () => {
             campaignName: 'Fitness Challenge',
             brand: {
                 name: 'Adidas',
-                logo: '/adidas-logo.png'
+                logo: 'https://logo.clearbit.com/adidas.com'
             },
             status: 'Expired',
             budget: '$4200',
@@ -36,7 +40,7 @@ const Invitations = () => {
             campaignName: 'Holiday Special',
             brand: {
                 name: 'H&M',
-                logo: '/hm-logo.png'
+                logo: 'https://logo.clearbit.com/hm.com'
             },
             status: 'Active',
             budget: '$6000',
@@ -46,7 +50,7 @@ const Invitations = () => {
             campaignName: 'Spring Collection',
             brand: {
                 name: 'Puma',
-                logo: '/puma-logo.png'
+                logo: 'https://logo.clearbit.com/puma.com'
             },
             status: 'Active',
             budget: '$4800',
@@ -56,274 +60,133 @@ const Invitations = () => {
             campaignName: 'Winter Essentials',
             brand: {
                 name: 'Under Armour',
-                logo: '/ua-logo.png'
+                logo: 'https://logo.clearbit.com/underarmour.com'
             },
             status: 'Expired',
             budget: '$3800',
         }
-    ];
+    ]);
 
     const handleAccept = (id) => {
-        // Handle accept logic
-        console.log('Accepted invitation:', id);
+        setInvitations(invitations.filter(inv => inv.id !== id));
+        toast.success('Invitation accepted successfully!', {
+            position: "top-right",
+            autoClose: 3000,
+        });
     };
 
     const handleReject = (id) => {
-        // Handle reject logic
-        console.log('Rejected invitation:', id);
+        setInvitations(invitations.filter(inv => inv.id !== id));
+        toast.info('Invitation rejected', {
+            position: "top-right",
+            autoClose: 3000,
+        });
     };
 
     const handleRowClick = (id) => {
-        // Handle row click
         console.log('Clicked row:', id);
+        // You can implement navigation or modal opening here
     };
 
     return (
-        <div className="invitations-container">
-        
-            <div className="table-container">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Campaign Name</th>
-                            <th>Invited By</th>
-                            <th>Status</th>
-                            <th>Budget</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {invitations.map((invitation) => (
-                            <tr 
-                                key={invitation.id}
-                                onClick={() => handleRowClick(invitation.id)}
-                                className="table-row"
-                            >
-                                <td className="campaign-cell">{invitation.campaignName}</td>
-                                <td className="brand-cell">
-                                    <div className="brand-wrapper">
-                                        <img 
-                                            src={invitation.brand.logo} 
-                                            alt={invitation.brand.name}
-                                            className="brand-logo"
-                                        />
-                                        <span>{invitation.brand.name}</span>
-                                    </div>
-                                </td>
-                                <td className="status-cell">
-                                    <span className={`status-badge ${invitation.status.toLowerCase()}`}>
-                                        {invitation.status}
-                                    </span>
-                                </td>
-                                <td className="budget-cell">{invitation.budget}</td>
-                                <td className="actions-cell">
-                                    <div className="actions-wrapper">
-                                        <button 
-                                            className="accept-btn"
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                handleAccept(invitation.id);
-                                            }}
-                                        >
-                                            Accept
-                                        </button>
-                                        <button 
-                                            className="reject-btn"
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                handleReject(invitation.id);
-                                            }}
-                                        >
-                                            Reject
-                                        </button>
-                                    </div>
-                                </td>
+        <div className="p-6 bg-gray-50 min-h-screen">
+            <ToastContainer />
+            
+            <div className="bg-white rounded-xl shadow-sm overflow-hidden">
+                <div className="overflow-x-auto">
+                    <table className="w-full">
+                        <thead className="bg-gray-50">
+                            <tr>
+                                <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/4">Campaign Name</th>
+                                <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/4">Invited By</th>
+                                <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/6">Status</th>
+                                <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/6">Budget</th>
+                                <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/5 min-w-[200px]">Actions</th>
                             </tr>
-                        ))}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody className="bg-white divide-y divide-gray-200">
+                            {invitations.map((invitation) => (
+                                <motion.tr 
+                                    key={invitation.id}
+                                    initial={{ opacity: 0 }}
+                                    animate={{ opacity: 1 }}
+                                    exit={{ opacity: 0 }}
+                                    whileHover={{ backgroundColor: '#f8f9fa' }}
+                                    onClick={() => handleRowClick(invitation.id)}
+                                    className="cursor-pointer transition-colors duration-150 h-18"
+                                >
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                        {invitation.campaignName}
+                                    </td>
+                                    <td className="px-6 py-4 whitespace-nowrap">
+                                        <div className="flex items-center">
+                                            <div className="flex-shrink-0 h-10 w-10">
+                                                <img 
+                                                    className="h-10 w-10 rounded-full object-cover" 
+                                                    src={invitation.brand.logo} 
+                                                    alt={invitation.brand.name}
+                                                    onError={(e) => {
+                                                        e.target.onerror = null; 
+                                                        e.target.src = 'https://via.placeholder.com/40';
+                                                    }}
+                                                />
+                                            </div>
+                                            <div className="ml-4">
+                                                <div className="text-sm font-medium text-gray-900">{invitation.brand.name}</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td className="px-6 py-4 whitespace-nowrap">
+                                        <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
+                                            ${invitation.status === 'Active' ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800'}`}>
+                                            {invitation.status}
+                                        </span>
+                                    </td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                        {invitation.budget}
+                                    </td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                        <div className="flex space-x-2">
+                                            <motion.button
+                                                whileHover={{ scale: 1.05 }}
+                                                whileTap={{ scale: 0.95 }}
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    handleAccept(invitation.id);
+                                                }}
+                                                className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors"
+                                            >
+                                                Accept
+                                            </motion.button>
+                                            <motion.button
+                                                whileHover={{ scale: 1.05 }}
+                                                whileTap={{ scale: 0.95 }}
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    handleReject(invitation.id);
+                                                }}
+                                                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+                                            >
+                                                Reject
+                                            </motion.button>
+                                        </div>
+                                    </td>
+                                </motion.tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
             </div>
 
-            <style jsx>{`
-                .invitations-container {
-                    padding: 20px;
-                }
-
-                .table-container {
-                    margin-top: 20px;
-                    border-radius: 8px;
-                    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-                    overflow-x: auto;
-                }
-
-                table {
-                    width: 100%;
-                    border-collapse: collapse;
-                    background: white;
-                    table-layout: fixed;
-                }
-
-                th, td {
-                    padding: 0 16px;
-                    text-align: left;
-                    border-bottom: 1px solid #eee;
-                    white-space: nowrap;
-                    overflow: hidden;
-                    text-overflow: ellipsis;
-                    vertical-align: middle;
-                }
-
-                th {
-                    background-color: #f8f9fa;
-                    font-weight: 600;
-                }
-
-                .table-row {
-                    cursor: pointer;
-                    transition: background-color 0.2s;
-                    height: 72px;
-                }
-
-                .table-row:hover {
-                    background-color: #f8f9fa;
-                }
-
-                .campaign-cell {
-                    padding: 16px;
-                    vertical-align: middle;
-                }
-
-                .brand-cell {
-                    height: 72px;
-                    padding: 0 16px;
-                    vertical-align: middle;
-                    max-width: 200px;
-                    display: flex;
-                    align-items: center;
-                }
-
-                .brand-wrapper {
-                    display: flex;
-                    align-items: center;
-                    gap: 8px;
-                    white-space: nowrap;
-                    width: 100%;
-                }
-
-                .brand-logo {
-                    width: 24px;
-                    height: 24px;
-                    border-radius: 50%;
-                    object-fit: cover;
-                    flex-shrink: 0;
-                }
-
-                .brand-cell span {
-                    overflow: hidden;
-                    text-overflow: ellipsis;
-                    white-space: nowrap;
-                }
-
-                .status-cell {
-                    padding: 16px;
-                    vertical-align: middle;
-                }
-
-                .budget-cell {
-                    padding: 16px;
-                    vertical-align: middle;
-                }
-
-                .actions-cell {
-                    padding: 16px;
-                    vertical-align: middle;
-                }
-
-                .actions-wrapper {
-                    display: flex;
-                    align-items: center;
-                    gap: 8px;
-                }
-
-                .status-badge {
-                    display: inline-flex;
-                    align-items: center;
-                    justify-content: center;
-                    padding: 6px 12px;
-                    border-radius: 16px;
-                    font-size: 0.875rem;
-                    font-weight: 500;
-                }
-
-                .accept-btn, .reject-btn {
-                    padding: 8px 16px;
-                    border-radius: 6px;
-                    border: none;
-                    cursor: pointer;
-                    font-weight: 500;
-                    height: 36px;
-                    min-width: 80px;
-                    transition: background-color 0.2s;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    text-align: center;
-                }
-
-                .accept-btn {
-                    background-color: #2e7d32;
-                    color: white;
-                }
-
-                .accept-btn:hover {
-                    background-color: #1b5e20;
-                }
-
-                .reject-btn {
-                    background-color:rgb(40, 82, 198);
-                    color: white;
-                }
-
-                .reject-btn:hover {
-                    background-color: rgb(14, 71, 228);
-                }
-
-                .status-badge.active {
-                    background-color: #e8f5e9;
-                    color: #2e7d32;
-                }
-
-                .status-badge.expired {
-                    background-color: #ffebee;
-                    color: rgb(14, 71, 228);
-                }
-
-                th:nth-child(1), 
-                td:nth-child(1) {
-                    width: 25%;
-                }
-
-                th:nth-child(2), 
-                td:nth-child(2) {
-                    width: 25%;
-                }
-
-                th:nth-child(3), 
-                td:nth-child(3) {
-                    width: 15%;
-                }
-
-                th:nth-child(4), 
-                td:nth-child(4) {
-                    width: 15%;
-                }
-
-                th:nth-child(5), 
-                td:nth-child(5) {
-                    width: 20%;
-                    min-width: 200px;
-                }
-            `}</style>
+            {invitations.length === 0 && (
+                <div className="text-center py-12">
+                    <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <h3 className="mt-2 text-lg font-medium text-gray-900">No invitations</h3>
+                    <p className="mt-1 text-sm text-gray-500">You don't have any pending invitations at this time.</p>
+                </div>
+            )}
         </div>
     );
 };

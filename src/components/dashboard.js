@@ -61,6 +61,11 @@ import Portfolio from "./Creators/Portfolio";
 import ProfileManagement from "./Creators/ProfileManagement";
 import Collab from "./Creators/Collaborations/Collab";
 import Support from "./Creators/Support";
+import { useIsMobile } from "./hooks/use-mobile";
+import LeftSidebar from "./Creators/comp/LeftSidebar";
+import Navbar from "./Creators/comp/Navbar";
+import Sidebar from "./Creators/comp/SideBar";
+import AccountSettings from "./Creators/Settings";
 
 // Placeholder user data (in a real app, this would come from authentication)
 const dummyUser = {
@@ -82,6 +87,23 @@ const CreatorDashboard = () => {
   const [activeSection, setActiveSection] = useState("home");
   const [isAvailable, setIsAvailable] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
+  const [isLeftSidebarOpen, setIsLeftSidebarOpen] = useState(false);
+  const [isRightSidebarOpen, setIsRightSidebarOpen] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const isMobile = useIsMobile();
+
+  // Add effect to handle sidebar state based on mobile detection
+  useEffect(() => {
+    if (!isMobile) {
+      setIsLeftSidebarOpen(true);
+    } else {
+      setIsLeftSidebarOpen(false);
+    }
+  }, [isMobile]);
+
+  const toggleSidebar = () => {
+    setIsLeftSidebarOpen(!isLeftSidebarOpen);
+  };
 
   const [user, setUser] = useState({
     id: 0,
@@ -157,7 +179,7 @@ const CreatorDashboard = () => {
       })
       .catch((error) => {
         console.error("Failed to fetch creator profile:", error);
-        navigate("/"); // Redirect to login if fetching profile fails
+        navigate("/");
       });
   };
 
@@ -427,15 +449,6 @@ const CreatorDashboard = () => {
       case "inbox":
         return <EmailInbox />;
 
-      // (
-      //   <div className="p-6">
-      //     <h2 className="text-2xl font-bold mb-4">Inbox</h2>
-      //     <div className="text-gray-500">
-      //       No new messages
-      //     </div>
-      //   </div>
-      // );
-
       case "collabs":
         return <Collab />;
 
@@ -446,25 +459,7 @@ const CreatorDashboard = () => {
         return <RatingsAndReviews />;
 
       case "settings":
-        return (
-          <div className="p-6">
-            <h2 className="text-2xl font-bold mb-4">Account Settings</h2>
-            <div className="space-y-4">
-              <div>
-                <h3 className="font-semibold">Profile Information</h3>
-                <p>Manage your personal details and account preferences</p>
-              </div>
-              <div>
-                <h3 className="font-semibold">Notification Preferences</h3>
-                <p>Control how and when you receive notifications</p>
-              </div>
-              <div>
-                <h3 className="font-semibold">Privacy Settings</h3>
-                <p>Manage your data sharing and visibility</p>
-              </div>
-            </div>
-          </div>
-        );
+        return <AccountSettings />;
 
       case "payments":
         return (
@@ -691,160 +686,50 @@ const CreatorDashboard = () => {
     //   </div>
     // </div>
 
-    <div className="flex">
-      {/* Left Sidebar - Modern Design */}
-      <div className="w-72 h-full bg-gradient-to-b from-gray-900 to-gray-800 border-r border-gray-700 p-6 flex flex-col text-white shadow-xl">
-        {/* Logo with subtle animation */}
-        <div className="mb-4 flex justify-center transition-transform hover:scale-105">
-          <img
-            style={{ height: "5rem", width: "auto" }}
-            src={logo}
-            alt="Hyperlinc Logo"
-            className="h-12 w-auto filter drop-shadow-lg"
-          />
-        </div>
-
-        {/* User Profile (uncomment if needed) */}
-        {/* <div className="flex items-center space-x-3 mb-8 p-3 rounded-xl bg-gray-800 hover:bg-gray-700 transition-all cursor-pointer">
-      <div className="relative">
-        <img
-          src={dummyUser.avatar}
-          alt={user.fullName}
-          className="w-12 h-12 rounded-full object-cover border-2 border-blue-400"
+    <div className="flex h-screen overflow-hidden">
+      {/* Left Sidebar - Navigation */}
+      <div>
+        <LeftSidebar
+          isOpen={isLeftSidebarOpen}
+          toggleSidebar={toggleSidebar}
+          activeSection={activeSection}
+          setActiveSection={setActiveSection}
+          isAvailable={isAvailable}
+          setIsAvailable={setIsAvailable}
         />
-        <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-gray-800"></div>
       </div>
-      <div className="overflow-hidden">
-        <p className="font-semibold text-sm truncate">{user.fullName}</p>
-        <p className="text-xs text-gray-300">View Profile</p>
-      </div>
-    </div> */}
 
-        {/* Navigation Menu */}
-        <nav className="space-y-2 flex-1">
-          {[
-            {
-              id: "home",
-              icon: homeIcon,
-              activeIcon: homeAcive,
-              label: "Home",
-            },
-            {
-              id: "profile-mngm",
-              icon: profileManagemnt,
-              activeIcon: profileManagementActive,
-              label: "Profile Management",
-            },
-            {
-              id: "collabs",
-              icon: collabsIcon,
-              activeIcon: collabsActive,
-              label: "Collaborations",
-            },
-            {
-              id: "earnings",
-              icon: earnings,
-              activeIcon: earningsActive,
-              label: "Earnings",
-            },
-            {
-              id: "portfolio",
-              icon: portfolioIcon,
-              activeIcon: portfolioActive,
-              label: "Portfolio",
-            },
-            {
-              id: "settings",
-              icon: settingsIcon,
-              activeIcon: settingsActive,
-              label: "Settings",
-            },
-            {
-              id: "support",
-              icon: supportIcon,
-              activeIcon: supportActive,
-              label: "Support",
-            },
-          ].map((item) => (
-            <div
-              key={item.id}
-              className={`flex items-center space-x-3 p-3 rounded-xl cursor-pointer transition-all duration-200
-            ${
-              activeSection === item.id
-                ? "bg-blue-600 shadow-md shadow-blue-500/20 "
-                : "hover:bg-gray-700 hover:translate-x-1"
-            }`}
-              onClick={() => setActiveSection(item.id)}
-            >
-                <div className={`w-6 h-6 flex items-center justify-center ${activeSection === item.id ? 'filter brightness-0 invert' : ''}`}>
-                <img
-                  src={activeSection === item.id ? item.activeIcon : item.icon}
-                  alt={item.label}
-                  className="w-5 h-5"
-                />
-              </div>
-              <span className="text-sm font-medium">{item.label}</span>
-              {activeSection === item.id && (
-                <div className="ml-auto w-2 h-2 bg-white rounded-full"></div>
-              )}
-            </div>
-          ))}
-        </nav>
+      {/* Right section (navbar + content) */}
+      <div className="flex-1 flex flex-col overflow-hidden">
+        {/* Navbar */}
+        <Navbar
+          user={user}
+          onMenuToggle={() => setIsLeftSidebarOpen(!isLeftSidebarOpen)}
+          onSidebarToggle={() => setIsRightSidebarOpen(!isRightSidebarOpen)}
+          isLeftSidebarOpen={isLeftSidebarOpen}
+        />
 
-        {/* Bottom Section */}
-        <div className="mt-6 space-y-4">
-          {/* Availability Toggle */}
-          <div className="relative">
-            <div
-              className={`absolute inset-0 rounded-full transition-all duration-300 ${
-                isAvailable ? "bg-green-500/20" : "bg-red-500/20"
-              }`}
-            ></div>
-            <button
-              className={`relative w-full py-2 px-4 rounded-full font-semibold text-sm flex items-center justify-center space-x-2 transition-all
-            ${
-              isAvailable
-                ? "bg-green-600 hover:bg-green-700"
-                : "bg-red-600 hover:bg-red-700"
-            }
-            shadow-md ${
-              isAvailable ? "shadow-green-500/30" : "shadow-red-500/30"
-            }`}
-              onClick={() => setIsAvailable(!isAvailable)}
-            >
-              <div
-                className={`w-2 h-2 rounded-full ${
-                  isAvailable ? "bg-green-300" : "bg-red-300"
-                }`}
-              ></div>
-              <span>
-                {isAvailable ? "Available for Collab" : "Unavailable"}
-              </span>
-            </button>
+        {/* Mobile backdrop */}
+        {isMobile && isLeftSidebarOpen && (
+          <div
+            className="fixed inset-0 bg-black bg-opacity-50 z-10 md:hidden"
+            onClick={() => setIsLeftSidebarOpen(false)}
+          />
+        )}
+
+        {/* Main Content Area */}
+        <div className="flex-1 flex overflow-hidden">
+          <div className={`flex-1 bg-gray-50 overflow-y-auto`}>
+            {renderContent()}
           </div>
 
-          {/* Facebook Login Button */}
-          <button
-            onClick={() =>
-              (window.location.href =
-                "http://localhost:5000/api/v1/fbAuth/auth/facebook")
-            }
-            className="w-full flex items-center justify-center space-x-2 bg-[#1877F2] hover:bg-[#166FE5] text-white py-2 px-4 rounded-lg transition-all shadow-md hover:shadow-lg"
-          >
-            <svg
-              className="w-5 h-5 fill-current"
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-            >
-              <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
-            </svg>
-            <span className="text-sm font-medium">Login with Facebook</span>
-          </button>
+          {/* Right Sidebar - Profile/Settings */}
+          <Sidebar
+            isOpen={isRightSidebarOpen}
+            onClose={() => setIsRightSidebarOpen(false)}
+          />
         </div>
       </div>
-
-      {/* Main Content Area */}
-      <div className="flex-1 bg-gray-50 overflow-y-auto">{renderContent()}</div>
     </div>
   );
 };

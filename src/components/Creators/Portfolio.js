@@ -1,5 +1,4 @@
 import React, { useState, useRef, useEffect } from 'react';
-import Navbar from './comp/Navbar';
 
 const Portfolio = () => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -7,12 +6,7 @@ const Portfolio = () => {
     const [sliderWidth, setSliderWidth] = useState(0);
     const [sliderOffset, setSliderOffset] = useState(0);
     const tabsRef = useRef({});
-
-    const defaultUser = {
-        fullName: "",
-        profilePicture: "https://avatar.iran.liara.run/public"
-    };
-
+    
     useEffect(() => {
         const activeTabElement = tabsRef.current[activeTab];
         if (activeTabElement) {
@@ -23,10 +17,10 @@ const Portfolio = () => {
 
     return (
         <div className="bg-gray-50 min-h-screen">
-            <Navbar
+            {/* <Navbar
                 user={defaultUser}
                 onSidebarToggle={() => setIsSidebarOpen(!isSidebarOpen)}
-            />
+            /> */}
             
             <div>
                 <div className="tab-bar" style={styles.tabBar}>
@@ -78,7 +72,6 @@ const Portfolio = () => {
 const styles = {
     tabBar: {
         display: 'flex',
-        marginTop: '40px',
         marginBottom: '20px',
         paddingTop: '20px',
         paddingLeft: '20px',

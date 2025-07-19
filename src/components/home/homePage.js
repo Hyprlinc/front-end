@@ -17,14 +17,17 @@ import Navbar from "../Creators/comp/Navbar";
 import SideBar from "../Creators/comp/SideBar";
 
 import { searchCampaigns } from "../../services/creators/CreatorsServices";
+import { useIsMobile } from "../hooks/use-mobile";
 
 const CreatorDashboardHome = ({ user, stats, campaigns, socialStats }) => {
+  const [isLeftSidebarOpen, setIsLeftSidebarOpen] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = React.useState(false);
   const [isSearchActive, setIsSearchActive] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [placeholderIndex, setPlaceholderIndex] = useState(0);
   const [searchResults, setSearchResults] = useState(null);
+  const isMobile = useIsMobile();
 
   const placeholders = [
     "Search Campaigns...",
@@ -139,10 +142,10 @@ const CreatorDashboardHome = ({ user, stats, campaigns, socialStats }) => {
         }`}
       >
         {/* Navbar */}
-        <Navbar
+        {/* <Navbar
           user={user}
           onSidebarToggle={() => setIsSidebarOpen(!isSidebarOpen)}
-        />
+        /> */}
 
         <div className="p-6">
           <div className="max-w-6xl mx-auto">
@@ -151,11 +154,11 @@ const CreatorDashboardHome = ({ user, stats, campaigns, socialStats }) => {
               {/* Welcome Banner with Enhanced Animation */}
               <div
                 className={`transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] 
-     ${
-      isSearchActive
-        ? "opacity-0 h-0 overflow-hidden -translate-y-4"
-        : "opacity-100 mb-6 translate-y-0"
-    }`}
+                  ${
+                    isSearchActive
+                      ? "opacity-0 h-0 overflow-hidden -translate-y-4"
+                      : "opacity-100 mb-6 translate-y-0"
+                  }`}
               >
                 <div className="bg-gradient-to-r from-blue-600 to-indigo-700 shadow-lg rounded-xl p-4 relative overflow-hidden">
                   {/* Decorative elements */}
@@ -168,12 +171,6 @@ const CreatorDashboardHome = ({ user, stats, campaigns, socialStats }) => {
                         Hello Anushka, Welcome back{" "}
                         <span className="animate-wiggle inline-block">👋</span>
                       </h2>
-                      {/* <p className="font-poppins text-base font-normal text-white/90 leading-relaxed">
-                        We're excited to have you on board! Here's your
-                        personalized dashboard where you can track your
-                        collaborations, earnings, and engagement insights—all in
-                        one place.
-                      </p> */}
                     </div>
                     <button
                       className="h-12 px-6 bg-white text-blue-600 rounded-lg font-poppins font-medium 
@@ -326,7 +323,7 @@ const CreatorDashboardHome = ({ user, stats, campaigns, socialStats }) => {
               </div>
 
               {/* Enhanced Search Section */}
-              <div
+              {/* <div
                 className={`fixed left-0 right-0 px-6 transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] z-10
     ${isSearchActive ? "top-20" : "relative top-0"}`}
               >
@@ -358,7 +355,6 @@ const CreatorDashboardHome = ({ user, stats, campaigns, socialStats }) => {
                     )}
                   </div>
 
-                  {/* Search Results with Enhanced Animation */}
                   {isSearchActive && (
                     <div
                       className={`mt-4 transition-all duration-300 ease-out
@@ -451,14 +447,12 @@ const CreatorDashboardHome = ({ user, stats, campaigns, socialStats }) => {
                     </div>
                   )}
                 </div>
-              </div>
+              </div> */}
             </div>
           </div>
         </div>
       </div>
 
-      {/* Add Sidebar */}
-      <SideBar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
     </div>
   );
 };

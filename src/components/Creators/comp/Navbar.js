@@ -1,20 +1,33 @@
 import React from "react";
 import msgIcon from "../../../assets/icons/messagesicon.png";
 import notificationIcon from "../../../assets/icons/notificationicon.png";
+import { Menu, X } from "lucide-react";
 
-const Navbar = ({ user, onSidebarToggle }) => {
+const Navbar = ({ user, onMenuToggle, onSidebarToggle, isLeftSidebarOpen  }) => {
   return (
     <nav className="bg-white shadow-sm p-4">
-      <div className="max-w-6xl mx-auto flex justify-end">
+      <div className="max-w-6xl mx-auto flex justify-between md:justify-end">
+        {/* Mobile menu button (left side) */}
+          <button
+          onClick={onMenuToggle}
+          className="md:hidden flex items-center justify-center h-[48px] w-[48px] bg-gray-50 rounded-lg hover:bg-gray-100 transition-all"
+        >
+          {isLeftSidebarOpen ? (
+            <X className="w-6 h-6 text-gray-600" />
+          ) : (
+            <Menu className="w-6 h-6 text-gray-600" />
+          )}
+        </button>
+
         {/* Right side icons and profile button */}
         <div className="flex items-center gap-4">
-          <button className="flex items-center justify-center h-[48px] w-[48px] bg-gray-50 rounded-lg hover:bg-gray-100 transition-all">
-            <img src={msgIcon} alt="Icon 1" className="w-[24px] h-[24px]" />
+          <button className="hidden md:flex items-center justify-center h-[48px] w-[48px] bg-gray-50 rounded-lg hover:bg-gray-100 transition-all">
+            <img src={msgIcon} alt="Messages" className="w-[24px] h-[24px]" />
           </button>
-          <button className="flex items-center justify-center h-[48px] w-[48px] bg-gray-50 rounded-lg hover:bg-gray-100 transition-all">
+          <button className="hidden md:flex items-center justify-center h-[48px] w-[48px] bg-gray-50 rounded-lg hover:bg-gray-100 transition-all">
             <img
               src={notificationIcon}
-              alt="Icon 2"
+              alt="Notifications"
               className="w-[24px] h-[24px]"
             />
           </button>
@@ -25,7 +38,7 @@ const Navbar = ({ user, onSidebarToggle }) => {
             <div className="relative">
               <img
                 src={
-                  user.profilePicture || "https://avatar.iran.liara.run/public"
+                  user.profilePicture || "https://img.freepik.com/free-vector/smiling-young-man-illustration_1308-174669.jpg"
                 }
                 alt="Profile"
                 className="w-10 h-10 rounded-full object-cover border-2 border-blue-400"
