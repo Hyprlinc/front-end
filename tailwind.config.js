@@ -10,7 +10,7 @@ module.exports = {
           'brand-gray': '#F3F4F6',
         },
         fontFamily: {
-          'sans': ['roboto', 'inter'],
+          'sans': ['roboto', 'inter', 'sans-serif'],
         },
       },
     },

@@ -1,7 +1,7 @@
 // Environment configuration
 const environment = {
   development: {
-    API_BASE_URL: 'http://localhost:5001/api/v1',
+    API_BASE_URL: 'http://localhost:5000/api/v1',
     AGENCY_PACKAGE_URL: 'http://localhost:5001/api/v1/agency/packageManagement',
     CREATOR_PACKAGE_URL: 'http://localhost:5001/api/v1/creators/packages',
     ORDER_MANAGEMENT: 'http://localhost:5001/api/v1/packages',
