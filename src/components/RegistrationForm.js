@@ -236,6 +236,8 @@ const RegistrationForm = () => {
       });
       console.log("Response body", response);
       showToast.success("Registration successful! Welcome aboard.");
+      // Move to the next step (channel details)
+      setStep(5);
     } catch (error) {
       setIsLoading(false);
       showToast.error("Registration failed. Please try again.");
