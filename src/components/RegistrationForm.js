@@ -33,6 +33,7 @@ import {
   creatorLogin,
 } from "../services/creators/CreatorsServices";
 import { Button } from "./ui/button";
+import MultiSelect from "./ui/multi-select";
 
 // Function to store token securely (localStorage for simplicity, cookies recommended in production)
 
@@ -91,10 +92,10 @@ const RegistrationForm = () => {
     channelAge: "",
     subscribers: "",
     averageViews: "",
-    contentType: "",
+    contentType: [],
     postingFrequency: "",
     liveStreaming: "",
-    collabType: "",
+    collabType: [],
   });
 
   // Influencer form state
@@ -102,7 +103,7 @@ const RegistrationForm = () => {
     name: "",
     email: "",
     password: "",
-    platform: "",
+    platform: [],
     channelLink: "",
   });
 
@@ -112,7 +113,7 @@ const RegistrationForm = () => {
     country: "",
     city: "",
     contentLanguages: [],
-    channelGenre: "",
+    channelGenre: [],
     contentDescription: "",
   });
 
@@ -315,9 +316,20 @@ const RegistrationForm = () => {
     };
     console.log(combinedDetails);
 
-    const allFieldsFilled = Object.values(combinedDetails).every(
-      (field) => field.trim() !== ""
+    // const allFieldsFilled = Object.values(combinedDetails).every(
+    //   (field) => field.trim() !== ""
+    // );
+
+    // Modified validation to handle both string and number fields
+    const allFieldsFilled = Object.entries(combinedDetails).every(
+      ([key, value]) => {
+        if (typeof value === "string") {
+          return value.trim() !== "";
+        }
+        return value !== "" && value !== null && value !== undefined;
+      }
     );
+
     if (!allFieldsFilled) {
       showToast.error("Please fill in all fields");
       return;
@@ -358,10 +370,10 @@ const RegistrationForm = () => {
   }, [navigate]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-black md:p-4 ">
-      <div className="w-full max-w-md">
+    <div className="min-h-screen flex items-center justify-center bg-white md:p-4 ">
+      <div className="w-full">
         {step === 1 && !showLoginForm && (
-          <div className="max-w-md mx-auto p-6 sm:p-8 bg-white/90 md:rounded-2xl shadow-2xl">
+          <div className="md:w-2/5 mx-auto p-6 sm:p-8 bg-white">
             <form onSubmit={handlePhoneSubmit} className="space-y-6">
               <div className="text-center">
                 <h1 className="text-3xl sm:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-500 mb-2">
@@ -385,6 +397,7 @@ const RegistrationForm = () => {
                     <input
                       type="tel"
                       id="phone"
+                      autoComplete="off"
                       value={phoneNumber}
                       onChange={(e) => setPhoneNumber(e.target.value)}
                       placeholder="Enter 10-digit number"
@@ -444,7 +457,7 @@ const RegistrationForm = () => {
         )}
 
         {showLoginForm && (
-          <div className="max-w-md mx-auto p-6 sm:p-8 bg-white/90 md:rounded-2xl shadow-2xl">
+          <div className="md:w-2/5 mx-auto p-6 sm:p-8 bg-white">
             <form onSubmit={handleLogin} className="space-y-6">
               <div className="text-center">
                 <h2 className="text-3xl sm:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-500 mb-2">
@@ -471,6 +484,7 @@ const RegistrationForm = () => {
                       type="email"
                       id="email"
                       value={email}
+                      autoComplete="off"
                       onChange={(e) => setEmail(e.target.value)}
                       placeholder="Enter your email"
                       className="w-full pl-10 pr-4 py-3 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-gray-400 transition-all"
@@ -496,6 +510,7 @@ const RegistrationForm = () => {
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       placeholder="Enter your password"
+                      autoComplete="off"
                       className="w-full pl-10 pr-4 py-3 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-gray-400 transition-all"
                       required
                     />
@@ -587,7 +602,7 @@ const RegistrationForm = () => {
         )}
 
         {step === 2 && (
-          <div className="max-w-md mx-auto p-6 sm:p-8 bg-white/90 md:rounded-2xl shadow-2xl">
+          <div className="md:w-2/5 mx-auto p-6 sm:p-8 bg-white">
             <div className="space-y-6">
               <div className="text-center">
                 <h2 className="text-3xl sm:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-500 mb-2">
@@ -641,7 +656,7 @@ const RegistrationForm = () => {
         )}
 
         {step === 3 && profileType === "Influencer" && (
-          <div className="max-w-md mx-auto p-6 sm:p-8 bg-white/90 md:rounded-2xl shadow-2xl">
+          <div className="md:w-2/5 mx-auto p-6 sm:p-8 bg-white">
             <form
               onSubmit={handleInfluencerDetailsSubmit}
               className="space-y-6"
@@ -671,6 +686,7 @@ const RegistrationForm = () => {
                       type="text"
                       id="name"
                       name="name"
+                      autoComplete="off"
                       value={influencerDetails.name}
                       onChange={handleInfluencerDetailsChange}
                       placeholder="Ex. Shri"
@@ -695,6 +711,7 @@ const RegistrationForm = () => {
                       type="email"
                       id="email"
                       name="email"
+                      autoComplete="off"
                       value={influencerDetails.email}
                       onChange={handleInfluencerDetailsChange}
                       placeholder="Example@email.com"
@@ -705,31 +722,59 @@ const RegistrationForm = () => {
                 </div>
 
                 <div>
-                  <label
-                    htmlFor="platform"
-                    className="block text-sm font-medium text-gray-700 mb-2"
-                  >
-                    Primary Platform
-                  </label>
-                  <div className="relative">
-                    <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                      <FaMobile className="h-5 w-5 text-gray-400" />
-                    </div>
-                    <select
-                      id="platform"
-                      name="platform"
-                      value={influencerDetails.platform}
-                      onChange={handleInfluencerDetailsChange}
-                      className="w-full pl-10 pr-4 py-3 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-gray-400 transition-all"
-                      required
-                    >
-                      <option value="" disabled>
-                        Select Platform
-                      </option>
-                      <option value="youtube">YouTube Channel</option>
-                      <option value="instagram">Instagram Channel</option>
-                    </select>
-                  </div>
+                  <MultiSelect
+                    label="Primary Platform(s)"
+                    name="platform"
+                    options={[
+                      {
+                        value: "youtube",
+                        label: "YouTube Channel",
+                        icon: <FaYoutube className="text-red-600 mr-2" />,
+                      },
+                      {
+                        value: "instagram",
+                        label: "Instagram Channel",
+                        icon: <FaInstagram className="text-pink-600 mr-2" />,
+                      },
+                      // Add more platforms as needed
+                    ]}
+                    value={(Array.isArray(influencerDetails.platform)
+                      ? influencerDetails.platform
+                      : influencerDetails.platform
+                      ? [influencerDetails.platform]
+                      : []
+                    )
+                      .filter((platform) => platform)
+                      .map((platform) => ({
+                        value: platform,
+                        label:
+                          platform === "youtube"
+                            ? "YouTube Channel"
+                            : "Instagram Channel",
+                        icon:
+                          platform === "youtube" ? (
+                            <FaYoutube className="text-red-600 mr-2" />
+                          ) : (
+                            <FaInstagram className="text-pink-600 mr-2" />
+                          ),
+                      }))}
+                    onChange={(selectedOptions) => {
+                      setInfluencerDetails((prev) => ({
+                        ...prev,
+                        platform: selectedOptions
+                          ? selectedOptions.map((option) => option.value)
+                          : [],
+                      }));
+                    }}
+                    placeholder="Select platform(s)"
+                    isRequired
+                    formatOptionLabel={(option) => (
+                      <div className="flex items-center">
+                        {option.icon}
+                        <span>{option.label}</span>
+                      </div>
+                    )}
+                  />
                 </div>
 
                 <div>
@@ -747,6 +792,7 @@ const RegistrationForm = () => {
                       type="url"
                       id="channelLink"
                       name="channelLink"
+                      autoComplete="off"
                       value={influencerDetails.channelLink}
                       onChange={handleInfluencerDetailsChange}
                       placeholder="Paste your channel/profile link"
@@ -771,6 +817,7 @@ const RegistrationForm = () => {
                       type={showPassword ? "text" : "password"}
                       id="password"
                       name="password"
+                      autoComplete="off"
                       value={influencerDetails.password}
                       onChange={handleInfluencerDetailsChange}
                       placeholder="Enter your password"
@@ -802,6 +849,7 @@ const RegistrationForm = () => {
                       type={showConfirmPassword ? "text" : "password"}
                       id="confirmPassword"
                       name="confirmPassword"
+                      autoComplete="off"
                       value={influencerDetails.confirmPassword}
                       onChange={handleInfluencerDetailsChange}
                       placeholder="Confirm your password"
@@ -861,9 +909,8 @@ const RegistrationForm = () => {
         )}
 
         {step === 4 && (
-          <div className="max-w-2xl mx-auto p-6 sm:p-8 bg-white/90 md:rounded-2xl shadow-2xl">
+          <div className="md:w-2/5 mx-auto p-6 sm:p-8 bg-white">
             <form onSubmit={handlePersonalDetailsSubmit}>
-              {/* Header Section */}
               <div className="text-center mb-8">
                 <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-blue-100 to-purple-100 rounded-full mb-4">
                   <MapPin
@@ -879,10 +926,8 @@ const RegistrationForm = () => {
                 </p>
               </div>
 
-              {/* Form Content */}
               <div className="space-y-6">
-                {/* Personal Information Card */}
-                <div className=" grid-cols-3  rounded-xl shadow-sm border border-gray-200">
+                <div className=" grid-cols-3">
                   <div className="flex items-center mb-5">
                     <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center mr-3">
                       <User className="text-blue-600" size={16} />
@@ -908,6 +953,7 @@ const RegistrationForm = () => {
                           type="number"
                           id="age"
                           name="age"
+                          autoComplete="off"
                           value={personalDetails.age}
                           onChange={handlePersonalDetailsChange}
                           placeholder="e.g. 25"
@@ -929,6 +975,7 @@ const RegistrationForm = () => {
                       <select
                         id="gender"
                         name="gender"
+                        autoComplete="off"
                         value={personalDetails.gender}
                         onChange={handlePersonalDetailsChange}
                         className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-gray-400 transition-all"
@@ -945,13 +992,14 @@ const RegistrationForm = () => {
                     <div>
                       <label
                         htmlFor="country"
-                        className="block text-sm font-medium text-gray-200 mb-2"
+                        className="block text-sm font-medium text-gray-700 mb-2"
                       >
                         Country
                       </label>
                       <Select
                         id="country"
                         name="country"
+                        autoComplete="off"
                         options={countryOptions}
                         value={countryOptions.find(
                           (option) => option.value === personalDetails.country
@@ -1064,8 +1112,7 @@ const RegistrationForm = () => {
                   </div>
                 </div>
 
-                {/* Content Information Card */}
-                <div className=" rounded-xl shadow-sm">
+                <div>
                   <div className="flex items-center mb-5">
                     <div className="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center mr-3">
                       <Film className="text-purple-600" size={16} />
@@ -1207,27 +1254,119 @@ const RegistrationForm = () => {
                     </div>
 
                     <div>
-                      <label
-                        htmlFor="channelGenre"
-                        className="block text-sm font-medium text-gray-700 mb-2"
-                      >
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
                         Content Niche
                       </label>
-                      <select
-                        id="channelGenre"
+                      <Select
+                        isMulti
                         name="channelGenre"
-                        value={personalDetails.channelGenre}
-                        onChange={handlePersonalDetailsChange}
-                        className="w-full px-2 py-3 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-gray-400 transition-all"
-                        required
-                      >
-                        <option value="">Select your primary niche</option>
-                        {channelGenres.map((genre) => (
-                          <option key={genre} value={genre}>
-                            {genre}
-                          </option>
-                        ))}
-                      </select>
+                        options={channelGenres.map((genre) => ({
+                          value: genre,
+                          label: genre,
+                        }))}
+                        value={personalDetails.channelGenre
+                          .filter((genre) => genre)
+                          .map((genre) => ({
+                            value: genre,
+                            label: genre,
+                          }))}
+                        onChange={(selectedOptions) => {
+                          setPersonalDetails((prev) => ({
+                            ...prev,
+                            channelGenre: selectedOptions
+                              ? selectedOptions.map((option) => option.value)
+                              : [],
+                          }));
+                        }}
+                        className="react-select-container"
+                        classNamePrefix="react-select"
+                        placeholder="Select your content niches"
+                        closeMenuOnSelect={false}
+                        hideSelectedOptions={false}
+                        styles={{
+                          control: (base) => ({
+                            ...base,
+                            minHeight: "44px",
+                            backgroundColor: "#374151",
+                            borderColor: "#4B5563",
+                            borderRadius: "0.5rem",
+                            "&:hover": {
+                              borderColor: "#4B5563",
+                            },
+                            boxShadow: "none",
+                          }),
+                          input: (base) => ({
+                            ...base,
+                            color: "white",
+                          }),
+                          placeholder: (base) => ({
+                            ...base,
+                            color: "#9CA3AF",
+                          }),
+                          menu: (base) => ({
+                            ...base,
+                            backgroundColor: "#374151",
+                            borderColor: "#4B5563",
+                          }),
+                          option: (base, { isFocused, isSelected }) => ({
+                            ...base,
+                            backgroundColor: isSelected
+                              ? "#1E40AF"
+                              : isFocused
+                              ? "#4B5563"
+                              : "#374151",
+                            color: "white",
+                            "&:active": {
+                              backgroundColor: "#1E40AF",
+                            },
+                          }),
+                          multiValue: (base) => ({
+                            ...base,
+                            backgroundColor: "#1E40AF",
+                            borderRadius: "0.375rem",
+                          }),
+                          multiValueLabel: (base) => ({
+                            ...base,
+                            color: "white",
+                            fontWeight: "500",
+                            padding: "2px 6px",
+                          }),
+                          multiValueRemove: (base) => ({
+                            ...base,
+                            color: "#93C5FD",
+                            ":hover": {
+                              backgroundColor: "#1D4ED8",
+                              color: "white",
+                            },
+                          }),
+                          valueContainer: (base) => ({
+                            ...base,
+                            padding: "4px 8px",
+                          }),
+                          indicatorsContainer: (base) => ({
+                            ...base,
+                            color: "#9CA3AF",
+                          }),
+                          dropdownIndicator: (base) => ({
+                            ...base,
+                            color: "#9CA3AF",
+                            "&:hover": {
+                              color: "#D1D5DB",
+                            },
+                          }),
+                          clearIndicator: (base) => ({
+                            ...base,
+                            color: "#9CA3AF",
+                            "&:hover": {
+                              color: "#D1D5DB",
+                            },
+                          }),
+                          indicatorSeparator: (base) => ({
+                            ...base,
+                            backgroundColor: "#4B5563",
+                          }),
+                        }}
+                      />
                     </div>
 
                     <div>
@@ -1240,6 +1379,7 @@ const RegistrationForm = () => {
                       <textarea
                         id="contentDescription"
                         name="contentDescription"
+                        autoComplete="off"
                         value={personalDetails.contentDescription}
                         onChange={handlePersonalDetailsChange}
                         placeholder="Describe your content style, audience, and unique value..."
@@ -1252,7 +1392,6 @@ const RegistrationForm = () => {
                 </div>
               </div>
 
-              {/* Form Actions */}
               <div className="flex gap-4 mt-8">
                 <button
                   type="button"
@@ -1300,7 +1439,7 @@ const RegistrationForm = () => {
         )}
 
         {step === 5 && (
-          <div className="max-w-3xl mx-auto p-6 sm:p-8 bg-white/90 md:rounded-2xl shadow-2xl">
+          <div className="md:w-2/5 mx-auto p-6 sm:p-8 bg-white">
             <form onSubmit={handleChannelDetailsSubmit} className="space-y-6">
               {/* Header Section */}
               <div className="text-center">
@@ -1322,7 +1461,7 @@ const RegistrationForm = () => {
                   <div className="flex flex-col">
                     <label
                       htmlFor="channelAge"
-                      className="text-sm font-medium text-gray-700 mb-2 md:min-h-[3rem] flex items-center"
+                      className="block text-sm font-medium text-gray-700 mb-2"
                     >
                       Channel Age (months)
                     </label>
@@ -1343,7 +1482,7 @@ const RegistrationForm = () => {
                   <div className="flex flex-col">
                     <label
                       htmlFor="subscribers"
-                      className="text-sm font-medium text-gray-700 mb-2 md:pt-1 md:min-h-[3rem] flex items-start"
+                      className="block text-sm font-medium text-gray-700 mb-2"
                     >
                       Subscribers
                     </label>
@@ -1363,7 +1502,7 @@ const RegistrationForm = () => {
                   <div className="flex flex-col">
                     <label
                       htmlFor="averageViews"
-                      className="text-sm font-medium text-gray-700 mb-2 md:min-h-[3rem] flex items-center"
+                      className="block text-sm font-medium text-gray-700 mb-2"
                     >
                       Avg. Views (last 10)
                     </label>
@@ -1382,8 +1521,8 @@ const RegistrationForm = () => {
                 </div>
 
                 {/* Content Details */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div>
+                <div className="grid grid-cols-1 gap-4">
+                  {/* <div>
                     <label
                       htmlFor="contentType"
                       className="block text-sm font-medium text-gray-700 mb-2"
@@ -1410,6 +1549,33 @@ const RegistrationForm = () => {
                         </option>
                       ))}
                     </select>
+                  </div> */}
+
+                  <div>
+                    <MultiSelect
+                      label="Content Type"
+                      name="contentType"
+                      options={[
+                        "Shorts",
+                        "Long (< 3min)",
+                        "Long (> 3min <10min)",
+                        "Podcasts",
+                      ].map((type) => ({ value: type, label: type }))}
+                      value={channelDetails.contentType.map((type) => ({
+                        value: type,
+                        label: type,
+                      }))}
+                      onChange={(selectedOptions) => {
+                        setChannelDetails((prev) => ({
+                          ...prev,
+                          contentType: selectedOptions
+                            ? selectedOptions.map((option) => option.value)
+                            : [],
+                        }));
+                      }}
+                      placeholder="Select content types"
+                      isRequired
+                    />
                   </div>
 
                   <div>
@@ -1435,7 +1601,7 @@ const RegistrationForm = () => {
                 </div>
 
                 {/* Additional Details */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 gap-4">
                   <div>
                     <label
                       htmlFor="liveStreaming"
@@ -1461,32 +1627,30 @@ const RegistrationForm = () => {
                   </div>
 
                   <div>
-                    <label
-                      htmlFor="collabType"
-                      className="block text-sm font-medium text-gray-700 mb-2"
-                    >
-                      Collaboration Type
-                    </label>
-                    <select
-                      id="collabType"
+                    <MultiSelect
+                      label="Collaboration Type"
                       name="collabType"
-                      value={channelDetails.collabType}
-                      onChange={handleChannelDetailsChange}
-                      className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-gray-400 transition-all"
-                      required
-                    >
-                      <option value="">Select Type</option>
-                      {[
+                      options={[
                         "Exclusive Collab",
                         "Background Collab",
                         "In-Between Video",
                         "Indirect",
-                      ].map((type) => (
-                        <option key={type} value={type}>
-                          {type}
-                        </option>
-                      ))}
-                    </select>
+                      ].map((type) => ({ value: type, label: type }))}
+                      value={channelDetails.collabType.map((type) => ({
+                        value: type,
+                        label: type,
+                      }))}
+                      onChange={(selectedOptions) => {
+                        setChannelDetails((prev) => ({
+                          ...prev,
+                          collabType: selectedOptions
+                            ? selectedOptions.map((option) => option.value)
+                            : [],
+                        }));
+                      }}
+                      placeholder="Select collaboration types"
+                      isRequired
+                    />
                   </div>
                 </div>
               </div>
@@ -1512,7 +1676,7 @@ const RegistrationForm = () => {
         )}
 
         {step === 6 && (
-          <div className="max-w-md mx-auto p-6 sm:p-8 bg-white/90 md:rounded-2xl shadow-2xl">
+          <div className="md:w-2/5 mx-auto p-6 sm:p-8 bg-white">
             <form onSubmit={handleInstagramDetailsSubmit} className="space-y-6">
               {/* Header Section */}
               <div className="text-center">

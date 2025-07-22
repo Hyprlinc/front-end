@@ -123,7 +123,7 @@ const BrandRegistrationForm = () => {
   }
 
   return (
-    <div className="min-h-screen bg-black flex flex-col justify-center md:py-12 lg:px-8">
+    <div className="min-h-screen bg-white flex flex-col justify-center md:py-12 lg:px-8">
       {/* {submitStatus === "success" && (
         <div className="mb-4 mx-auto max-w-md p-4 flex items-center gap-2 bg-green-50 border border-green-200 rounded-lg">
           <AlertCircle className="text-green-600" />
@@ -142,7 +142,7 @@ const BrandRegistrationForm = () => {
         </div>
       )} */}
 
-      <div className="max-w-md mx-auto p-6 sm:p-8 bg-white/90 md:rounded-2xl shadow-2xl">
+      <div className="md:w-2/5 mx-auto p-6 sm:p-8 bg-white">
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="text-center">
             <h1 className="text-3xl sm:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-500 mb-2">
@@ -197,6 +197,7 @@ const BrandRegistrationForm = () => {
                   id="email"
                   name="email"
                   type="email"
+                  autoComplete="off"
                   placeholder="Enter your work email"
                   required
                   value={formData.email}
@@ -224,6 +225,7 @@ const BrandRegistrationForm = () => {
                   id="country"
                   name="country"
                   required
+                  autoComplete="off"
                   value={formData.country}
                   onChange={handleChange}
                   className="w-full pl-10 pr-6 py-3  bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-gray-400 transition-all"
@@ -258,6 +260,7 @@ const BrandRegistrationForm = () => {
                   type={showPassword ? "text" : "password"}
                   placeholder="Enter your password"
                   required
+                  autoComplete="off"
                   value={formData.password}
                   onChange={handleChange}
                   className="w-full pl-10 pr-4 py-3 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white transition-all"
@@ -292,6 +295,7 @@ const BrandRegistrationForm = () => {
                   type={showConfirmPassword ? "text" : "password"}
                   placeholder="Enter your confirm password"
                   required
+                  autoComplete="off"
                   value={formData.confirmPassword}
                   onChange={handleChange}
                   className="w-full pl-10 pr-4 py-3 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white transition-all"
@@ -385,8 +389,8 @@ const BrandLoginForm = ({ setShowLoginForm }) => {
   };
 
   return (
-    <div className="min-h-screen bg-black flex flex-col justify-center md:py-12 lg:px-8">
-      <div className="max-w-md mx-auto p-6 sm:p-8 bg-white/90 md:rounded-2xl shadow-2xl">
+    <div className="min-h-screen bg-white flex flex-col justify-center ">
+      <div className=" md:w-2/5 mx-auto p-6 sm:p-8 bg-white">
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="text-center">
             <h1 className="text-3xl sm:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-500 mb-2">
@@ -413,6 +417,7 @@ const BrandLoginForm = ({ setShowLoginForm }) => {
                   id="email"
                   name="email"
                   type="email"
+                  autoComplete="off"
                   placeholder="Enter your work email"
                   required
                   value={formData.email}
@@ -437,6 +442,7 @@ const BrandLoginForm = ({ setShowLoginForm }) => {
                   id="password"
                   name="password"
                   type="password"
+                  autoComplete="off"
                   placeholder="Enter your password"
                   required
                   value={formData.password}
