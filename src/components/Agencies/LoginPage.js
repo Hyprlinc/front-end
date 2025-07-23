@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Building2, Lock, Mail, AlertCircle, Loader2 } from "lucide-react";
 import AgencyAuth from "../../services/agencies/AgencyAuth";
 import { useNavigate } from "react-router-dom";
+import logoForLogin from "../../assets/logo/logoForLogin.png";
 
 const LoginPage = () => {
   const navigate = useNavigate();
@@ -58,15 +59,22 @@ const LoginPage = () => {
 
   return (
     <div className="min-h-screen bg-white items-center justify-center">
+      <div>
+        <img
+          src={logoForLogin}
+          alt="logoForLogin"
+          className="w-40 m-6 filter drop-shadow-sm"
+        />
+      </div>
       <div className="md:w-2/5 mx-auto p-6 sm:p-8 bg-white">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-700 to-purple-500">
+          <h1 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#007AFF] to-[#00C957]">
             Agency Login
           </h1>
           <p className="text-gray-700 mt-2">Manage your influencer campaigns</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label
               htmlFor="agencyName"
@@ -82,7 +90,7 @@ const LoginPage = () => {
                 id="agencyName"
                 name="agencyName"
                 placeholder="Enter your agency name"
-                className="w-full pl-10 pr-4 py-3 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-white placeholder-gray-400 "
+                className="w-full pl-10 pr-4 py-3 border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-gray-700 placeholder-gray-400 "
                 value={formData.agencyName}
                 onChange={handleInputChange}
               />
@@ -105,7 +113,7 @@ const LoginPage = () => {
                 name="email"
                 type="email"
                 placeholder="Enter your email"
-                className="w-full pl-10 pr-4 py-3 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-white placeholder-gray-400 transition-all disabled:opacity-50"
+                className="w-full pl-10 pr-4 py-3    border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-gray-700 placeholder-gray-400 transition-all disabled:opacity-50"
                 value={formData.email}
                 onChange={handleInputChange}
                 disabled={isLoading}
@@ -129,7 +137,7 @@ const LoginPage = () => {
                 name="password"
                 type="password"
                 placeholder="Enter your password"
-                className="w-full pl-10 pr-4 py-3 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-white placeholder-gray-400 transition-all disabled:opacity-50"
+                className="w-full pl-10 pr-4 py-3    border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-gray-700 placeholder-gray-400 transition-all disabled:opacity-50"
                 value={formData.password}
                 onChange={handleInputChange}
                 disabled={isLoading}
@@ -138,7 +146,7 @@ const LoginPage = () => {
           </div>
 
           {error && (
-            <div className="flex items-center gap-3 p-4 text-red-300 bg-red-900/30 rounded-lg border border-red-800">
+            <div className="flex items-center gap-3 text-red-500 rounded-lg">
               <AlertCircle className="h-5 w-5 flex-shrink-0" />
               <p className="text-sm">{error}</p>
             </div>
@@ -146,7 +154,7 @@ const LoginPage = () => {
 
           <button
             type="submit"
-            className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 px-4 rounded-lg hover:from-blue-500 hover:to-purple-500 focus:ring-4 focus:ring-blue-500/30 font-medium transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full bg-gradient-to-r from-[#007AFF] to-[#00C957] text-white py-3 px-4 rounded-lg hover:from-blue-500 hover:to-green-500 focus:ring-4 focus:ring-blue-500/30 font-medium transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
             disabled={isLoading}
           >
             {isLoading ? (

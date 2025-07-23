@@ -164,7 +164,7 @@ const MultiSelect = ({
     control: (provided) => ({
       ...provided,
       minHeight: "44px",
-      backgroundColor: "#374151",
+      // backgroundColor: "#374151",
       borderColor: "#4B5563",
       borderRadius: "0.5rem",
       "&:hover": {
@@ -174,22 +174,22 @@ const MultiSelect = ({
     }),
     menu: (provided) => ({
       ...provided,
-      backgroundColor: "#374151",
+      // backgroundColor: "#374151",
       borderColor: "#4B5563",
     }),
     option: (provided, state) => ({
       ...provided,
-      backgroundColor: state.isFocused ? "#4B5563" : "#374151", // Removed selected background
-      color: "white",
+      backgroundColor: state.isFocused ? "#4B5563" : "#374151",
+      color: "black",
       position: "relative",
-      paddingLeft: "2rem", // Make space for checkmark
+      paddingLeft: "2rem",
       "&:before": state.isSelected ? {
         content: '"✓"',
         position: "absolute",
         left: "0.75rem",
         top: "50%",
         transform: "translateY(-50%)",
-        color: "#93C5FD", // Light blue checkmark
+        color: "#007AFA",
       } : {},
     }),
     multiValue: (provided) => ({
@@ -238,22 +238,22 @@ const MultiSelect = ({
         components={{ Option, MultiValueLabel }}
         classNames={{
           control: () =>
-            "!bg-gray-700 !border-gray-600 !rounded-lg !min-h-[44px]",
-          input: () => "!text-white",
+            "!border-gray-600 !rounded-lg !min-h-[44px]",
+          input: () => "!text-gray-700",
           placeholder: () => "!text-gray-400",
-          menu: () => "!bg-gray-700 !border-gray-600",
+          menu: () => " !border-gray-600",
           option: ({ isFocused, isSelected }) =>
             isFocused
-              ? "!bg-gray-600"
-              : "!bg-gray-700",
-          multiValue: () => "!bg-blue-600 !rounded",
+              ? "!bg-gray-100"
+              : "!bg-white",
+          multiValue: () => "!bg-blue-500 !rounded",
           multiValueLabel: () => "!text-white !font-medium",
           multiValueRemove: () =>
             "!text-blue-200 hover:!bg-blue-700 hover:!text-white",
-          indicatorsContainer: () => "!text-gray-400",
-          dropdownIndicator: () => "hover:!text-gray-300",
-          clearIndicator: () => "hover:!text-gray-300",
-          indicatorSeparator: () => "!bg-gray-500",
+          indicatorsContainer: () => "!text-gray-700",
+          dropdownIndicator: () => "hover:!text-gray-700",
+          clearIndicator: () => "hover:!text-gray-700",
+          indicatorSeparator: () => "!bg-white",
         }}
       />
     </div>

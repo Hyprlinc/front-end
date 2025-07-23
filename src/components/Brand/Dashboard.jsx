@@ -25,6 +25,7 @@ import ProfileMenu from './ProfileMenu';
 import Orders from './Orders'
 import { getAgencies } from '../../services/brands/EnlistAgencies';
 import DiscoverAgencies from './DiscoverAgencies';
+import BrandSidebar from './SideBar';
 
 const Dashboard = () => {
   const [token, setToken] = useState("");
@@ -83,7 +84,7 @@ const Dashboard = () => {
   return (
     <div className="flex h-screen bg-gray-50">
       {/* Sidebar */}
-      <div className="fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-lg">
+      {/* <div className="fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-lg">
         <div className="flex items-center justify-between p-4 border-b">
           <h1 className="text-2xl font-bold text-blue-600">HyprLinc</h1>
         </div>
@@ -113,7 +114,8 @@ const Dashboard = () => {
             </button>
           ))}
         </nav>
-      </div>
+      </div> */}
+      <BrandSidebar/>
 
       {/* Main Content */}
       <div className="ml-64 flex-1">

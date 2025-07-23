@@ -1,5 +1,5 @@
 import React from "react";
-import logo from "../../../assets/logo.png";
+import logo from "../../../assets/logo/logoForSidebar.png";
 import homeIcon from "../../../assets/icons/Home.png";
 import homeActive from "../../../assets/icons/homeblue.png";
 import profileManagemnt from "../../../assets/icons/profile_management.png";
@@ -61,10 +61,10 @@ const LeftSidebar = ({
       {/* Logo */}
       <div className="mb-4 flex justify-center transition-transform hover:scale-105">
         <img
-          style={{ height: "5rem", width: "auto" }}
+          // style={{ height: "5rem", width: "auto" }}
           src={logo}
           alt="Logo"
-          className="h-12 w-auto filter drop-shadow-lg"
+          className="w-28 filter drop-shadow-lg"
         />
       </div>
 
