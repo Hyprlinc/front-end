@@ -58,7 +58,7 @@ const Messages = () => {
   };
 
   return (
-    <div className="p-6 relative">
+    <div className="md:p-6 relative">
       <h1 className="text-2xl font-bold mb-6 flex items-center">
         <MessageCircle className="mr-2" /> Messages
       </h1>

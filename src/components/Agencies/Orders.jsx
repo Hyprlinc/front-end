@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Package, DollarSign, Calendar, Check, Clock, XCircle } from 'lucide-react';
+import { Package, DollarSign, Calendar, Check, Clock, XCircle, ListOrdered } from 'lucide-react';
+import { FaBox, FaBoxOpen, FaFirstOrder } from 'react-icons/fa';
 
 const Orders = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -55,10 +56,10 @@ const Orders = () => {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-semibold text-gray-800">Order Management</h1>
-        <div className="flex space-x-4">
+    <div className="container mx-auto md:px-4 md:py-8">
+      <div className="md:flex justify-between items-center mb-6">
+        <h1 className="flex text-2xl font-semibold text-gray-800"><FaBoxOpen className="mr-2"/> Order Management</h1>
+        <div className="flex space-x-4 mt-2 md:mt-0">
           <select className="border rounded-lg px-4 py-2 bg-white">
             <option>All Orders</option>
             <option>In Progress</option>
@@ -69,7 +70,7 @@ const Orders = () => {
       </div>
 
       {/* Orders Table */}
-      <div className="bg-white rounded-lg shadow overflow-hidden">
+      <div className="bg-white rounded-lg shadow overflow-x-auto md:overflow-hidden">
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
             <tr>

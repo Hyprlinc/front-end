@@ -1,16 +1,11 @@
 import { useState } from "react";
-import {
-  Building2,
-  Lock,
-  Mail,
-  MailIcon,
-  Map,
-} from "lucide-react";
+import { Building2, Lock, Mail, MailIcon, Map } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { brandLogin, registerBrand } from "../services/brands/BrandsServices";
 import { Button } from "./ui/button";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { showToast } from "./lib/toast";
+import logoForLogin from "../assets/logo/logoForLogin.png";
 
 const BrandRegistrationForm = () => {
   const [formData, setFormData] = useState({
@@ -123,29 +118,18 @@ const BrandRegistrationForm = () => {
   }
 
   return (
-    <div className="min-h-screen bg-white flex flex-col justify-center md:py-12 lg:px-8">
-      {/* {submitStatus === "success" && (
-        <div className="mb-4 mx-auto max-w-md p-4 flex items-center gap-2 bg-green-50 border border-green-200 rounded-lg">
-          <AlertCircle className="text-green-600" />
-          <p className="text-green-700">
-            Registration successful! Welcome aboard.
-          </p>
-        </div>
-      )} */}
-
-      {/* {submitStatus === "error" && (
-        <div className="mb-4 mx-auto max-w-md p-4 flex items-center gap-2 bg-red-50 border border-red-200 rounded-lg">
-          <AlertCircle className="text-red-600" />
-          <p className="text-red-700">
-            {errors.submit || "Registration failed. Please try again."}
-          </p>
-        </div>
-      )} */}
-
+    <div className="min-h-screen bg-white flex flex-col justify-center">
+      <div>
+        <img
+          src={logoForLogin}
+          alt="logoForLogin"
+          className="w-40 m-6 filter drop-shadow-sm"
+        />
+      </div>
       <div className="md:w-2/5 mx-auto p-6 sm:p-8 bg-white">
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="text-center">
-            <h1 className="text-3xl sm:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-500 mb-2">
+            <h1 className="text-3xl sm:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#007AFF] to-[#00C957] mb-2">
               Register Your Brand
             </h1>
             <p className="text-gray-900 text-sm sm:text-base">
@@ -174,7 +158,7 @@ const BrandRegistrationForm = () => {
                   required
                   value={formData.brandsName}
                   onChange={handleChange}
-                  className="w-full pl-10 pr-4 py-3 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-gray-400 transition-all autofill:bg-gray-700 autofill:text-white"
+                  className="w-full pl-10 pr-4 py-3 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-700 placeholder-gray-400 transition-all autofill:  autofill:text-white"
                 />
               </div>
               {errors.brandsName && (
@@ -202,7 +186,7 @@ const BrandRegistrationForm = () => {
                   required
                   value={formData.email}
                   onChange={handleChange}
-                  className="w-full pl-10 pr-4 py-3 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white transition-all"
+                  className="w-full pl-10 pr-4 py-3 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-700 transition-all"
                 />
               </div>
               {errors.email && (
@@ -228,7 +212,7 @@ const BrandRegistrationForm = () => {
                   autoComplete="off"
                   value={formData.country}
                   onChange={handleChange}
-                  className="w-full pl-10 pr-6 py-3  bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-gray-400 transition-all"
+                  className="w-full pl-10 pr-6 py-3 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-700 placeholder-gray-400 transition-all"
                 >
                   <option value="">Select a country</option>
                   {countries.map((country) => (
@@ -263,7 +247,7 @@ const BrandRegistrationForm = () => {
                   autoComplete="off"
                   value={formData.password}
                   onChange={handleChange}
-                  className="w-full pl-10 pr-4 py-3 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white transition-all"
+                  className="w-full pl-10 pr-4 py-3 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-700 transition-all"
                 />
               </div>
               <button
@@ -298,7 +282,7 @@ const BrandRegistrationForm = () => {
                   autoComplete="off"
                   value={formData.confirmPassword}
                   onChange={handleChange}
-                  className="w-full pl-10 pr-4 py-3 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white transition-all"
+                  className="w-full pl-10 pr-4 py-3 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-700 transition-all"
                 />
               </div>
               <button
@@ -320,7 +304,7 @@ const BrandRegistrationForm = () => {
               variant="default"
               size="full"
               disabled={isSubmitting}
-              className="py-3 text-lg text-white font-semibold bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 transition-all transform hover:scale-[1.01] shadow-lg disabled:opacity-70"
+              className="py-3 text-lg text-white font-semibold bg-gradient-to-r from-[#007AFF] to-[#00C957] hover:from-blue-600 hover:to-green-500 transition-all transform hover:scale-[1.01] shadow-lg disabled:opacity-70"
             >
               {isSubmitting ? "Registering..." : "Register Brand"}
             </Button>
@@ -352,6 +336,7 @@ const BrandLoginForm = ({ setShowLoginForm }) => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [errors, setErrors] = useState({});
+  const [showPassword, setShowPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const storeToken = (token) => {
@@ -389,11 +374,18 @@ const BrandLoginForm = ({ setShowLoginForm }) => {
   };
 
   return (
-    <div className="min-h-screen bg-white flex flex-col justify-center ">
+    <div className="bg-white flex flex-col justify-center ">
+      <div>
+        <img
+          src={logoForLogin}
+          alt="logoForLogin"
+          className="w-40 m-6 filter drop-shadow-sm"
+        />
+      </div>
       <div className=" md:w-2/5 mx-auto p-6 sm:p-8 bg-white">
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="text-center">
-            <h1 className="text-3xl sm:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-500 mb-2">
+            <h1 className="text-3xl sm:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#007AFF] to-[#00C957] mb-2">
               Login to Your Brand Account
             </h1>
             <p className="text-gray-900 text-sm sm:text-base">
@@ -422,7 +414,7 @@ const BrandLoginForm = ({ setShowLoginForm }) => {
                   required
                   value={formData.email}
                   onChange={handleChange}
-                  className="w-full pl-10 pr-4 py-3 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-gray-400 transition-all"
+                  className="w-full pl-10 pr-4 py-3 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-700 placeholder-gray-400 transition-all"
                 />
               </div>
             </div>
@@ -441,14 +433,21 @@ const BrandLoginForm = ({ setShowLoginForm }) => {
                 <input
                   id="password"
                   name="password"
-                  type="password"
+                  type={showPassword ? "text" : "password"}
                   autoComplete="off"
                   placeholder="Enter your password"
                   required
                   value={formData.password}
                   onChange={handleChange}
-                  className="w-full pl-10 pr-4 py-3 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-gray-400 transition-all"
+                  className="w-full pl-10 pr-4 py-3 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-700 placeholder-gray-400 transition-all"
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute inset-y-0 right-3 flex items-center text-gray-500 focus:outline-none"
+                >
+                  {showPassword ? <FaEyeSlash /> : <FaEye />}
+                </button>
               </div>
             </div>
 
@@ -461,7 +460,7 @@ const BrandLoginForm = ({ setShowLoginForm }) => {
               variant="default"
               size="full"
               disabled={isSubmitting}
-              className="py-3 text-lg text-white font-semibold bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 transition-all transform hover:scale-[1.01] shadow-lg disabled:opacity-70"
+              className="py-3 text-lg text-white font-semibold bg-gradient-to-r from-[#007AFF] to-[#00C957] hover:from-blue-600 hover:to-green-500 transition-all transform hover:scale-[1.01] shadow-lg disabled:opacity-70"
             >
               {isSubmitting ? "Logging in..." : "Login"}
             </Button>

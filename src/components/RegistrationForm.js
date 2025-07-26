@@ -34,6 +34,7 @@ import {
 } from "../services/creators/CreatorsServices";
 import { Button } from "./ui/button";
 import MultiSelect from "./ui/multi-select";
+import logoForLogin from "../assets/logo/logoForLogin.png";
 
 // Function to store token securely (localStorage for simplicity, cookies recommended in production)
 
@@ -370,13 +371,20 @@ const RegistrationForm = () => {
   }, [navigate]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-white md:p-4 ">
+    <div className="items-center justify-center bg-white">
+      <div>
+        <img
+          src={logoForLogin}
+          alt="logoForLogin"
+          className="w-40 m-6 filter drop-shadow-sm"
+        />
+      </div>
       <div className="w-full">
         {step === 1 && !showLoginForm && (
           <div className="md:w-2/5 mx-auto p-6 sm:p-8 bg-white">
             <form onSubmit={handlePhoneSubmit} className="space-y-6">
               <div className="text-center">
-                <h1 className="text-3xl sm:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-500 mb-2">
+                <h1 className="text-3xl sm:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#007AFF] to-[#00C957] mb-2">
                   Join Our Community
                 </h1>
                 <p className="text-gray-900 text-sm sm:text-base">
@@ -402,7 +410,7 @@ const RegistrationForm = () => {
                       onChange={(e) => setPhoneNumber(e.target.value)}
                       placeholder="Enter 10-digit number"
                       maxLength="10"
-                      className="w-full pl-12 pr-4 py-3 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-gray-400 transition-all"
+                      className="w-full pl-12 pr-4 py-3 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-700 placeholder-gray-400 transition-all"
                       required
                     />
                   </div>
@@ -411,7 +419,7 @@ const RegistrationForm = () => {
                 <Button
                   variant="default"
                   size="full"
-                  className="py-3 text-lg text-white font-semibold bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 transition-all transform hover:scale-[1.01] shadow-lg"
+                  className="py-3 text-lg  text-white font-semibold bg-gradient-to-r from-[#007AFF] to-[#00C957] hover:from-blue-600 hover:to-green-500 transition-all transform hover:scale-[1.01] shadow-lg"
                 >
                   Send Verification Code
                 </Button>
@@ -428,14 +436,14 @@ const RegistrationForm = () => {
               <div className="flex flex-col sm:flex-row justify-center gap-3">
                 <button
                   type="button"
-                  className="flex items-center justify-center w-full px-4 py-2.5 text-sm font-medium rounded-lg bg-gray-700 hover:bg-gray-600 transition-colors text-white"
+                  className="flex items-center justify-center w-full px-4 py-2.5 text-sm font-medium rounded-lg  hover:bg-gray-200 transition-colors text-gray-900 shadow-sm bg-gray-100"
                 >
                   <FaInstagram className="text-pink-500 mr-2" size={18} />
                   Instagram
                 </button>
                 <button
                   type="button"
-                  className="flex items-center justify-center w-full px-4 py-2.5 text-sm font-medium rounded-lg bg-gray-700 hover:bg-gray-600 transition-colors text-white"
+                  className="flex items-center justify-center w-full px-4 py-2.5 text-sm font-medium rounded-lg  hover:bg-gray-200 transition-colors text-gray-900 shadow-sm bg-gray-100"
                 >
                   <FaYoutube className="text-red-500 mr-2" size={18} />
                   YouTube
@@ -460,7 +468,7 @@ const RegistrationForm = () => {
           <div className="md:w-2/5 mx-auto p-6 sm:p-8 bg-white">
             <form onSubmit={handleLogin} className="space-y-6">
               <div className="text-center">
-                <h2 className="text-3xl sm:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-500 mb-2">
+                <h2 className="text-3xl sm:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r  from-[#007AFF] to-[#00C957] mb-2">
                   Influencer Login
                 </h2>
                 <p className="text-gray-900 text-sm sm:text-base">
@@ -487,7 +495,7 @@ const RegistrationForm = () => {
                       autoComplete="off"
                       onChange={(e) => setEmail(e.target.value)}
                       placeholder="Enter your email"
-                      className="w-full pl-10 pr-4 py-3 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-gray-400 transition-all"
+                      className="w-full pl-10 pr-4 py-3 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-700 placeholder-gray-400 transition-all"
                       required
                     />
                   </div>
@@ -511,7 +519,7 @@ const RegistrationForm = () => {
                       onChange={(e) => setPassword(e.target.value)}
                       placeholder="Enter your password"
                       autoComplete="off"
-                      className="w-full pl-10 pr-4 py-3 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-gray-400 transition-all"
+                      className="w-full pl-10 pr-4 py-3 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-700 placeholder-gray-400 transition-all"
                       required
                     />
                     <button
@@ -528,13 +536,13 @@ const RegistrationForm = () => {
                   type="submit"
                   variant="default"
                   size="full"
-                  className="font-bold bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white transition-all transform hover:scale-[1.01]"
+                  className="font-bold bg-gradient-to-r  from-[#007AFF] to-[#00C957] hover:from-blue-600 hover:to-green-500  text-white transition-all transform hover:scale-[1.01]"
                   disabled={loginLoading}
                 >
                   {loginLoading ? (
                     <span className="flex items-center justify-center">
                       <svg
-                        className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                        className="animate-spin -ml-1 mr-3 h-5 w-5  text-gray-700"
                         xmlns="http://www.w3.org/2000/svg"
                         fill="none"
                         viewBox="0 0 24 24"
@@ -573,7 +581,7 @@ const RegistrationForm = () => {
                 <Button
                   variant="default"
                   size="full"
-                  className="font-medium  bg-gray-700 hover:bg-gray-600 transition-colors text-white"
+                  className="font-medium hover:bg-gray-200 transition-colors text-gray-900 shadow-sm bg-gray-100"
                 >
                   <FaGoogle className="text-red-500 mr-2" size={18} />
                   Google
@@ -581,7 +589,7 @@ const RegistrationForm = () => {
                 <Button
                   variant="default"
                   size="full"
-                  className="font-medium  bg-gray-700 hover:bg-gray-600 transition-colors text-white"
+                  className="font-medium hover:bg-gray-200 transition-colors text-gray-900 shadow-sm bg-gray-100"
                 >
                   <FaInstagram className="text-pink-500 mr-2" size={18} />
                   Instagram
@@ -605,7 +613,7 @@ const RegistrationForm = () => {
           <div className="md:w-2/5 mx-auto p-6 sm:p-8 bg-white">
             <div className="space-y-6">
               <div className="text-center">
-                <h2 className="text-3xl sm:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-500 mb-2">
+                <h2 className="text-3xl sm:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#007AFF] to-[#00C957] mb-2">
                   Choose Your Profile Type
                 </h2>
                 <p className="text-gray-700 text-sm sm:text-base">
@@ -631,10 +639,10 @@ const RegistrationForm = () => {
 
                 <button
                   onClick={() => handleProfileTypeSelect("Influencer")}
-                  className="flex flex-col items-center justify-center p-4 border-2 border-gray-400 rounded-xl hover:border-purple-500 hover:shadow-md bg-white transition-all duration-300 space-y-3 group"
+                  className="flex flex-col items-center justify-center p-4 border-2 border-gray-400 rounded-xl hover:border-green-500 hover:shadow-md bg-white transition-all duration-300 space-y-3 group"
                 >
-                  <div className="p-3 rounded-full bg-purple-50 group-hover:bg-purple-100 transition-colors">
-                    <User className="text-purple-600" size={32} />
+                  <div className="p-3 rounded-full bg-green-50 group-hover:bg-green-100 transition-colors">
+                    <User className="text-green-400" size={32} />
                   </div>
                   <span className="font-semibold text-gray-800 text-lg">
                     As an Influencer
@@ -662,7 +670,7 @@ const RegistrationForm = () => {
               className="space-y-6"
             >
               <div className="text-center">
-                <h2 className="text-3xl sm:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-500 mb-2">
+                <h2 className="text-3xl sm:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#007AFF] to-[#00C957] mb-2">
                   Influencer Profile
                 </h2>
                 <p className="text-gray-700 text-sm sm:text-base">
@@ -690,7 +698,7 @@ const RegistrationForm = () => {
                       value={influencerDetails.name}
                       onChange={handleInfluencerDetailsChange}
                       placeholder="Ex. Shri"
-                      className="w-full pl-10 pr-4 py-3 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-gray-400 transition-all"
+                      className="w-full pl-10 pr-4 py-3 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-700 placeholder-gray-400 transition-all"
                       required
                     />
                   </div>
@@ -715,7 +723,7 @@ const RegistrationForm = () => {
                       value={influencerDetails.email}
                       onChange={handleInfluencerDetailsChange}
                       placeholder="Example@email.com"
-                      className="w-full pl-10 pr-4 py-3 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-gray-400 transition-all"
+                      className="w-full pl-10 pr-4 py-3 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-700 placeholder-gray-400 transition-all"
                       required
                     />
                   </div>
@@ -796,7 +804,7 @@ const RegistrationForm = () => {
                       value={influencerDetails.channelLink}
                       onChange={handleInfluencerDetailsChange}
                       placeholder="Paste your channel/profile link"
-                      className="w-full pl-10 pr-4 py-3 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-gray-400 transition-all"
+                      className="w-full pl-10 pr-4 py-3 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-700 placeholder-gray-400 transition-all"
                       required
                     />
                   </div>
@@ -821,7 +829,7 @@ const RegistrationForm = () => {
                       value={influencerDetails.password}
                       onChange={handleInfluencerDetailsChange}
                       placeholder="Enter your password"
-                      className="w-full pl-10 pr-4 py-3 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-gray-400 transition-all"
+                      className="w-full pl-10 pr-4 py-3 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-700 placeholder-gray-400 transition-all"
                       required
                     />
                     <button
@@ -864,7 +872,7 @@ const RegistrationForm = () => {
                           setPasswordError("");
                         }
                       }}
-                      className="w-full pl-10 pr-4 py-3 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-gray-400 transition-all"
+                      className="w-full pl-10 pr-4 py-3 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-700 placeholder-gray-400 transition-all"
                       required
                     />
                     <button
@@ -899,7 +907,7 @@ const RegistrationForm = () => {
                 </button>
                 <button
                   type="submit"
-                  className="w-1/2 py-3 text-lg font-semibold bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white rounded-lg transition-all transform hover:scale-[1.01] shadow-lg"
+                  className="w-1/2 py-3 text-lg font-semibold bg-gradient-to-r from-[#007AFF] to-[#00C957] hover:from-blue-600 hover:to-green-500  text-white rounded-lg transition-all transform hover:scale-[1.01] shadow-lg"
                 >
                   Next
                 </button>
@@ -912,13 +920,13 @@ const RegistrationForm = () => {
           <div className="md:w-2/5 mx-auto p-6 sm:p-8 bg-white">
             <form onSubmit={handlePersonalDetailsSubmit}>
               <div className="text-center mb-8">
-                <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-blue-100 to-purple-100 rounded-full mb-4">
+                <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-blue-100 to-green-100 rounded-full mb-4">
                   <MapPin
-                    className="text-gradient-to-r from-blue-600 to-purple-600"
+                    className="text-gradient-to-r from-[#007AFF] to-[#00C957]"
                     size={28}
                   />
                 </div>
-                <h2 className="text-3xl sm:text-4xl font-bold mb-2 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                <h2 className="text-3xl sm:text-4xl font-bold mb-2 bg-gradient-to-r from-[#007AFF] to-[#00C957] bg-clip-text text-transparent">
                   Unlock Your Content Creator Journey!
                 </h2>
                 <p className="text-gray-700 text-sm sm:text-base">
@@ -959,7 +967,7 @@ const RegistrationForm = () => {
                           placeholder="e.g. 25"
                           min="13"
                           max="120"
-                          className="w-full pl-10 pr-4 py-3 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-gray-400 transition-all"
+                          className="w-full pl-10 pr-4 py-3   border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent  text-gray-700 placeholder-gray-400 transition-all"
                           required
                         />
                       </div>
@@ -978,7 +986,7 @@ const RegistrationForm = () => {
                         autoComplete="off"
                         value={personalDetails.gender}
                         onChange={handlePersonalDetailsChange}
-                        className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-gray-400 transition-all"
+                        className="w-full px-4 py-3 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-700 placeholder-gray-400 transition-all"
                         required
                       >
                         <option value="">Select gender</option>
@@ -1019,7 +1027,7 @@ const RegistrationForm = () => {
                           control: (base) => ({
                             ...base,
                             minHeight: "44px",
-                            backgroundColor: "#374151",
+                            backgroundColor: "#FFFFFF",
                             borderColor: "#4B5563",
                             borderRadius: "0.5rem",
                             "&:hover": { borderColor: "#4B5563" },
@@ -1031,18 +1039,18 @@ const RegistrationForm = () => {
                           }),
                           singleValue: (base) => ({
                             ...base,
-                            color: "white",
+                            color: "black",
                           }),
                           option: (base, { isFocused, isSelected }) => ({
                             ...base,
                             backgroundColor: isSelected
-                              ? "#1E40AF"
+                              ? "#cccccc"
                               : isFocused
-                              ? "#4B5563"
-                              : "#374151",
-                            color: "white",
+                              ? "#cccccc"
+                              : "#FFFFFF",
+                            color: "black",
                             "&:active": {
-                              backgroundColor: "#1E40AF",
+                              backgroundColor: "#bababa",
                             },
                           }),
                         }}
@@ -1078,11 +1086,12 @@ const RegistrationForm = () => {
                           control: (base) => ({
                             ...base,
                             minHeight: "44px",
+                            backgroundColor: "#FFFFFF",
                             borderColor: "#4B5563",
                             borderRadius: "0.5rem",
                             backgroundColor: !personalDetails.country
-                              ? "#374151"
-                              : "#4B5563",
+                              ? "#f7f5f5"
+                              : "#FFFFFF",
                             "&:hover": { borderColor: "#4B5563" },
                             boxShadow: "none",
                           }),
@@ -1092,18 +1101,18 @@ const RegistrationForm = () => {
                           }),
                           singleValue: (base) => ({
                             ...base,
-                            color: "white",
+                            color: "black",
                           }),
                           option: (base, { isFocused, isSelected }) => ({
                             ...base,
                             backgroundColor: isSelected
-                              ? "#1E40AF"
+                              ? "#cccccc"
                               : isFocused
-                              ? "#4B5563"
-                              : "#374151",
-                            color: "white",
+                              ? "#cccccc"
+                              : "#FFFFFF",
+                            color: "black",
                             "&:active": {
-                              backgroundColor: "#1E40AF",
+                              backgroundColor: "#bababa",
                             },
                           }),
                         }}
@@ -1124,12 +1133,8 @@ const RegistrationForm = () => {
 
                   <div className="space-y-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Content Languages
-                      </label>
-
-                      <Select
-                        isMulti
+                      <MultiSelect
+                        label="Content Languages"
                         name="contentLanguages"
                         options={[
                           {
@@ -1161,104 +1166,14 @@ const RegistrationForm = () => {
                               : [],
                           }));
                         }}
-                        className="react-select-container"
-                        classNamePrefix="react-select"
                         placeholder="Select your content language"
-                        closeMenuOnSelect={false}
-                        hideSelectedOptions={false}
-                        styles={{
-                          control: (base) => ({
-                            ...base,
-                            minHeight: "44px",
-                            backgroundColor: "#374151",
-                            borderColor: "#4B5563",
-
-                            borderRadius: "0.5rem",
-                            "&:hover": {
-                              borderColor: "#4B5563",
-                            },
-                            boxShadow: "none",
-                          }),
-                          input: (base) => ({
-                            ...base,
-                            color: "white",
-                          }),
-                          placeholder: (base) => ({
-                            ...base,
-                            color: "#9CA3AF",
-                          }),
-                          menu: (base) => ({
-                            ...base,
-                            backgroundColor: "#374151",
-                            borderColor: "#4B5563",
-                          }),
-                          option: (base, { isFocused, isSelected }) => ({
-                            ...base,
-                            backgroundColor: isSelected
-                              ? "#1E40AF"
-                              : isFocused
-                              ? "#4B5563"
-                              : "#374151",
-                            color: "white",
-                            "&:active": {
-                              backgroundColor: "#1E40AF",
-                            },
-                          }),
-                          multiValue: (base) => ({
-                            ...base,
-                            backgroundColor: "#1E40AF",
-                            borderRadius: "0.375rem",
-                          }),
-                          multiValueLabel: (base) => ({
-                            ...base,
-                            color: "white",
-                            fontWeight: "500",
-                            padding: "2px 6px",
-                          }),
-                          multiValueRemove: (base) => ({
-                            ...base,
-                            color: "#93C5FD",
-                            ":hover": {
-                              backgroundColor: "#1D4ED8",
-                              color: "white",
-                            },
-                          }),
-                          valueContainer: (base) => ({
-                            ...base,
-                            padding: "4px 8px",
-                          }),
-                          indicatorsContainer: (base) => ({
-                            ...base,
-                            color: "#9CA3AF",
-                          }),
-                          dropdownIndicator: (base) => ({
-                            ...base,
-                            color: "#9CA3AF",
-                            "&:hover": {
-                              color: "#D1D5DB",
-                            },
-                          }),
-                          clearIndicator: (base) => ({
-                            ...base,
-                            color: "#9CA3AF",
-                            "&:hover": {
-                              color: "#D1D5DB",
-                            },
-                          }),
-                          indicatorSeparator: (base) => ({
-                            ...base,
-                            backgroundColor: "#4B5563",
-                          }),
-                        }}
+                        isRequired
                       />
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Content Niche
-                      </label>
-                      <Select
-                        isMulti
+                      <MultiSelect
+                        label="Content Niche"
                         name="channelGenre"
                         options={channelGenres.map((genre) => ({
                           value: genre,
@@ -1278,97 +1193,12 @@ const RegistrationForm = () => {
                               : [],
                           }));
                         }}
-                        className="react-select-container"
-                        classNamePrefix="react-select"
                         placeholder="Select your content niches"
-                        closeMenuOnSelect={false}
-                        hideSelectedOptions={false}
-                        styles={{
-                          control: (base) => ({
-                            ...base,
-                            minHeight: "44px",
-                            backgroundColor: "#374151",
-                            borderColor: "#4B5563",
-                            borderRadius: "0.5rem",
-                            "&:hover": {
-                              borderColor: "#4B5563",
-                            },
-                            boxShadow: "none",
-                          }),
-                          input: (base) => ({
-                            ...base,
-                            color: "white",
-                          }),
-                          placeholder: (base) => ({
-                            ...base,
-                            color: "#9CA3AF",
-                          }),
-                          menu: (base) => ({
-                            ...base,
-                            backgroundColor: "#374151",
-                            borderColor: "#4B5563",
-                          }),
-                          option: (base, { isFocused, isSelected }) => ({
-                            ...base,
-                            backgroundColor: isSelected
-                              ? "#1E40AF"
-                              : isFocused
-                              ? "#4B5563"
-                              : "#374151",
-                            color: "white",
-                            "&:active": {
-                              backgroundColor: "#1E40AF",
-                            },
-                          }),
-                          multiValue: (base) => ({
-                            ...base,
-                            backgroundColor: "#1E40AF",
-                            borderRadius: "0.375rem",
-                          }),
-                          multiValueLabel: (base) => ({
-                            ...base,
-                            color: "white",
-                            fontWeight: "500",
-                            padding: "2px 6px",
-                          }),
-                          multiValueRemove: (base) => ({
-                            ...base,
-                            color: "#93C5FD",
-                            ":hover": {
-                              backgroundColor: "#1D4ED8",
-                              color: "white",
-                            },
-                          }),
-                          valueContainer: (base) => ({
-                            ...base,
-                            padding: "4px 8px",
-                          }),
-                          indicatorsContainer: (base) => ({
-                            ...base,
-                            color: "#9CA3AF",
-                          }),
-                          dropdownIndicator: (base) => ({
-                            ...base,
-                            color: "#9CA3AF",
-                            "&:hover": {
-                              color: "#D1D5DB",
-                            },
-                          }),
-                          clearIndicator: (base) => ({
-                            ...base,
-                            color: "#9CA3AF",
-                            "&:hover": {
-                              color: "#D1D5DB",
-                            },
-                          }),
-                          indicatorSeparator: (base) => ({
-                            ...base,
-                            backgroundColor: "#4B5563",
-                          }),
-                        }}
+                        isRequired
                       />
                     </div>
 
+                    {/* Content Description textarea remains the same */}
                     <div>
                       <label
                         htmlFor="contentDescription"
@@ -1384,7 +1214,7 @@ const RegistrationForm = () => {
                         onChange={handlePersonalDetailsChange}
                         placeholder="Describe your content style, audience, and unique value..."
                         rows={4}
-                        className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-gray-400 transition-all"
+                        className="w-full px-4 py-3 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-700 placeholder-gray-400 transition-all"
                         required
                       />
                     </div>
@@ -1403,12 +1233,12 @@ const RegistrationForm = () => {
                 <button
                   type="submit"
                   disabled={isLoading}
-                  className="flex-1 py-3 px-6 rounded-xl text-sm font-medium text-white bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all transform hover:scale-[1.01] shadow-lg disabled:opacity-70 disabled:cursor-not-allowed"
+                  className="flex-1 py-3 px-6 rounded-xl text-sm font-semibold  text-white bg-gradient-to-r from-[#007AFF] to-[#00C957] hover:from-blue-700 hover:to-green-500 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all transform hover:scale-[1.01] shadow-lg disabled:opacity-70 disabled:cursor-not-allowed"
                 >
                   {isLoading ? (
                     <span className="flex items-center justify-center">
                       <svg
-                        className="animate-spin -ml-1 mr-2 h-5 w-5 text-white"
+                        className="animate-spin -ml-1 mr-2 h-5 w-5  text-white"
                         xmlns="http://www.w3.org/2000/svg"
                         fill="none"
                         viewBox="0 0 24 24"
@@ -1443,10 +1273,10 @@ const RegistrationForm = () => {
             <form onSubmit={handleChannelDetailsSubmit} className="space-y-6">
               {/* Header Section */}
               <div className="text-center">
-                <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-blue-100 to-purple-100 rounded-full mb-4">
+                <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-blue-100 to-green-100 rounded-full mb-4">
                   <FaYoutube className="text-red-600" size={28} />
                 </div>
-                <h2 className="text-3xl sm:text-4xl font-bold mb-2 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                <h2 className="text-3xl sm:text-4xl font-bold mb-2 bg-gradient-to-r from-[#007AFF] to-[#00C957] bg-clip-text text-transparent">
                   Channel Details
                 </h2>
                 <p className="text-gray-700 text-sm sm:text-base">
@@ -1474,7 +1304,7 @@ const RegistrationForm = () => {
                       placeholder="e.g. 12"
                       min="0"
                       max="1200"
-                      className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-gray-400 transition-all"
+                      className="w-full px-4 py-3   border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent  text-gray-700 placeholder-gray-400 transition-all"
                       required
                     />
                   </div>
@@ -1494,7 +1324,7 @@ const RegistrationForm = () => {
                       onChange={handleChannelDetailsChange}
                       placeholder="e.g. 10000"
                       min="0"
-                      className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-gray-400 transition-all"
+                      className="w-full px-4 py-3   border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent  text-gray-700 placeholder-gray-400 transition-all"
                       required
                     />
                   </div>
@@ -1514,7 +1344,7 @@ const RegistrationForm = () => {
                       onChange={handleChannelDetailsChange}
                       placeholder="e.g. 5000"
                       min="0"
-                      className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-gray-400 transition-all"
+                      className="w-full px-4 py-3   border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent  text-gray-700 placeholder-gray-400 transition-all"
                       required
                     />
                   </div>
@@ -1534,7 +1364,7 @@ const RegistrationForm = () => {
                       name="contentType"
                       value={channelDetails.contentType}
                       onChange={handleChannelDetailsChange}
-                      className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-gray-400 transition-all"
+                      className="w-full px-4 py-3   border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent  text-gray-700 placeholder-gray-400 transition-all"
                       required
                     >
                       <option value="">Select Type</option>
@@ -1594,7 +1424,7 @@ const RegistrationForm = () => {
                       placeholder="e.g. 7"
                       min="1"
                       max="365"
-                      className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-gray-400 transition-all"
+                      className="w-full px-4 py-3   border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent  text-gray-700 placeholder-gray-400 transition-all"
                       required
                     />
                   </div>
@@ -1614,7 +1444,7 @@ const RegistrationForm = () => {
                       name="liveStreaming"
                       value={channelDetails.liveStreaming}
                       onChange={handleChannelDetailsChange}
-                      className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-gray-400 transition-all"
+                      className="w-full px-4 py-3   border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent  text-gray-700 placeholder-gray-400 transition-all"
                       required
                     >
                       <option value="">Select Option</option>
@@ -1666,7 +1496,7 @@ const RegistrationForm = () => {
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 py-3 px-6 rounded-xl text-sm font-medium text-white bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all transform hover:scale-[1.01] shadow-lg"
+                  className="flex-1 py-3 px-6 rounded-xl text-sm font-semibold  text-white bg-gradient-to-r from-[#007AFF] to-[#00C957] hover:from-blue-700 hover:to-green-500 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all transform hover:scale-[1.01] shadow-lg"
                 >
                   Submit Channel Details
                 </button>
@@ -1680,10 +1510,10 @@ const RegistrationForm = () => {
             <form onSubmit={handleInstagramDetailsSubmit} className="space-y-6">
               {/* Header Section */}
               <div className="text-center">
-                <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-pink-100 to-purple-100 rounded-full mb-4">
+                <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-pink-100 to-green-100 rounded-full mb-4">
                   <FaInstagram className="text-pink-600" size={28} />
                 </div>
-                <h2 className="text-3xl sm:text-4xl font-bold mb-2 bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent">
+                <h2 className="text-3xl sm:text-4xl font-bold mb-2 bg-gradient-to-r from-[#007AFF] to-[#00C957] bg-clip-text text-transparent">
                   Instagram Profile
                 </h2>
                 <p className="text-gray-700 text-sm sm:text-base">
@@ -1704,10 +1534,11 @@ const RegistrationForm = () => {
                     type="text"
                     id="accountName"
                     name="accountName"
+                    autoComplete="off"
                     value={instagramDetails.accountName}
                     onChange={handleInstagramDetailsChange}
                     placeholder="Enter your Instagram handle"
-                    className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-gray-400 transition-all"
+                    className="w-full px-4 py-3   border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent  text-gray-700 placeholder-gray-400 transition-all"
                     required
                   />
                 </div>
@@ -1725,12 +1556,13 @@ const RegistrationForm = () => {
                       type="number"
                       id="accountAge"
                       name="accountAge"
+                    autoComplete="off"
                       value={instagramDetails.accountAge}
                       onChange={handleInstagramDetailsChange}
                       placeholder="e.g. 12"
                       min="0"
                       max="1200"
-                      className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-gray-400 transition-all"
+                      className="w-full px-4 py-3   border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent  text-gray-700 placeholder-gray-400 transition-all"
                       required
                     />
                   </div>
@@ -1746,11 +1578,12 @@ const RegistrationForm = () => {
                       type="number"
                       id="followers"
                       name="followers"
+                    autoComplete="off"
                       value={instagramDetails.followers}
                       onChange={handleInstagramDetailsChange}
                       placeholder="e.g. 10000"
                       min="0"
-                      className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-gray-400 transition-all"
+                      className="w-full px-4 py-3   border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent  text-gray-700 placeholder-gray-400 transition-all"
                       required
                     />
                   </div>
@@ -1769,11 +1602,12 @@ const RegistrationForm = () => {
                       type="number"
                       id="avgReelViews"
                       name="avgReelViews"
+                    autoComplete="off"
                       value={instagramDetails.avgReelViews}
                       onChange={handleInstagramDetailsChange}
                       placeholder="e.g. 5000"
                       min="0"
-                      className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-gray-400 transition-all"
+                      className="w-full px-4 py-3   border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent  text-gray-700 placeholder-gray-400 transition-all"
                       required
                     />
                   </div>
@@ -1789,11 +1623,12 @@ const RegistrationForm = () => {
                       type="number"
                       id="avgLikes"
                       name="avgLikes"
+                    autoComplete="off"
                       value={instagramDetails.avgLikes}
                       onChange={handleInstagramDetailsChange}
                       placeholder="e.g. 1000"
                       min="0"
-                      className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-gray-400 transition-all"
+                      className="w-full px-4 py-3   border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent  text-gray-700 placeholder-gray-400 transition-all"
                       required
                     />
                   </div>
@@ -1812,11 +1647,12 @@ const RegistrationForm = () => {
                       type="number"
                       id="avgComments"
                       name="avgComments"
+                    autoComplete="off"
                       value={instagramDetails.avgComments}
                       onChange={handleInstagramDetailsChange}
                       placeholder="e.g. 100"
                       min="0"
-                      className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-gray-400 transition-all"
+                      className="w-full px-4 py-3   border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent  text-gray-700 placeholder-gray-400 transition-all"
                       required
                     />
                   </div>
@@ -1832,13 +1668,14 @@ const RegistrationForm = () => {
                       type="number"
                       id="engagementRate"
                       name="engagementRate"
+                    autoComplete="off"
                       value={instagramDetails.engagementRate}
                       onChange={handleInstagramDetailsChange}
                       placeholder="e.g. 3.5"
                       step="0.1"
                       min="0"
                       max="100"
-                      className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-gray-400 transition-all"
+                      className="w-full px-4 py-3   border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent  text-gray-700 placeholder-gray-400 transition-all"
                       required
                     />
                   </div>
@@ -1850,13 +1687,13 @@ const RegistrationForm = () => {
                 <button
                   type="button"
                   onClick={() => setStep(5)}
-                  className="flex-1 py-3 px-6 border border-gray-300 rounded-xl text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-pink-500 transition-all"
+                  className="flex-1 py-3 px-6 border border-gray-500 rounded-xl text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
                 >
                   Back
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 py-3 px-6 rounded-xl text-sm font-medium text-white bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-pink-500 transition-all transform hover:scale-[1.01] shadow-lg"
+                  className="flex-1 py-3 px-6 rounded-xl text-sm font-semibold  text-white bg-gradient-to-r from-[#007AFF] to-[#00C957] hover:from-blue-700 hover:to-green-500 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all transform hover:scale-[1.01] shadow-lg"
                 >
                   Submit Instagram Data
                 </button>

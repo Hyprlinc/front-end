@@ -31,31 +31,10 @@ import {
 } from "../services/creators/CreatorsServices";
 
 import { useNavigate } from "react-router-dom";
-import UserProfileComponent from "./profile";
 import CreatorDashboardHome from "./home/homePage";
 import EmailInbox from "./Creators/EmailInbox";
 import RatingsAndReviews from "./Creators/RatingsAndTestimonials";
 import EarningsDashboard from "./Creators/Earnings";
-
-import logo from "../assets/logo.png";
-import homeIcon from "../assets/icons/Home.png";
-import inboxIcon from "../assets/icons/messages.png";
-import collabsIcon from "../assets/icons/collaborations.png";
-import earningsIcon from "../assets/icons/profile_management.png";
-import portfolioIcon from "../assets/icons/portfolio.png";
-import settingsIcon from "../assets/icons/settings.png";
-import supportIcon from "../assets/icons/support.png";
-
-import homeAcive from "../assets/icons/homeblue.png";
-import inboxActive from "../assets/icons/messagesblue.png";
-import collabsActive from "../assets/icons/collabotationsblue.png";
-import earningsActive from "../assets/icons/earningsblue.png";
-import earnings from "../assets/icons/earnings.png";
-import portfolioActive from "../assets/icons/portfolioblue.png";
-import settingsActive from "../assets/icons/settingsblue.png";
-import supportActive from "../assets/icons/supportblue.png";
-import profileManagementActive from "../assets/icons/profileblue.png";
-import profileManagemnt from "../assets/icons/profile_management.png";
 
 import Portfolio from "./Creators/Portfolio";
 import ProfileManagement from "./Creators/ProfileManagement";
@@ -89,7 +68,6 @@ const CreatorDashboard = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isLeftSidebarOpen, setIsLeftSidebarOpen] = useState(false);
   const [isRightSidebarOpen, setIsRightSidebarOpen] = useState(false);
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const isMobile = useIsMobile();
 
   // Add effect to handle sidebar state based on mobile detection
@@ -545,147 +523,6 @@ const CreatorDashboard = () => {
   }
 
   return (
-    // <div className="flex h-screen">
-    //   {/* Left Sidebar */}
-    //   <div className="w-64 bg-black border-r p-4 flex flex-col text-white font-['Roboto']">
-    //     {/* Logo */}
-    //     <div className="mb-6 flex justify-center">
-    //       <img
-    //         style={{ height: '5rem', width: 'auto' }}
-    //         src={logo}
-    //         alt="Hyperlinc Logo"
-    //         className="h-12 w-auto"
-    //       />
-    //     </div>
-
-    //     {/* User Avatar and Profile */}
-    //     {/* <div
-    //       className="flex items-center space-x-4 mb-6 cursor-pointer hover:bg-[#1a88ff] p-2 rounded-lg"
-    //       onClick={() => setActiveSection('profile')}
-    //     >
-    //       <img
-    //         src={dummyUser.avatar}
-    //         alt={user.fullName}
-    //         className="w-16 h-16 rounded-full object-cover"
-    //       />
-    //       <div>
-    //         <p className="font-semibold text-[14px]">{user.fullName}</p>
-    //         <p className="text-sm text-gray-100">View Profile</p>
-    //       </div>
-    //     </div> */}
-
-    //     {/* Navigation Options */}
-    //     <nav className="space-y-4">
-    //       {/* home */}
-    //       <div
-    //         className={`flex items-center space-x-2 p-3 rounded-lg cursor-pointer text-[18px] font-['Roboto'] font-semibold
-    //         ${activeSection === 'home' ? 'bg-white text-[#007AFF]' : 'hover:bg-[#1a88ff] text-white'}`}
-    //         onClick={() => setActiveSection('home')}
-    //       >
-    //         <img src={activeSection === 'home' ? homeAcive : homeIcon} alt="Home" className="w-4 h-4" />
-    //         <span>Home</span>
-    //       </div>
-    //       {/* profile-mngm */}
-    //       <div
-    //         className={`flex items-center space-x-2 p-3 rounded-lg cursor-pointer text-[18px] font-['Roboto'] font-semibold
-    //         ${activeSection === 'profile-mngm' ? 'bg-white text-[#007AFF]' : 'hover:bg-[#1a88ff] text-white'}`}
-    //         onClick={() => setActiveSection('profile-mngm')}
-    //       >
-    //         <img src={activeSection === 'profile-mngm' ? profileManagementActive : profileManagemnt} alt="Inbox" className="w-4 h-4" />
-    //         <span>Profile Management</span>
-    //       </div>
-    //       {/* collabs */}
-    //       <div
-    //         className={`flex items-center space-x-2 p-3 rounded-lg cursor-pointer text-[18px] font-['Roboto'] font-semibold
-    //         ${activeSection === 'collabs' ? 'bg-white text-[#007AFF]' : 'hover:bg-[#1a88ff] text-white'}`}
-    //         onClick={() => setActiveSection('collabs')}
-    //       >
-    //         <img src={activeSection === 'collabs' ? collabsActive : collabsIcon} alt="Collaborations" className="w-4 h-4" />
-    //         <span>Collaborations</span>
-    //       </div>
-    //       {/* earnings */}
-    //       <div
-    //         className={`flex items-center space-x-2 p-3 rounded-lg cursor-pointer text-[18px] font-['Roboto'] font-semibold
-    //         ${activeSection === 'earnings' ? 'bg-white text-[#007AFF]' : 'hover:bg-[#1a88ff] text-white'}`}
-    //         onClick={() => setActiveSection('earnings')}
-    //       >
-    //         <img src={activeSection === 'earnings' ? earningsActive : earnings} alt="Earnings" className="w-4 h-4" />
-    //         <span>Earnings</span>
-    //       </div>
-    //       {/* messages */}
-    //       {/* <div
-    //         className={`flex items-center space-x-2 p-3 rounded-lg cursor-pointer text-[18px] font-['Roboto'] font-semibold
-    //         ${activeSection === 'messages' ? 'bg-white text-[#007AFF]' : 'hover:bg-[#1a88ff] text-white'}`}
-    //         onClick={() => setActiveSection('messages')}
-    //       >
-    //         <img src={activeSection === 'messages' ? inboxActive : inboxIcon} alt="Messages" className="w-4 h-4" />
-    //         <span>Messages</span>
-    //       </div> */}
-    //       {/* portfolio */}
-    //       <div
-    //         className={`flex items-center space-x-2 p-3 rounded-lg cursor-pointer text-[18px] font-['Roboto'] font-semibold
-    //         ${activeSection === 'portfolio' ? 'bg-white text-[#007AFF]' : 'hover:bg-[#1a88ff] text-white'}`}
-    //         onClick={() => setActiveSection('portfolio')}
-    //       >
-    //         <img src={activeSection === 'portfolio' ? portfolioActive : portfolioIcon} alt="Portfolio" className="w-4 h-4" />
-    //         <span>Portfolio</span>
-    //       </div>
-
-    //       {/* settings */}
-    //       <div
-    //         className={`flex items-center space-x-2 p-3 rounded-lg cursor-pointer text-[18px] font-['Roboto'] font-semibold
-    //         ${activeSection === 'settings' ? 'bg-white text-[#007AFF]' : 'hover:bg-[#1a88ff] text-white'}`}
-    //         onClick={() => setActiveSection('settings')}
-    //       >
-    //         <img src={activeSection === 'settings' ? settingsActive : settingsIcon} alt="Settings" className="w-4 h-4" />
-    //         <span>Settings</span>
-    //       </div>
-    //       {/* support */}
-    //       <div
-    //         className={`flex items-center space-x-2 p-3 rounded-lg cursor-pointer text-[18px] font-['Roboto'] font-semibold
-    //         ${activeSection === 'support' ? 'bg-white text-[#007AFF]' : 'hover:bg-[#1a88ff] text-white'}`}
-    //         onClick={() => setActiveSection('support')}
-    //       >
-    //         <img src={activeSection === 'support' ? supportActive : supportIcon} alt="Support" className="w-4 h-4" />
-    //         <span>Support</span>
-    //       </div>
-    //     </nav>
-
-    //     {/* Availability Toggle */}
-    //     <div className="mt-auto p-4">
-    //       <button
-    //         className={`w-full p-2 rounded-lg font-semibold ${isAvailable ? 'bg-green-500 text-white' : 'bg-red-500 text-white'}`}
-    //         onClick={() => setIsAvailable(!isAvailable)}
-    //       >
-    //         {isAvailable ? 'Available for Collab' : 'Unavailable'}
-    //       </button>
-    //     </div>
-
-    //     <div>
-
-    //       <button
-    //         onClick={() => window.location.href = 'http://localhost:5000/api/v1/fbAuth/auth/facebook'}
-    //         className="w-full mb-4 flex items-center justify-center space-x-2 bg-blue-600 text-white p-2 rounded-lg hover:bg-blue-700"
-    //       >
-    //         <svg
-    //           className="w-5 h-5 fill-current"
-    //           xmlns="http://www.w3.org/2000/svg"
-    //           viewBox="0 0 24 24"
-    //         >
-    //           <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
-    //         </svg>
-    //         <span>Login with Facebook</span>
-    //       </button>
-    //     </div>
-
-    //   </div>
-
-    //   {/* Main Content Area */}
-    //   <div className="flex-1 bg-white overflow-y-auto">
-    //     {renderContent()}
-    //   </div>
-    // </div>
-
     <div className="flex h-screen overflow-hidden">
       {/* Left Sidebar - Navigation */}
       <div>
