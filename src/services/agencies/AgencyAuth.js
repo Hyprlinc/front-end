@@ -37,7 +37,7 @@ class AgencyAuth {
       }
       return response.data;
     } catch (error) {
-      throw error.response?.data || { error: 'Registration failed' };
+      throw error.response?.data || { error: 'Registration failed. Please try again.' };
     }
   }
 

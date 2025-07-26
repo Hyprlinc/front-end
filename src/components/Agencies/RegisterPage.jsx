@@ -1,17 +1,20 @@
 import React, { useState } from "react";
-import { Building2, Lock, Mail, AlertCircle, Loader2 } from "lucide-react";
+import { Building2, Lock, Mail, AlertCircle, Loader2, User } from "lucide-react";
 import AgencyAuth from "../../services/agencies/AgencyAuth";
 import { useNavigate } from "react-router-dom";
 import logoForLogin from "../../assets/logo/logoForLogin.png";
+import { showErrorToast, showSuccessToast } from "../lib/toast";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 
-const LoginPage = () => {
+const RegisterPage = () => {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [formData, setFormData] = useState({
+    agencyName: "",
     email: "",
     password: "",
-    agencyName: "",
+    confirmPassword: ""
   });
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -28,9 +31,9 @@ const LoginPage = () => {
     e.preventDefault();
     setIsLoading(true);
 
-    // Basic validation
-    if (!formData.email || !formData.password) {
-      setError("Email and password are required");
+    // Validation
+    if (!formData.agencyName || !formData.email || !formData.password || !formData.confirmPassword) {
+      setError("All fields are required");
       setIsLoading(false);
       return;
     }
@@ -41,19 +44,32 @@ const LoginPage = () => {
       return;
     }
 
+    if (formData.password !== formData.confirmPassword) {
+      setError("Passwords do not match");
+      setIsLoading(false);
+      return;
+    }
+
+    if (formData.password.length < 8) {
+      setError("Password must be at least 8 characters");
+      setIsLoading(false);
+      return;
+    }
+
     try {
-      const response = await AgencyAuth.login({
+      await AgencyAuth.register({
+        agencyName: formData.agencyName,
         email: formData.email,
-        password: formData.password,
+        password: formData.password
       });
 
-      // Store the token and agency ID
-      localStorage.setItem("agencyId", response.id);
-
-      // Redirect to dashboard or home page
-      navigate("/agencyDashboard");
+      console.log("Registration successful", formData);
+      showSuccessToast("Agency registered successfully")
+      // Redirect to login page after successful registration
+      navigate("/agencyLogin");
     } catch (error) {
-      setError(error.error || "Login failed. Please check your credentials.");
+      showErrorToast(error.error || "Registration failed. Please try again.");
+      setError(error.error || "Registration failed. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -71,13 +87,13 @@ const LoginPage = () => {
       <div className="md:w-2/5 mx-auto p-6 sm:p-8 bg-white">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#007AFF] to-[#00C957]">
-            Agency Login
+            Agency Registration
           </h1>
-          <p className="text-gray-700 mt-2">Manage your influencer campaigns</p>
+          <p className="text-gray-700 mt-2">Create your agency account</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          {/* <div>
+          <div>
             <label
               htmlFor="agencyName"
               className="block text-sm font-medium text-gray-700 mb-2"
@@ -92,12 +108,14 @@ const LoginPage = () => {
                 id="agencyName"
                 name="agencyName"
                 placeholder="Enter your agency name"
-                className="w-full pl-10 pr-4 py-3 border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-gray-700 placeholder-gray-400 "
+                autoComplete="off"
+                className="w-full pl-10 pr-4 py-3 border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-gray-700 placeholder-gray-400"
                 value={formData.agencyName}
                 onChange={handleInputChange}
+                disabled={isLoading}
               />
             </div>
-          </div> */}
+          </div>
 
           <div>
             <label
@@ -114,9 +132,9 @@ const LoginPage = () => {
                 id="email"
                 name="email"
                 type="email"
-                autoComplete="off"
                 placeholder="Enter your email"
-                className="w-full pl-10 pr-4 py-3    border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-gray-700 placeholder-gray-400 transition-all disabled:opacity-50"
+                autoComplete="off"
+                className="w-full pl-10 pr-4 py-3 border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-gray-700 placeholder-gray-400 transition-all disabled:opacity-50"
                 value={formData.email}
                 onChange={handleInputChange}
                 disabled={isLoading}
@@ -139,20 +157,51 @@ const LoginPage = () => {
                 id="password"
                 name="password"
                 type={showPassword ? "text" : "password"}
-                autoComplete="off"
-                placeholder="Enter your password"
+                placeholder="Enter your password (min 8 characters)"
                 className="w-full pl-10 pr-4 py-3 border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-gray-700 placeholder-gray-400 transition-all disabled:opacity-50"
                 value={formData.password}
+                autoComplete="off"
                 onChange={handleInputChange}
                 disabled={isLoading}
               />
-                <button
-                      type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="absolute inset-y-0 right-3 flex items-center text-gray-500 focus:outline-none"
-                    >
-                      {showPassword ? <FaEyeSlash /> : <FaEye />}
-                    </button>
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute inset-y-0 right-3 flex items-center text-gray-500 focus:outline-none"
+              >
+                {showPassword ? <FaEyeSlash /> : <FaEye />}
+              </button>
+            </div>
+          </div>
+
+          <div>
+            <label
+              htmlFor="confirmPassword"
+              className="block text-sm font-medium text-gray-700 mb-2"
+            >
+              Confirm Password
+            </label>
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                <Lock className="h-5 w-5 text-gray-400" />
+              </div>
+              <input
+                id="confirmPassword"
+                name="confirmPassword"
+                type={showConfirmPassword ? "text" : "password"}
+                placeholder="Confirm your password"
+                className="w-full pl-10 pr-4 py-3 border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-gray-700 placeholder-gray-400 transition-all disabled:opacity-50"
+                value={formData.confirmPassword}
+                onChange={handleInputChange}
+                disabled={isLoading}
+              />
+              <button
+                type="button"
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                className="absolute inset-y-0 right-3 flex items-center text-gray-500 focus:outline-none"
+              >
+                {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
+              </button>
             </div>
           </div>
 
@@ -171,30 +220,22 @@ const LoginPage = () => {
             {isLoading ? (
               <span className="flex items-center justify-center gap-2">
                 <Loader2 className="h-4 w-4 animate-spin" />
-                Logging in...
+                Registering...
               </span>
             ) : (
-              "Login"
+              "Register"
             )}
           </button>
         </form>
 
-        <div className="mt-6 space-y-3 text-center">
+        <div className="mt-6 text-center">
           <p className="text-sm text-gray-600">
-            Don't have an account?{" "}
+            Already have an account?{" "}
             <a
-              href="/agencyRegister"
+              href="/agencyLogin"
               className="text-blue-600 hover:text-blue-900 hover:underline font-medium transition-colors"
             >
-              Sign up
-            </a>
-          </p>
-          <p className="text-sm text-gray-400">
-            <a
-              href="/forgot-password"
-              className="text-blue-600 hover:text-blue-900 hover:underline font-medium transition-colors"
-            >
-              Forgot password?
+              Login
             </a>
           </p>
         </div>
@@ -203,4 +244,4 @@ const LoginPage = () => {
   );
 };
 
-export default LoginPage;
+export default RegisterPage;

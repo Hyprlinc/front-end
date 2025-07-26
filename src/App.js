@@ -12,6 +12,7 @@ import { MessageProvider } from "./components/Brand/Context/MessagesContext";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { toastConfig } from "../src/components/lib/toast";
+import RegisterPage from "./components/Agencies/RegisterPage";
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
           <Route path="/dashboard" element={<CreatorDashboard />} />
           <Route path="/agencyProfile" element={<AgencyProfile />} />
           <Route path="/agencyLogin" element={<LoginPage />} />
+          <Route path="/agencyRegister" element={<RegisterPage/>} />
           <Route path="/agencyDashboard" element={<AgencyDashboard />} />
         </Routes>
       </Router>
