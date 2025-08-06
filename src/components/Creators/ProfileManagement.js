@@ -361,36 +361,64 @@ const ProfileTab = ({ name, email, location, phoneNumber, bio }) => {
     );
   };
 
-  const EditableBio = () => {
-    const textareaRef = useRef(null);
+const EditableBio = () => {
+  const textareaRef = useRef(null);
+  const [isComposing, setIsComposing] = useState(false);
 
-    return (
-      <div className="space-y-2 w-full">
-        <label className="block text-sm font-medium text-gray-700">Bio</label>
+  useEffect(() => {
+    if (editStates.bio && textareaRef.current) {
+      textareaRef.current.focus();
+      // Set cursor at the end of the text
+      const length = tempValues.bio.length;
+      textareaRef.current.setSelectionRange(length, length);
+    }
+  }, [editStates.bio]);
 
-        <div className="relative w-full">
-          {!editStates.bio ? (
-            <div
-              className="w-full px-3 py-2 sm:px-4 sm:py-2 bg-gray-100 rounded-lg min-h-24 cursor-pointer text-sm sm:text-base"
-              onClick={() => toggleEdit("bio")}
-            >
-              {values.bio || "Tell us about yourself..."}
-            </div>
-          ) : (
+  const handleBlur = () => {
+    if (!isComposing) {
+      toggleEdit("bio");
+    }
+  };
+
+  const handleButtonClick = () => {
+    toggleEdit("bio");
+  };
+
+  return (
+    <div className="space-y-2 w-full">
+      <label className="block text-sm font-medium text-gray-700">Bio</label>
+      <div className="relative w-full">
+        {!editStates.bio ? (
+          <div
+            className="w-full px-3 py-2 sm:px-4 sm:py-2 bg-gray-100 rounded-lg min-h-24 cursor-pointer text-sm sm:text-base whitespace-pre-wrap"
+            onClick={() => toggleEdit("bio")}
+          >
+            {values.bio || "Tell us about yourself..."}
+          </div>
+        ) : (
+          <>
             <textarea
               ref={textareaRef}
               placeholder="Tell us about yourself..."
               value={tempValues.bio}
               onChange={(e) => handleChange("bio", e.target.value)}
-              onBlur={() => toggleEdit("bio")}
-              className="w-full px-3 py-2 sm:px-4 sm:py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all min-h-24 text-sm sm:text-base"
+              onBlur={handleBlur}
+              onCompositionStart={() => setIsComposing(true)}
+              onCompositionEnd={() => setIsComposing(false)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && !e.shiftKey && !isComposing) {
+                  e.preventDefault();
+                  toggleEdit("bio");
+                }
+              }}
+              className="w-full px-3 py-2 sm:px-4 sm:py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all min-h-24 text-sm sm:text-base resize-none"
+              dir="auto" // Automatic text direction
             />
-          )}
-          <button
-            className="edit-button absolute right-2 sm:right-3 top-8 text-gray-500 hover:text-indigo-600 transition-colors"
-            onClick={() => toggleEdit("bio")}
-          >
-            {editStates.bio ? (
+            <button
+              className="edit-button absolute right-2 sm:right-3 top-2 text-gray-500 hover:text-indigo-600 transition-colors"
+              onClick={handleButtonClick}
+              type="button"
+            >
               <svg
                 className="w-4 h-4 sm:w-5 sm:h-5"
                 fill="none"
@@ -404,26 +432,13 @@ const ProfileTab = ({ name, email, location, phoneNumber, bio }) => {
                   d="M5 13l4 4L19 7"
                 />
               </svg>
-            ) : (
-              <svg
-                className="w-4 h-4 sm:w-5 sm:h-5"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
-                />
-              </svg>
-            )}
-          </button>
-        </div>
+            </button>
+          </>
+        )}
       </div>
-    );
-  };
+    </div>
+  );
+};
 
   if (loading) {
     return (
@@ -878,6 +893,565 @@ const NichesTab = ({ niches }) => {
 };
 
 // Enhanced PackagesTab Component
+// const PackagesTab = () => {
+//   const [packages, setPackages] = useState([]);
+//   const [isCreating, setIsCreating] = useState(false);
+//   const [editingPackage, setEditingPackage] = useState(null);
+//   const [loading, setLoading] = useState(false);
+//   const [isLoadingPackages, setIsLoadingPackages] = useState(true);
+//   const [packageMode, setPackageMode] = useState("broadcast");
+//   const [formData, setFormData] = useState({
+//     package_type: "",
+//     price: "",
+//     features: "",
+//     delivery_time_days: "",
+//     target_brand: "",
+//   });
+
+//   const fetchPackages = async () => {
+//     try {
+//       setIsLoadingPackages(true);
+//       const response = await CreatorPackagesAPI.getPackages();
+//       if (response?.data) {
+//         setPackages(response.data);
+//       }
+//     } catch (error) {
+//       console.error("Error fetching packages:", error);
+//       toast.error("Failed to fetch packages");
+//     } finally {
+//       setIsLoadingPackages(false);
+//     }
+//   };
+
+//   const handleEditPackage = useCallback((pkg) => {
+//     setPackageMode(pkg.target_brand ? "targeted" : "broadcast");
+//     setFormData({
+//       package_type: pkg.package_type,
+//       price: pkg.price.toString(),
+//       features: Array.isArray(pkg.features)
+//         ? pkg.features.join("\n")
+//         : pkg.features,
+//       delivery_time_days: pkg.delivery_time_days.toString(),
+//       target_brand: pkg.target_brand || "",
+//     });
+//     setEditingPackage(pkg);
+//     setIsCreating(true);
+//   }, []);
+
+//   const resetForm = useCallback(() => {
+//     setFormData({
+//       package_type: "",
+//       price: "",
+//       features: "",
+//       delivery_time_days: "",
+//       target_brand: "",
+//     });
+//     setPackageMode("broadcast");
+//     setIsCreating(false);
+//     setEditingPackage(null);
+//   }, []);
+
+//   const handleSubmit = async (e) => {
+//     e.preventDefault();
+//     setLoading(true);
+//     try {
+//       const processedFormData = {
+//         ...formData,
+//         features: formData.features
+//           .split("\n")
+//           .filter((feature) => feature.trim() !== ""),
+//         target_brand: packageMode === "targeted" ? formData.target_brand : null,
+//         price: parseFloat(formData.price),
+//         delivery_time_days: parseInt(formData.delivery_time_days),
+//       };
+
+//       if (editingPackage) {
+//         await CreatorPackagesAPI.updatePackage(
+//           editingPackage.id,
+//           processedFormData
+//         );
+//         toast.success("Package updated successfully!");
+//       } else {
+//         await CreatorPackagesAPI.createPackage(processedFormData);
+//         toast.success("Package created successfully!");
+//       }
+
+//       resetForm();
+//       await fetchPackages();
+//     } catch (error) {
+//       console.error("Error:", error);
+//       toast.error(
+//         error.message || "An error occurred while saving the package"
+//       );
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+
+//   useEffect(() => {
+//     fetchPackages();
+//   }, []);
+
+//   const handleInputChange = useCallback((e) => {
+//     const { name, value } = e.target;
+//     setFormData((prev) => ({
+//       ...prev,
+//       [name]: value,
+//     }));
+//   }, []);
+
+//   const PackageForm = useCallback(
+//     () => (
+//       <form
+//         onSubmit={handleSubmit}
+//         className="bg-white rounded-xl shadow-sm p-4 sm:p-6"
+//       >
+//         <div className="mb-6">
+//           <label className="block text-sm font-medium text-gray-700 mb-3">
+//             Package Mode
+//           </label>
+//           <div className="grid grid-cols-2 gap-4">
+//             <button
+//               type="button"
+//               onClick={() => setPackageMode("broadcast")}
+//               className={`p-3 sm:p-4 rounded-lg border-2 transition-all
+//                             ${
+//                               packageMode === "broadcast"
+//                                 ? "border-indigo-500 bg-indigo-50 text-indigo-700"
+//                                 : "border-gray-200 bg-white text-gray-600 hover:border-gray-300"
+//                             }`}
+//             >
+//               <div className="flex flex-col items-center">
+//                 <span className="text-2xl mb-1 sm:mb-2">🌐</span>
+//                 <div className="font-medium text-sm sm:text-base">Broadcast</div>
+//                 <div className="text-xs mt-1">Available to all brands</div>
+//               </div>
+//             </button>
+//             <button
+//               type="button"
+//               onClick={() => setPackageMode("targeted")}
+//               className={`p-3 sm:p-4 rounded-lg border-2 transition-all
+//                             ${
+//                               packageMode === "targeted"
+//                                 ? "border-indigo-500 bg-indigo-50 text-indigo-700"
+//                                 : "border-gray-200 bg-white text-gray-600 hover:border-gray-300"
+//                             }`}
+//             >
+//               <div className="flex flex-col items-center">
+//                 <span className="text-2xl mb-1 sm:mb-2">🎯</span>
+//                 <div className="font-medium text-sm sm:text-base">Targeted</div>
+//                 <div className="text-xs mt-1">For specific brands</div>
+//               </div>
+//             </button>
+//           </div>
+//         </div>
+
+//         {packageMode === "targeted" && (
+//           <div className="mb-6">
+//             <label className="block text-sm font-medium text-gray-700 mb-1">
+//               Brand ID
+//             </label>
+//             <input
+//               type="text"
+//               name="target_brand"
+//               value={formData.target_brand}
+//               onChange={handleInputChange}
+//               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all"
+//               placeholder="Enter the brand's UUID"
+//               required={packageMode === "targeted"}
+//             />
+//           </div>
+//         )}
+
+//         <div className="mb-6">
+//           <label className="block text-sm font-medium text-gray-700 mb-1">
+//             Package Type
+//           </label>
+//           <input
+//             type="text"
+//             name="package_type"
+//             value={formData.package_type}
+//             onChange={handleInputChange}
+//             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all"
+//             placeholder="e.g., Basic, Standard, Premium"
+//             required
+//           />
+//         </div>
+
+//         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 mb-6">
+//           <div>
+//             <label className="block text-sm font-medium text-gray-700 mb-1">
+//               Price (₹)
+//             </label>
+//             <input
+//               type="number"
+//               name="price"
+//               value={formData.price}
+//               onChange={handleInputChange}
+//               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all"
+//               placeholder="Enter price"
+//               required
+//             />
+//           </div>
+
+//           <div>
+//             <label className="block text-sm font-medium text-gray-700 mb-1">
+//               Delivery Time (days)
+//             </label>
+//             <input
+//               type="number"
+//               name="delivery_time_days"
+//               value={formData.delivery_time_days}
+//               onChange={handleInputChange}
+//               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all"
+//               placeholder="Enter delivery time"
+//               required
+//             />
+//           </div>
+//         </div>
+
+//         <div className="mb-6">
+//           <label className="block text-sm font-medium text-gray-700 mb-1">
+//             Features (one per line)
+//           </label>
+//           <textarea
+//             name="features"
+//             value={formData.features}
+//             onChange={handleInputChange}
+//             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all min-h-32"
+//             placeholder="Enter features (one per line)"
+//             required
+//           />
+//         </div>
+
+//         <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-4">
+//           <button
+//             type="submit"
+//             disabled={loading}
+//             className={`px-4 sm:px-6 py-2 sm:py-3 bg-indigo-600 text-white font-medium rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-colors shadow-md
+//                         ${
+//                           loading
+//                             ? "opacity-70 cursor-not-allowed"
+//                             : "hover:bg-indigo-700"
+//                         }`}
+//           >
+//             {loading ? (
+//               <span className="flex items-center justify-center">
+//                 <svg
+//                   className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
+//                   xmlns="http://www.w3.org/2000/svg"
+//                   fill="none"
+//                   viewBox="0 0 24 24"
+//                 >
+//                   <circle
+//                     className="opacity-25"
+//                     cx="12"
+//                     cy="12"
+//                     r="10"
+//                     stroke="currentColor"
+//                     strokeWidth="4"
+//                   ></circle>
+//                   <path
+//                     className="opacity-75"
+//                     fill="currentColor"
+//                     d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+//                   ></path>
+//                 </svg>
+//                 {editingPackage ? "Updating..." : "Creating..."}
+//               </span>
+//             ) : editingPackage ? (
+//               "Update Package"
+//             ) : (
+//               "Create Package"
+//             )}
+//           </button>
+//           <button
+//             type="button"
+//             onClick={resetForm}
+//             className="px-4 sm:px-6 py-2 sm:py-3 bg-gray-200 text-gray-700 font-medium rounded-lg hover:bg-gray-300 transition-colors"
+//           >
+//             Cancel
+//           </button>
+//         </div>
+//       </form>
+//     ),
+//     [formData, packageMode, loading, editingPackage, handleInputChange]
+//   );
+
+//   return (
+//     <div className="space-y-4 sm:space-y-6">
+//       <ToastContainer position="top-right" autoClose={3000} />
+
+//       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 sm:gap-0">
+//         <h2 className="text-xl sm:text-2xl font-bold text-gray-900">Your Packages</h2>
+//         {!isCreating && (
+//           <button
+//             onClick={() => setIsCreating(true)}
+//             className="px-4 sm:px-6 py-2 sm:py-3 bg-indigo-600 text-white font-medium rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-colors shadow-md text-sm sm:text-base"
+//           >
+//             Create New Package
+//           </button>
+//         )}
+//       </div>
+
+//       {isLoadingPackages ? (
+//         <div className="bg-white rounded-xl shadow-sm p-4 sm:p-6">
+//           <div className="animate-pulse space-y-4 sm:space-y-6">
+//             <div className="h-6 sm:h-8 bg-gray-200 rounded w-1/3"></div>
+//             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+//               {[...Array(3)].map((_, i) => (
+//                 <div key={i} className="h-48 sm:h-64 bg-gray-200 rounded-xl"></div>
+//               ))}
+//             </div>
+//           </div>
+//         </div>
+//       ) : isCreating ? (
+//         <PackageForm />
+//       ) : (
+//         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+//           {packages.map((pkg) => (
+//             <motion.div
+//               key={pkg.id}
+//               initial={{ opacity: 0, y: 20 }}
+//               animate={{ opacity: 1, y: 0 }}
+//               transition={{ duration: 0.3 }}
+//               className="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100 hover:shadow-md transition-shadow"
+//             >
+//               <div className="p-4 sm:p-6">
+//                 {pkg.target_brand && (
+//                   <div className="inline-flex items-center px-2 sm:px-3 py-0.5 sm:py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 mb-2 sm:mb-3">
+//                     Targeted Package
+//                   </div>
+//                 )}
+//                 <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-1 sm:mb-2">
+//                   {pkg.package_type}
+//                 </h3>
+//                 <div className="text-xl sm:text-2xl font-bold text-indigo-600 mb-3 sm:mb-4">
+//                   ₹{pkg.price}
+//                 </div>
+//                 <ul className="space-y-1 sm:space-y-2 mb-4 sm:mb-6">
+//                   {pkg.features.map((feature, index) => (
+//                     <li key={index} className="flex items-start">
+//                       <svg
+//                         className="h-4 w-4 sm:h-5 sm:w-5 text-green-500 mr-1 sm:mr-2 mt-0.5"
+//                         fill="none"
+//                         stroke="currentColor"
+//                         viewBox="0 0 24 24"
+//                       >
+//                         <path
+//                           strokeLinecap="round"
+//                           strokeLinejoin="round"
+//                           strokeWidth="2"
+//                           d="M5 13l4 4L19 7"
+//                         />
+//                       </svg>
+//                       <span className="text-xs sm:text-sm text-gray-700">{feature}</span>
+//                     </li>
+//                   ))}
+//                 </ul>
+//                 <div className="flex justify-between items-center pt-3 sm:pt-4 border-t border-gray-100">
+//                   <div className="text-xs sm:text-sm text-gray-500">
+//                     Delivery in {pkg.delivery_time_days} days
+//                   </div>
+//                   <button
+//                     onClick={() => handleEditPackage(pkg)}
+//                     className="px-3 sm:px-4 py-1 sm:py-2 bg-indigo-50 text-indigo-600 rounded-lg font-medium hover:bg-indigo-100 transition-colors text-xs sm:text-sm"
+//                   >
+//                     Edit
+//                   </button>
+//                 </div>
+//               </div>
+//             </motion.div>
+//           ))}
+//         </div>
+//       )}
+//     </div>
+//   );
+// };
+
+
+// Extracted PackageForm component for better state management
+const PackageForm = ({
+  formData,
+  packageMode,
+  loading,
+  editingPackage,
+  handleInputChange,
+  handleSubmit,
+  setPackageMode,
+  resetForm
+}) => (
+  <form onSubmit={handleSubmit} className="bg-white rounded-xl shadow-sm p-4 sm:p-6">
+    <div className="mb-6">
+      <label className="block text-sm font-medium text-gray-700 mb-3">
+        Package Mode
+      </label>
+      <div className="grid grid-cols-2 gap-4">
+        <button
+          type="button"
+          onClick={() => setPackageMode("broadcast")}
+          className={`p-3 sm:p-4 rounded-lg border-2 transition-all
+                      ${
+                        packageMode === "broadcast"
+                          ? "border-indigo-500 bg-indigo-50 text-indigo-700"
+                          : "border-gray-200 bg-white text-gray-600 hover:border-gray-300"
+                      }`}
+        >
+          <div className="flex flex-col items-center">
+            <span className="text-2xl mb-1 sm:mb-2">🌐</span>
+            <div className="font-medium text-sm sm:text-base">Broadcast</div>
+            <div className="text-xs mt-1">Available to all brands</div>
+          </div>
+        </button>
+        <button
+          type="button"
+          onClick={() => setPackageMode("targeted")}
+          className={`p-3 sm:p-4 rounded-lg border-2 transition-all
+                      ${
+                        packageMode === "targeted"
+                          ? "border-indigo-500 bg-indigo-50 text-indigo-700"
+                          : "border-gray-200 bg-white text-gray-600 hover:border-gray-300"
+                      }`}
+        >
+          <div className="flex flex-col items-center">
+            <span className="text-2xl mb-1 sm:mb-2">🎯</span>
+            <div className="font-medium text-sm sm:text-base">Targeted</div>
+            <div className="text-xs mt-1">For specific brands</div>
+          </div>
+        </button>
+      </div>
+    </div>
+
+    {packageMode === "targeted" && (
+      <div className="mb-6">
+        <label className="block text-sm font-medium text-gray-700 mb-1">
+          Brand ID
+        </label>
+        <input
+          type="text"
+          name="target_brand"
+          value={formData.target_brand}
+          onChange={handleInputChange}
+          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all"
+          placeholder="Enter the brand's UUID"
+          required={packageMode === "targeted"}
+        />
+      </div>
+    )}
+
+    <div className="mb-6">
+      <label className="block text-sm font-medium text-gray-700 mb-1">
+        Package Type
+      </label>
+      <input
+        type="text"
+        name="package_type"
+        value={formData.package_type}
+        onChange={handleInputChange}
+        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all"
+        placeholder="e.g., Basic, Standard, Premium"
+        required
+      />
+    </div>
+
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 mb-6">
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-1">
+          Price (₹)
+        </label>
+        <input
+          type="number"
+          name="price"
+          value={formData.price || ""}
+          onChange={handleInputChange}
+          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all"
+          placeholder="Enter price"
+          required
+        />
+      </div>
+
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-1">
+          Delivery Time (days)
+        </label>
+        <input
+          type="number"
+          name="delivery_time_days"
+          value={formData.delivery_time_days || ""}
+          onChange={handleInputChange}
+          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all"
+          placeholder="Enter delivery time"
+          required
+        />
+      </div>
+    </div>
+
+    <div className="mb-6">
+      <label className="block text-sm font-medium text-gray-700 mb-1">
+        Features (one per line)
+      </label>
+      <textarea
+        name="features"
+        value={formData.features}
+        onChange={handleInputChange}
+        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all min-h-32"
+        placeholder="Enter features (one per line)"
+        required
+      />
+    </div>
+
+    <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-4">
+      <button
+        type="submit"
+        disabled={loading}
+        className={`px-4 sm:px-6 py-2 sm:py-3 bg-indigo-600 text-white font-medium rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-colors shadow-md
+                    ${
+                      loading
+                        ? "opacity-70 cursor-not-allowed"
+                        : "hover:bg-indigo-700"
+                    }`}
+      >
+        {loading ? (
+          <span className="flex items-center justify-center">
+            <svg
+              className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <circle
+                className="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                strokeWidth="4"
+              ></circle>
+              <path
+                className="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+              ></path>
+            </svg>
+            {editingPackage ? "Updating..." : "Creating..."}
+          </span>
+        ) : editingPackage ? (
+          "Update Package"
+        ) : (
+          "Create Package"
+        )}
+      </button>
+      <button
+        type="button"
+        onClick={resetForm}
+        className="px-4 sm:px-6 py-2 sm:py-3 bg-gray-200 text-gray-700 font-medium rounded-lg hover:bg-gray-300 transition-colors"
+      >
+        Cancel
+      </button>
+    </div>
+  </form>
+);
+
 const PackagesTab = () => {
   const [packages, setPackages] = useState([]);
   const [isCreating, setIsCreating] = useState(false);
@@ -936,6 +1510,14 @@ const PackagesTab = () => {
     setEditingPackage(null);
   }, []);
 
+  const handleInputChange = useCallback((e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  }, []);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -951,7 +1533,7 @@ const PackagesTab = () => {
       };
 
       if (editingPackage) {
-        await CreatorPackagesAPI.updatePackage(
+        await CreatorPackagesAPI.updatePackage( // Fixed typo (was CreatorPackagesAPI)
           editingPackage.id,
           processedFormData
         );
@@ -976,192 +1558,6 @@ const PackagesTab = () => {
   useEffect(() => {
     fetchPackages();
   }, []);
-
-  const handleInputChange = useCallback((e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  }, []);
-
-  const PackageForm = useCallback(
-    () => (
-      <form
-        onSubmit={handleSubmit}
-        className="bg-white rounded-xl shadow-sm p-4 sm:p-6"
-      >
-        <div className="mb-6">
-          <label className="block text-sm font-medium text-gray-700 mb-3">
-            Package Mode
-          </label>
-          <div className="grid grid-cols-2 gap-4">
-            <button
-              type="button"
-              onClick={() => setPackageMode("broadcast")}
-              className={`p-3 sm:p-4 rounded-lg border-2 transition-all
-                            ${
-                              packageMode === "broadcast"
-                                ? "border-indigo-500 bg-indigo-50 text-indigo-700"
-                                : "border-gray-200 bg-white text-gray-600 hover:border-gray-300"
-                            }`}
-            >
-              <div className="flex flex-col items-center">
-                <span className="text-2xl mb-1 sm:mb-2">🌐</span>
-                <div className="font-medium text-sm sm:text-base">Broadcast</div>
-                <div className="text-xs mt-1">Available to all brands</div>
-              </div>
-            </button>
-            <button
-              type="button"
-              onClick={() => setPackageMode("targeted")}
-              className={`p-3 sm:p-4 rounded-lg border-2 transition-all
-                            ${
-                              packageMode === "targeted"
-                                ? "border-indigo-500 bg-indigo-50 text-indigo-700"
-                                : "border-gray-200 bg-white text-gray-600 hover:border-gray-300"
-                            }`}
-            >
-              <div className="flex flex-col items-center">
-                <span className="text-2xl mb-1 sm:mb-2">🎯</span>
-                <div className="font-medium text-sm sm:text-base">Targeted</div>
-                <div className="text-xs mt-1">For specific brands</div>
-              </div>
-            </button>
-          </div>
-        </div>
-
-        {packageMode === "targeted" && (
-          <div className="mb-6">
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Brand ID
-            </label>
-            <input
-              type="text"
-              name="target_brand"
-              value={formData.target_brand}
-              onChange={handleInputChange}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all"
-              placeholder="Enter the brand's UUID"
-              required={packageMode === "targeted"}
-            />
-          </div>
-        )}
-
-        <div className="mb-6">
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Package Type
-          </label>
-          <input
-            type="text"
-            name="package_type"
-            value={formData.package_type}
-            onChange={handleInputChange}
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all"
-            placeholder="e.g., Basic, Standard, Premium"
-            required
-          />
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 mb-6">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Price (₹)
-            </label>
-            <input
-              type="number"
-              name="price"
-              value={formData.price}
-              onChange={handleInputChange}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all"
-              placeholder="Enter price"
-              required
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Delivery Time (days)
-            </label>
-            <input
-              type="number"
-              name="delivery_time_days"
-              value={formData.delivery_time_days}
-              onChange={handleInputChange}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all"
-              placeholder="Enter delivery time"
-              required
-            />
-          </div>
-        </div>
-
-        <div className="mb-6">
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Features (one per line)
-          </label>
-          <textarea
-            name="features"
-            value={formData.features}
-            onChange={handleInputChange}
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all min-h-32"
-            placeholder="Enter features (one per line)"
-            required
-          />
-        </div>
-
-        <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-4">
-          <button
-            type="submit"
-            disabled={loading}
-            className={`px-4 sm:px-6 py-2 sm:py-3 bg-indigo-600 text-white font-medium rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-colors shadow-md
-                        ${
-                          loading
-                            ? "opacity-70 cursor-not-allowed"
-                            : "hover:bg-indigo-700"
-                        }`}
-          >
-            {loading ? (
-              <span className="flex items-center justify-center">
-                <svg
-                  className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                >
-                  <circle
-                    className="opacity-25"
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="currentColor"
-                    strokeWidth="4"
-                  ></circle>
-                  <path
-                    className="opacity-75"
-                    fill="currentColor"
-                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                  ></path>
-                </svg>
-                {editingPackage ? "Updating..." : "Creating..."}
-              </span>
-            ) : editingPackage ? (
-              "Update Package"
-            ) : (
-              "Create Package"
-            )}
-          </button>
-          <button
-            type="button"
-            onClick={resetForm}
-            className="px-4 sm:px-6 py-2 sm:py-3 bg-gray-200 text-gray-700 font-medium rounded-lg hover:bg-gray-300 transition-colors"
-          >
-            Cancel
-          </button>
-        </div>
-      </form>
-    ),
-    [formData, packageMode, loading, editingPackage, handleInputChange]
-  );
 
   return (
     <div className="space-y-4 sm:space-y-6">
@@ -1191,7 +1587,16 @@ const PackagesTab = () => {
           </div>
         </div>
       ) : isCreating ? (
-        <PackageForm />
+        <PackageForm
+          formData={formData}
+          packageMode={packageMode}
+          loading={loading}
+          editingPackage={editingPackage}
+          handleInputChange={handleInputChange}
+          handleSubmit={handleSubmit}
+          setPackageMode={setPackageMode}
+          resetForm={resetForm}
+        />
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
           {packages.map((pkg) => (
@@ -1253,5 +1658,6 @@ const PackagesTab = () => {
     </div>
   );
 };
+
 
 export default ProfileManagement;
