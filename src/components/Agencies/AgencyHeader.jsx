@@ -1,7 +1,8 @@
-import React from 'react';
-import { Search, Bell, User, Menu } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
-import { useIsMobile } from '../hooks/use-mobile';
+import React from "react";
+import { Search, Bell, User, Menu } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { useIsMobile } from "../hooks/use-mobile";
+import ProfileMenu from "./ProfileMenu";
 
 const AgencyHeader = ({ toggleSidebar, user }) => {
   const navigate = useNavigate();
@@ -12,32 +13,32 @@ const AgencyHeader = ({ toggleSidebar, user }) => {
       <div className="flex items-center justify-between px-4 sm:px-6 py-3 sm:py-4">
         {/* Mobile menu button */}
         {isMobile && (
-          <button 
+          <button
             onClick={toggleSidebar}
             className="mr-2 p-2 hover:bg-gray-100 rounded-lg"
           >
             <Menu className="w-5 h-5 text-gray-600" />
           </button>
         )}
-        
+
         {/* Search Bar */}
-        <div className={`flex-1 ${isMobile ? 'ml-2' : 'max-w-2xl'}`}>
+        <div className={`flex-1 ${isMobile ? "ml-2" : "max-w-2xl"}`}>
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 sm:w-5 sm:h-5" />
             <input
               type="text"
               placeholder={
-                isMobile 
-                  ? "Search..." 
+                isMobile
+                  ? "Search..."
                   : "Search influencers, campaigns, or brands..."
               }
               className="w-full pl-9 sm:pl-10 pr-3 sm:pr-4 py-1.5 sm:py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
             />
           </div>
         </div>
-        
+
         {/* Right Side Icons */}
-        <div className="flex items-center space-x-2 sm:space-x-4 ml-2">
+        {/* <div className="flex items-center space-x-2 sm:space-x-4 ml-2">
           <button 
             className="p-1.5 sm:p-2 hover:bg-gray-100 rounded-full relative"
             aria-label="Notifications"
@@ -66,7 +67,13 @@ const AgencyHeader = ({ toggleSidebar, user }) => {
               </span>
             )}
           </button>
-        </div>
+        </div> */}
+
+        {/* Replace User Controls with ProfileMenu */}
+        <ProfileMenu
+          user={user}
+          onProfileMenuToggle={() => console.log("Profile menu toggled")}
+        />
       </div>
     </header>
   );

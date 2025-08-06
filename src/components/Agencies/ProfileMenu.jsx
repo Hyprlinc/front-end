@@ -1,49 +1,3 @@
-// import React from 'react';
-// import msgIcon from '../../assets/icons/messagesicon.png';
-// import notificationIcon from '../../assets/icons/notificationicon.png';
-
-
-// const ProfileMenu = ({user, onProfileMenuToggle}) => {
-//     return (
-//         <nav className="bg-white shadow-sm p-4">
-//           <div className="max-w-6xl mx-auto flex justify-end">
-//             {/* Right side icons and profile button */}
-//             <div className="flex items-center gap-4">
-//               <button className="flex items-center justify-center h-[48px] w-[48px] bg-gray-50 rounded-lg hover:bg-gray-100 transition-all">
-//                 <img 
-//                   src={msgIcon} 
-//                   alt="Icon 1" 
-//                   className="w-[24px] h-[24px]"
-//                 />
-//               </button>
-//               <button className="flex items-center justify-center h-[48px] w-[48px] bg-gray-50 rounded-lg hover:bg-gray-100 transition-all">
-//                 <img 
-//                   src={notificationIcon} 
-//                   alt="Icon 2" 
-//                   className="w-[24px] h-[24px]"
-//                 />
-//               </button>
-//               <button 
-//                 onClick={onProfileMenuToggle}
-//                 className="flex items-center bg-gray-50 rounded-lg h-[48px] w-[160px] p-2 hover:bg-gray-100 transition-all"
-//               >
-//                 <img 
-//                   src={user.profilePicture || "https://avatar.iran.liara.run/public"} 
-//                   alt="Profile" 
-//                   className="w-[40px] h-[40px] rounded-full"
-//                 />
-//                 <div className="ml-3 text-left">
-//                   <p className="text-sm font-medium text-gray-900">{user.brands_name}</p>
-//                   <p className="text-xs text-gray-500">{"Brand"}</p>
-//                 </div>
-//               </button>
-//             </div>
-//           </div>
-//         </nav>
-//     )
-// }
-
-// export default ProfileMenu;
 
 import React, { useState } from 'react';
 import { MessageSquare, Bell, ChevronDown, LogOut, Settings, User, HelpCircle } from 'lucide-react';
@@ -58,9 +12,9 @@ const ProfileMenu = ({ user, onProfileMenuToggle }) => {
 
   const handleLogout = () => {
     try {
-      localStorage.removeItem("brandToken");
+      localStorage.removeItem("agency_token","agencyId");
       sessionStorage.clear();
-      navigate("/");
+      navigate("/agencyLogin");
       window.location.reload();
     } catch (error) {
       console.error("Logout failed:", error);
@@ -112,15 +66,15 @@ const ProfileMenu = ({ user, onProfileMenuToggle }) => {
               className="flex items-center bg-gray-50 rounded-lg h-10 px-2 hover:bg-gray-100 transition-all"
             >
               <img 
-                src={user.profilePicture || defaultAvatar} 
+                src={defaultAvatar} 
                 alt="Profile" 
                 className="w-8 h-8 rounded-full object-cover"
               />
               <div className="ml-2 text-left hidden md:block">
                 <p className="text-sm font-medium text-gray-900 truncate max-w-[120px]">
-                  {user.brands_name || 'User Name'}
+                  {/* {user.agency_name || 'User Name'} */}
                 </p>
-                <p className="text-xs text-gray-500">Brand Account</p>
+                <p className="text-xs text-gray-500">Agency Account</p>
               </div>
               <ChevronDown className={`w-4 h-4 ml-1 text-gray-500 transition-transform ${showDropdown ? 'transform rotate-180' : ''}`} />
             </button>
@@ -130,7 +84,7 @@ const ProfileMenu = ({ user, onProfileMenuToggle }) => {
               <div className="absolute right-0 mt-2 w-56 bg-white rounded-md shadow-lg py-1 z-50 border border-gray-200">
                 <div className="px-4 py-3 border-b border-gray-100">
                   <p className="text-sm font-medium text-gray-900">
-                    {user.brands_name || 'User Name'}
+                    {user.agency_name || 'User Name'}
                   </p>
                   <p className="text-xs text-gray-500 truncate">
                     {user.email || 'user@example.com'}

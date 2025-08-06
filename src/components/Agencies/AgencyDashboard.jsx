@@ -6,7 +6,7 @@ import {
 
 
 import { useNavigate } from 'react-router-dom';
-import DiscoverInfluencersInAgency from '../Agencies/DiscoverInfluencersInAgency'
+import DiscoverInfluencersInAgency from './DiscoverInfluencersInAgency'
 import DiscoverCampaignsInAgency from './DiscoverCampaignsInAgency'
 import Messages from './Messages';
 import AgencyProfile from './AgencyProfile';
@@ -81,12 +81,11 @@ const DashboardLayout = () => {
         {/* Header */}
         <AgencyHeader 
         toggleSidebar={toggleSidebar}
-        // user={user}
+        user={user}
       />
 
         {/* Main Content Area */}
         <main className="flex-1 overflow-y-auto p-6">
-          {/* Content will be rendered based on activeSection */}
           <div className="max-w-7xl mx-auto">
             {activeSection === 'dashboard' && <DashboardHome />}
             {activeSection === 'profile' && <AgencyProfile/>}
@@ -100,48 +99,6 @@ const DashboardLayout = () => {
     </div>
   );
 };
-
-// Dashboard Home Component
-// const DashboardHome = () => {
-//   const stats = [
-//     { label: 'Active Campaigns', value: '12' },
-//     { label: 'Influencers Collaborated', value: '45' },
-//     { label: 'Brands Connected', value: '28' },
-//     { label: 'Earnings This Month', value: '₹1,25,000' }
-//   ];
-
-//   return (
-//     <div className="space-y-6">
-//       <h2 className="text-2xl font-bold text-gray-800">Dashboard Overview</h2>
-
-//       {/* Quick Stats */}
-//       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-//         {stats.map((stat, index) => (
-//           <div key={index} className="bg-white p-6 rounded-lg shadow">
-//             <h3 className="text-sm font-medium text-gray-500">{stat.label}</h3>
-//             <p className="mt-2 text-3xl font-bold text-gray-900">{stat.value}</p>
-//           </div>
-//         ))}
-//       </div>
-
-//       {/* Recent Activity */}
-//       <div className="bg-white p-6 rounded-lg shadow">
-//         <h3 className="text-lg font-medium text-gray-900 mb-4">Recent Activity</h3>
-//         <div className="space-y-4">
-//           {/* Activity items will be mapped here */}
-//           <div className="flex items-start space-x-3">
-//             <div className="flex-1">
-//               <p className="text-sm text-gray-600">
-//                 New campaign application received from <span className="font-medium">Sarah Johnson</span>
-//               </p>
-//               <p className="text-xs text-gray-400 mt-1">2 hours ago</p>
-//             </div>
-//           </div>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// };
 
 const DashboardHome = () => {
   const stats = [
