@@ -87,6 +87,7 @@ const CreatorDashboard = () => {
     id: 0,
     fullName: "",
     email: "",
+    mobileNumber: "",
     primaryPlatform: [],
     channelLinks: [],
     age: null,
@@ -123,6 +124,7 @@ const CreatorDashboard = () => {
           fullName: profileResponse.data.full_name,
           email: profileResponse.data.email,
           primaryPlatform: profileResponse.data.primaryplatform,
+          mobileNumber: profileResponse.data.mob_number,
           channelLinks: profileResponse.data.channel_links,
           age: profileResponse.data.age,
           gender: profileResponse.data.gender,
@@ -418,9 +420,10 @@ const CreatorDashboard = () => {
             name={user.fullName}
             email={user.email}
             location={user.country}
-            phoneNumber={user.phoneNumber}
-            bio={user.bio}
+            phoneNumber={user.mobileNumber}
+            bio={user.contentDesc}
             niches={user.channelNiche}
+          
           />
         );
 

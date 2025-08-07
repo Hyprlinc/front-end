@@ -290,7 +290,7 @@ const ProfileTab = ({ name, email, location, phoneNumber, bio }) => {
     }, [editStates[field]]);
 
     return (
-      <div className="space-y-2">
+      <div className="space-y-2"> 
         <label className="block text-sm font-medium text-gray-700">
           {label}
         </label>
@@ -795,10 +795,11 @@ const KYCTab = () => {
 
 // Enhanced NichesTab Component
 const NichesTab = ({ niches }) => {
-  const [selectedNiches, setSelectedNiches] = useState(() => {
-    if (!niches) return new Set();
-    return new Set(niches.split(",").map((niche) => niche.trim()));
-  });
+const [selectedNiches, setSelectedNiches] = useState(() => {
+  if (!niches || !Array.isArray(niches)) return new Set();
+  return new Set(niches.map((niche) => niche.trim()));
+});
+
 
   const categories = {
     "Content Preferences": [

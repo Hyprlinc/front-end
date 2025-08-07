@@ -103,6 +103,7 @@ const RegistrationForm = () => {
   const [influencerDetails, setInfluencerDetails] = useState({
     name: "",
     email: "",
+    phoneNumber: "",
     password: "",
     platform: [],
     channelLink: "",
@@ -218,6 +219,7 @@ const RegistrationForm = () => {
       password: influencerDetails.password,
       primaryPlatforms: influencerDetails.platform,
       channelLink: influencerDetails.channelLink,
+      phoneNumber: influencerDetails.phoneNumber,
 
       // Personal details
       age: personalDetails.age,
@@ -1556,7 +1558,7 @@ const RegistrationForm = () => {
                       type="number"
                       id="accountAge"
                       name="accountAge"
-                    autoComplete="off"
+                      autoComplete="off"
                       value={instagramDetails.accountAge}
                       onChange={handleInstagramDetailsChange}
                       placeholder="e.g. 12"
@@ -1578,7 +1580,7 @@ const RegistrationForm = () => {
                       type="number"
                       id="followers"
                       name="followers"
-                    autoComplete="off"
+                      autoComplete="off"
                       value={instagramDetails.followers}
                       onChange={handleInstagramDetailsChange}
                       placeholder="e.g. 10000"
@@ -1602,7 +1604,7 @@ const RegistrationForm = () => {
                       type="number"
                       id="avgReelViews"
                       name="avgReelViews"
-                    autoComplete="off"
+                      autoComplete="off"
                       value={instagramDetails.avgReelViews}
                       onChange={handleInstagramDetailsChange}
                       placeholder="e.g. 5000"
@@ -1623,7 +1625,7 @@ const RegistrationForm = () => {
                       type="number"
                       id="avgLikes"
                       name="avgLikes"
-                    autoComplete="off"
+                      autoComplete="off"
                       value={instagramDetails.avgLikes}
                       onChange={handleInstagramDetailsChange}
                       placeholder="e.g. 1000"
@@ -1647,7 +1649,7 @@ const RegistrationForm = () => {
                       type="number"
                       id="avgComments"
                       name="avgComments"
-                    autoComplete="off"
+                      autoComplete="off"
                       value={instagramDetails.avgComments}
                       onChange={handleInstagramDetailsChange}
                       placeholder="e.g. 100"
@@ -1668,7 +1670,7 @@ const RegistrationForm = () => {
                       type="number"
                       id="engagementRate"
                       name="engagementRate"
-                    autoComplete="off"
+                      autoComplete="off"
                       value={instagramDetails.engagementRate}
                       onChange={handleInstagramDetailsChange}
                       placeholder="e.g. 3.5"

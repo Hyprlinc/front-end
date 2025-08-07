@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const ENLIST_INFLUENCERS = 'http://localhost:5001/api/v1/agency/discover/enlistInfluencers';
+const ENLIST_INFLUENCERS = 'http://localhost:5002/api/v1/agency/discover/enlistInfluencers';
 
 export const getInfluencers = async (token, filters) => {
     try {
